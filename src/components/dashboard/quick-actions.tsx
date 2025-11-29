@@ -38,12 +38,12 @@ const actions = [
 
 export function QuickActions() {
   return (
-    <Card className="border-border/50 glass">
+    <Card className="border-border/50 glass h-full">
       <CardHeader>
         <CardTitle className="text-lg">Acciones Rápidas</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-3">
+      <CardContent className="flex-1">
+        <div className="grid grid-cols-2 gap-3 h-full">
           {actions.map((action) => (
             <Link key={action.title} href={action.href}>
               <Button

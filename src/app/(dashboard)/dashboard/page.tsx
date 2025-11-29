@@ -2,7 +2,7 @@
 
 import { useFinanceStore } from '@/store/finance-store';
 import { StatCard } from '@/components/dashboard/stat-card';
-import { IncomeExpenseChart, CategoryPieChart, SavingsChart } from '@/components/dashboard/charts';
+import { IncomeExpenseChart, CategoryPieChart, SavingsChart, PayslipChart } from '@/components/dashboard/charts';
 import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import { QuickActions } from '@/components/dashboard/quick-actions';
 import {
@@ -43,6 +43,22 @@ export default function DashboardPage() {
   const goalsProgress = goals.length > 0
     ? (goals.reduce((sum, g) => sum + (g.currentAmount / g.targetAmount) * 100, 0) / goals.length)
     : 0;
+
+  const payslipChartData = [...payslips]
+    .sort((a, b) => {
+      const dateA = new Date(a.year, ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+        .findIndex(m => m.toLowerCase() === a.month.toLowerCase()));
+      const dateB = new Date(b.year, ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+        .findIndex(m => m.toLowerCase() === b.month.toLowerCase()));
+      return dateA.getTime() - dateB.getTime();
+    })
+    .map(p => ({
+      month: `${p.month.slice(0, 3)} ${p.year}`,
+      grossSalary: p.grossSalary,
+      netSalary: p.netSalary,
+    }));
 
   return (
     <div className="space-y-6">
@@ -142,8 +158,9 @@ export default function DashboardPage() {
         <RecentTransactions transactions={recentTransactions} />
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-6 lg:grid-cols-2">
         <SavingsChart data={monthlyData} />
+        <PayslipChart data={payslipChartData} />
       </div>
     </div>
   );

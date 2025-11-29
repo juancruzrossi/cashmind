@@ -9,7 +9,6 @@ import {
   ArrowLeftRight,
   PiggyBank,
   Target,
-  FileBarChart,
   Settings,
   LogOut,
   Wallet,
@@ -28,7 +27,6 @@ const navigation = [
   { name: 'Transacciones', href: '/dashboard/transactions', icon: ArrowLeftRight },
   { name: 'Presupuestos', href: '/dashboard/budgets', icon: PiggyBank },
   { name: 'Metas', href: '/dashboard/goals', icon: Target },
-  { name: 'Reportes', href: '/dashboard/reports', icon: FileBarChart },
 ];
 
 const bottomNavigation = [

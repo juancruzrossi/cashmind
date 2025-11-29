@@ -58,9 +58,27 @@ export const useFinanceStore = create<FinanceState>()(
         })),
 
       addPayslip: (payslip) =>
-        set((state) => ({
-          payslips: [payslip, ...state.payslips],
-        })),
+        set((state) => {
+          const monthIndex = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+            .findIndex(m => m.toLowerCase() === payslip.month.toLowerCase());
+          const transactionDate = new Date(payslip.year, monthIndex >= 0 ? monthIndex : 0, 15);
+
+          const transaction = {
+            id: `payslip-${payslip.id}`,
+            type: 'income' as const,
+            amount: payslip.netSalary,
+            description: `Sueldo ${payslip.month} ${payslip.year}`,
+            category: 'salary',
+            date: transactionDate.toISOString(),
+            notes: `Generado automáticamente desde recibo de ${payslip.employer || 'empleador'}`,
+          };
+
+          return {
+            payslips: [payslip, ...state.payslips],
+            transactions: [transaction, ...state.transactions],
+          };
+        }),
 
       updatePayslip: (id, updates) =>
         set((state) => ({

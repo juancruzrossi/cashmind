@@ -76,7 +76,7 @@ export function IncomeExpenseChart({ data }: IncomeExpenseChartProps) {
   const hasData = data.some(item => item.income > 0 || item.expenses > 0);
 
   return (
-    <Card className="border-border/50 glass">
+    <Card className="border-border/50 glass h-full">
       <CardHeader>
         <CardTitle className="text-lg">Ingresos vs Gastos</CardTitle>
         <CardDescription>Evolución mensual de tus finanzas</CardDescription>
@@ -280,6 +280,88 @@ export function SavingsChart({ data }: SavingsChartProps) {
                   stroke={INCOME_COLOR}
                   strokeWidth={2}
                   fill="url(#savingsGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+interface PayslipChartData {
+  month: string;
+  grossSalary: number;
+  netSalary: number;
+}
+
+interface PayslipChartProps {
+  data: PayslipChartData[];
+}
+
+export function PayslipChart({ data }: PayslipChartProps) {
+  const hasData = data.length > 0;
+
+  return (
+    <Card className="border-border/50 glass">
+      <CardHeader>
+        <CardTitle className="text-lg">Evolución Salarial</CardTitle>
+        <CardDescription>Historial de recibos de sueldo</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[300px]">
+          {!hasData ? (
+            <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
+              <p className="text-sm">No hay recibos cargados</p>
+              <p className="text-xs mt-1">Sube recibos para ver la evolución</p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="grossGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={INCOME_COLOR} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={INCOME_COLOR} stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="netGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#60a5fa" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                  axisLine={{ stroke: GRID_COLOR }}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend
+                  wrapperStyle={{ paddingTop: '20px' }}
+                  formatter={(value) => <span style={{ color: AXIS_COLOR, fontSize: '14px' }}>{value}</span>}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="grossSalary"
+                  name="Bruto"
+                  stroke={INCOME_COLOR}
+                  strokeWidth={2}
+                  fill="url(#grossGradient)"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="netSalary"
+                  name="Neto"
+                  stroke="#60a5fa"
+                  strokeWidth={2}
+                  fill="url(#netGradient)"
                 />
               </AreaChart>
             </ResponsiveContainer>
