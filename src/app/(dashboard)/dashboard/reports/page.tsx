@@ -324,19 +324,19 @@ export default function ReportsPage() {
                       />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend formatter={(value) => <span style={{ color: AXIS_COLOR }}>{value}</span>} />
-                      <Bar dataKey="income" name="Ingresos" radius={[4, 4, 0, 0]}>
+                      <Bar dataKey="income" name="Ingresos" fill={INCOME_COLOR} radius={[4, 4, 0, 0]}>
                         {monthlyData.map((entry, index) => (
                           <Cell
                             key={`income-${index}`}
-                            fill={entry.income > 0 ? INCOME_COLOR : EMPTY_BAR_COLOR}
+                            fill={entry.income > 0 ? INCOME_COLOR : 'transparent'}
                           />
                         ))}
                       </Bar>
-                      <Bar dataKey="expenses" name="Gastos" radius={[4, 4, 0, 0]}>
+                      <Bar dataKey="expenses" name="Gastos" fill={EXPENSE_COLOR} radius={[4, 4, 0, 0]}>
                         {monthlyData.map((entry, index) => (
                           <Cell
                             key={`expense-${index}`}
-                            fill={entry.expenses > 0 ? EXPENSE_COLOR : EMPTY_BAR_COLOR}
+                            fill={entry.expenses > 0 ? EXPENSE_COLOR : 'transparent'}
                           />
                         ))}
                       </Bar>

@@ -104,24 +104,26 @@ export function IncomeExpenseChart({ data }: IncomeExpenseChartProps) {
               <Bar
                 dataKey="income"
                 name="Ingresos"
+                fill={INCOME_COLOR}
                 radius={[4, 4, 0, 0]}
               >
                 {data.map((entry, index) => (
                   <Cell
                     key={`income-${index}`}
-                    fill={entry.income > 0 ? INCOME_COLOR : EMPTY_BAR_COLOR}
+                    fill={entry.income > 0 ? INCOME_COLOR : 'transparent'}
                   />
                 ))}
               </Bar>
               <Bar
                 dataKey="expenses"
                 name="Gastos"
+                fill={EXPENSE_COLOR}
                 radius={[4, 4, 0, 0]}
               >
                 {data.map((entry, index) => (
                   <Cell
                     key={`expense-${index}`}
-                    fill={entry.expenses > 0 ? EXPENSE_COLOR : EMPTY_BAR_COLOR}
+                    fill={entry.expenses > 0 ? EXPENSE_COLOR : 'transparent'}
                   />
                 ))}
               </Bar>
