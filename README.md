@@ -48,7 +48,6 @@ AUTH_SECRET=tu_secreto_aqui
 AUTH_USERNAME=tu_usuario
 AUTH_PASSWORD=tu_contraseña
 GOOGLE_GEMINI_API_KEY=tu_api_key_de_gemini
-NEXTAUTH_URL=http://localhost:3000
 ```
 
 ## Despliegue en Railway
