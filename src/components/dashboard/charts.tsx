@@ -43,8 +43,9 @@ const formatCurrency = (value: number) => {
 
 const AXIS_COLOR = '#9ca3af';
 const GRID_COLOR = '#374151';
-const INCOME_COLOR = '#6ee7b7';
-const EXPENSE_COLOR = '#fca5a5';
+const INCOME_COLOR = '#34d399';
+const EXPENSE_COLOR = '#f87171';
+const EMPTY_BAR_COLOR = '#4b5563';
 
 const CustomTooltip = ({ active, payload, label }: {
   active?: boolean;
@@ -103,15 +104,27 @@ export function IncomeExpenseChart({ data }: IncomeExpenseChartProps) {
               <Bar
                 dataKey="income"
                 name="Ingresos"
-                fill={INCOME_COLOR}
                 radius={[4, 4, 0, 0]}
-              />
+              >
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`income-${index}`}
+                    fill={entry.income > 0 ? INCOME_COLOR : EMPTY_BAR_COLOR}
+                  />
+                ))}
+              </Bar>
               <Bar
                 dataKey="expenses"
                 name="Gastos"
-                fill={EXPENSE_COLOR}
                 radius={[4, 4, 0, 0]}
-              />
+              >
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`expense-${index}`}
+                    fill={entry.expenses > 0 ? EXPENSE_COLOR : EMPTY_BAR_COLOR}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

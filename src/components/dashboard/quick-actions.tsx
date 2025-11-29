@@ -7,29 +7,29 @@ import { Plus, Upload, Target, PiggyBank, FileText } from 'lucide-react';
 
 const actions = [
   {
-    title: 'Nueva Transacción',
-    description: 'Registra un ingreso o gasto',
+    title: 'Transacción',
+    description: 'Nuevo movimiento',
     icon: Plus,
     href: '/dashboard/transactions?new=true',
     color: 'from-primary to-chart-2',
   },
   {
-    title: 'Subir Recibo',
-    description: 'Analiza tu recibo de sueldo',
+    title: 'Recibo',
+    description: 'Analizar sueldo',
     icon: Upload,
     href: '/dashboard/payslips?upload=true',
     color: 'from-chart-2 to-chart-5',
   },
   {
-    title: 'Nueva Meta',
-    description: 'Define un objetivo financiero',
+    title: 'Meta',
+    description: 'Nuevo objetivo',
     icon: Target,
     href: '/dashboard/goals?new=true',
     color: 'from-chart-3 to-amber-400',
   },
   {
-    title: 'Nuevo Presupuesto',
-    description: 'Crea un límite de gastos',
+    title: 'Presupuesto',
+    description: 'Límite de gasto',
     icon: PiggyBank,
     href: '/dashboard/budgets?new=true',
     color: 'from-chart-4 to-pink-400',
@@ -55,9 +55,9 @@ export function QuickActions() {
                 >
                   <action.icon className="w-5 h-5 text-white" />
                 </div>
-                <div className="text-left">
-                  <p className="font-medium text-sm">{action.title}</p>
-                  <p className="text-xs text-muted-foreground">{action.description}</p>
+                <div className="text-left w-full overflow-hidden">
+                  <p className="font-medium text-sm truncate">{action.title}</p>
+                  <p className="text-xs text-muted-foreground truncate">{action.description}</p>
                 </div>
               </Button>
             </Link>
