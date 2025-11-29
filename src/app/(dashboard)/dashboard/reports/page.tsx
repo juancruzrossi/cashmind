@@ -28,15 +28,6 @@ import {
   YAxis,
   Legend,
 } from 'recharts';
-
-type ChartDataItem = {
-  month: string;
-  fullMonth: string;
-  income: number | null;
-  expenses: number | null;
-  savings: number;
-  savingsRate: number;
-};
 import {
   TrendingUp,
   TrendingDown,
@@ -316,31 +307,34 @@ export default function ReportsPage() {
               </CardHeader>
               <CardContent>
                 <div className="h-[350px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={monthlyData.map(item => ({
-                      ...item,
-                      income: item.income > 0 ? item.income : null,
-                      expenses: item.expenses > 0 ? item.expenses : null,
-                    }))}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
-                      <XAxis
-                        dataKey="month"
-                        tick={{ fill: AXIS_COLOR, fontSize: 12 }}
-                        axisLine={{ stroke: GRID_COLOR }}
-                        tickLine={false}
-                      />
-                      <YAxis
-                        tick={{ fill: AXIS_COLOR, fontSize: 12 }}
-                        axisLine={false}
-                        tickLine={false}
-                        tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend formatter={(value) => <span style={{ color: AXIS_COLOR }}>{value}</span>} />
-                      <Bar dataKey="income" name="Ingresos" fill={INCOME_COLOR} radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="expenses" name="Gastos" fill={EXPENSE_COLOR} radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  {!monthlyData.some(item => item.income > 0 || item.expenses > 0) ? (
+                    <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
+                      <p className="text-sm">No hay datos para mostrar</p>
+                      <p className="text-xs mt-1">Agrega transacciones para ver el gráfico</p>
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={monthlyData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
+                        <XAxis
+                          dataKey="month"
+                          tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                          axisLine={{ stroke: GRID_COLOR }}
+                          tickLine={false}
+                        />
+                        <YAxis
+                          tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                          axisLine={false}
+                          tickLine={false}
+                          tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend formatter={(value) => <span style={{ color: AXIS_COLOR }}>{value}</span>} />
+                        <Bar dataKey="income" name="Ingresos" fill={INCOME_COLOR} radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="expenses" name="Gastos" fill={EXPENSE_COLOR} radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
                 </div>
               </CardContent>
             </Card>
