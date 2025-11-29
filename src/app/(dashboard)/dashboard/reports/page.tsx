@@ -28,6 +28,15 @@ import {
   YAxis,
   Legend,
 } from 'recharts';
+
+type ChartDataItem = {
+  month: string;
+  fullMonth: string;
+  income: number | null;
+  expenses: number | null;
+  savings: number;
+  savingsRate: number;
+};
 import {
   TrendingUp,
   TrendingDown,
@@ -308,7 +317,11 @@ export default function ReportsPage() {
               <CardContent>
                 <div className="h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={monthlyData}>
+                    <BarChart data={monthlyData.map(item => ({
+                      ...item,
+                      income: item.income > 0 ? item.income : null,
+                      expenses: item.expenses > 0 ? item.expenses : null,
+                    }))}>
                       <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
                       <XAxis
                         dataKey="month"
@@ -324,22 +337,8 @@ export default function ReportsPage() {
                       />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend formatter={(value) => <span style={{ color: AXIS_COLOR }}>{value}</span>} />
-                      <Bar dataKey="income" name="Ingresos" fill={INCOME_COLOR} radius={[4, 4, 0, 0]}>
-                        {monthlyData.map((entry, index) => (
-                          <Cell
-                            key={`income-${index}`}
-                            fill={entry.income > 0 ? INCOME_COLOR : 'transparent'}
-                          />
-                        ))}
-                      </Bar>
-                      <Bar dataKey="expenses" name="Gastos" fill={EXPENSE_COLOR} radius={[4, 4, 0, 0]}>
-                        {monthlyData.map((entry, index) => (
-                          <Cell
-                            key={`expense-${index}`}
-                            fill={entry.expenses > 0 ? EXPENSE_COLOR : 'transparent'}
-                          />
-                        ))}
-                      </Bar>
+                      <Bar dataKey="income" name="Ingresos" fill={INCOME_COLOR} radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="expenses" name="Gastos" fill={EXPENSE_COLOR} radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

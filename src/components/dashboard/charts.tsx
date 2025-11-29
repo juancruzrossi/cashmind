@@ -73,6 +73,12 @@ const CustomTooltip = ({ active, payload, label }: {
 };
 
 export function IncomeExpenseChart({ data }: IncomeExpenseChartProps) {
+  const chartData = data.map(item => ({
+    ...item,
+    income: item.income > 0 ? item.income : null,
+    expenses: item.expenses > 0 ? item.expenses : null,
+  }));
+
   return (
     <Card className="border-border/50 glass">
       <CardHeader>
@@ -82,7 +88,7 @@ export function IncomeExpenseChart({ data }: IncomeExpenseChartProps) {
       <CardContent>
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
               <XAxis
                 dataKey="month"
@@ -106,27 +112,13 @@ export function IncomeExpenseChart({ data }: IncomeExpenseChartProps) {
                 name="Ingresos"
                 fill={INCOME_COLOR}
                 radius={[4, 4, 0, 0]}
-              >
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`income-${index}`}
-                    fill={entry.income > 0 ? INCOME_COLOR : 'transparent'}
-                  />
-                ))}
-              </Bar>
+              />
               <Bar
                 dataKey="expenses"
                 name="Gastos"
                 fill={EXPENSE_COLOR}
                 radius={[4, 4, 0, 0]}
-              >
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`expense-${index}`}
-                    fill={entry.expenses > 0 ? EXPENSE_COLOR : 'transparent'}
-                  />
-                ))}
-              </Bar>
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
