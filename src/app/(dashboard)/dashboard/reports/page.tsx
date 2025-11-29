@@ -53,6 +53,12 @@ const MONTHS = [
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ];
 
+const AXIS_COLOR = '#9ca3af';
+const GRID_COLOR = '#374151';
+const INCOME_COLOR = '#6ee7b7';
+const EXPENSE_COLOR = '#fca5a5';
+const SAVINGS_COLOR = '#fcd34d';
+
 export default function ReportsPage() {
   const { transactions, payslips, budgets, goals } = useFinanceStore();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
@@ -302,23 +308,23 @@ export default function ReportsPage() {
                 <div className="h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={monthlyData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
                       <XAxis
                         dataKey="month"
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                        axisLine={{ stroke: 'hsl(var(--border))' }}
+                        tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                        axisLine={{ stroke: GRID_COLOR }}
                         tickLine={false}
                       />
                       <YAxis
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                        tick={{ fill: AXIS_COLOR, fontSize: 12 }}
                         axisLine={false}
                         tickLine={false}
                         tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
                       />
                       <Tooltip content={<CustomTooltip />} />
-                      <Legend />
-                      <Bar dataKey="income" name="Ingresos" fill="#10B981" radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="expenses" name="Gastos" fill="#EF4444" radius={[4, 4, 0, 0]} />
+                      <Legend formatter={(value) => <span style={{ color: AXIS_COLOR }}>{value}</span>} />
+                      <Bar dataKey="income" name="Ingresos" fill={INCOME_COLOR} radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="expenses" name="Gastos" fill={EXPENSE_COLOR} radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -335,20 +341,20 @@ export default function ReportsPage() {
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={monthlyData}>
                       <defs>
-                        <linearGradient id="savingsGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
+                        <linearGradient id="savingsGradientReport" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor={INCOME_COLOR} stopOpacity={0.3} />
+                          <stop offset="95%" stopColor={INCOME_COLOR} stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
                       <XAxis
                         dataKey="month"
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                        axisLine={{ stroke: 'hsl(var(--border))' }}
+                        tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                        axisLine={{ stroke: GRID_COLOR }}
                         tickLine={false}
                       />
                       <YAxis
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                        tick={{ fill: AXIS_COLOR, fontSize: 12 }}
                         axisLine={false}
                         tickLine={false}
                         tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
@@ -358,9 +364,9 @@ export default function ReportsPage() {
                         type="monotone"
                         dataKey="savings"
                         name="Ahorro"
-                        stroke="hsl(var(--chart-1))"
+                        stroke={INCOME_COLOR}
                         strokeWidth={2}
-                        fill="url(#savingsGradient)"
+                        fill="url(#savingsGradientReport)"
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -378,15 +384,15 @@ export default function ReportsPage() {
               <div className="h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={monthlyData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
                     <XAxis
                       dataKey="month"
-                      tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                      axisLine={{ stroke: 'hsl(var(--border))' }}
+                      tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                      axisLine={{ stroke: GRID_COLOR }}
                       tickLine={false}
                     />
                     <YAxis
-                      tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                      tick={{ fill: AXIS_COLOR, fontSize: 12 }}
                       axisLine={false}
                       tickLine={false}
                       tickFormatter={(value) => `${value}%`}
@@ -395,18 +401,20 @@ export default function ReportsPage() {
                     <Tooltip
                       formatter={(value: number) => [`${value.toFixed(1)}%`, 'Tasa de Ahorro']}
                       contentStyle={{
-                        backgroundColor: 'hsl(var(--popover))',
-                        border: '1px solid hsl(var(--border))',
+                        backgroundColor: '#1f2937',
+                        border: '1px solid #374151',
                         borderRadius: '8px',
+                        color: '#e5e7eb',
                       }}
+                      labelStyle={{ color: '#e5e7eb' }}
                     />
                     <Line
                       type="monotone"
                       dataKey="savingsRate"
                       name="Tasa de Ahorro"
-                      stroke="hsl(var(--chart-3))"
+                      stroke={SAVINGS_COLOR}
                       strokeWidth={2}
-                      dot={{ fill: 'hsl(var(--chart-3))' }}
+                      dot={{ fill: SAVINGS_COLOR }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -443,10 +451,12 @@ export default function ReportsPage() {
                       <Tooltip
                         formatter={(value: number) => formatCurrency(value)}
                         contentStyle={{
-                          backgroundColor: 'hsl(var(--popover))',
-                          border: '1px solid hsl(var(--border))',
+                          backgroundColor: '#1f2937',
+                          border: '1px solid #374151',
                           borderRadius: '8px',
+                          color: '#e5e7eb',
                         }}
+                        labelStyle={{ color: '#e5e7eb' }}
                       />
                     </PieChart>
                   </ResponsiveContainer>
@@ -526,10 +536,12 @@ export default function ReportsPage() {
                       <Tooltip
                         formatter={(value: number) => formatCurrency(value)}
                         contentStyle={{
-                          backgroundColor: 'hsl(var(--popover))',
-                          border: '1px solid hsl(var(--border))',
+                          backgroundColor: '#1f2937',
+                          border: '1px solid #374151',
                           borderRadius: '8px',
+                          color: '#e5e7eb',
                         }}
+                        labelStyle={{ color: '#e5e7eb' }}
                       />
                     </PieChart>
                   </ResponsiveContainer>

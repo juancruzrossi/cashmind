@@ -41,6 +41,11 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
+const AXIS_COLOR = '#9ca3af';
+const GRID_COLOR = '#374151';
+const INCOME_COLOR = '#6ee7b7';
+const EXPENSE_COLOR = '#fca5a5';
+
 const CustomTooltip = ({ active, payload, label }: {
   active?: boolean;
   payload?: Array<{ name: string; value: number; color: string }>;
@@ -77,15 +82,15 @@ export function IncomeExpenseChart({ data }: IncomeExpenseChartProps) {
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
               <XAxis
                 dataKey="month"
-                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                axisLine={{ stroke: 'hsl(var(--border))' }}
+                tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                axisLine={{ stroke: GRID_COLOR }}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                tick={{ fill: AXIS_COLOR, fontSize: 12 }}
                 axisLine={false}
                 tickLine={false}
                 tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
@@ -93,18 +98,18 @@ export function IncomeExpenseChart({ data }: IncomeExpenseChartProps) {
               <Tooltip content={<CustomTooltip />} />
               <Legend
                 wrapperStyle={{ paddingTop: '20px' }}
-                formatter={(value) => <span className="text-muted-foreground text-sm">{value}</span>}
+                formatter={(value) => <span style={{ color: AXIS_COLOR, fontSize: '14px' }}>{value}</span>}
               />
               <Bar
                 dataKey="income"
                 name="Ingresos"
-                fill="hsl(var(--chart-1))"
+                fill={INCOME_COLOR}
                 radius={[4, 4, 0, 0]}
               />
               <Bar
                 dataKey="expenses"
                 name="Gastos"
-                fill="hsl(var(--chart-4))"
+                fill={EXPENSE_COLOR}
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>
@@ -232,19 +237,19 @@ export function SavingsChart({ data }: SavingsChartProps) {
             <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="savingsGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
+                  <stop offset="5%" stopColor={INCOME_COLOR} stopOpacity={0.3} />
+                  <stop offset="95%" stopColor={INCOME_COLOR} stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
               <XAxis
                 dataKey="month"
-                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                axisLine={{ stroke: 'hsl(var(--border))' }}
+                tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                axisLine={{ stroke: GRID_COLOR }}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                tick={{ fill: AXIS_COLOR, fontSize: 12 }}
                 axisLine={false}
                 tickLine={false}
                 tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
@@ -254,7 +259,7 @@ export function SavingsChart({ data }: SavingsChartProps) {
                 type="monotone"
                 dataKey="savings"
                 name="Ahorro"
-                stroke="hsl(var(--chart-1))"
+                stroke={INCOME_COLOR}
                 strokeWidth={2}
                 fill="url(#savingsGradient)"
               />

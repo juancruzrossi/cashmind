@@ -17,19 +17,19 @@ interface StatCardProps {
 }
 
 const variantStyles = {
-  default: 'from-card to-card',
-  primary: 'from-primary/20 to-primary/5',
-  success: 'from-emerald-500/20 to-emerald-500/5',
-  warning: 'from-amber-500/20 to-amber-500/5',
-  danger: 'from-red-500/20 to-red-500/5',
+  default: 'bg-card',
+  primary: 'bg-emerald-950/30 border-emerald-500/20',
+  success: 'bg-emerald-950/30 border-emerald-500/20',
+  warning: 'bg-amber-950/30 border-amber-500/20',
+  danger: 'bg-red-950/30 border-red-500/20',
 };
 
 const iconVariantStyles = {
   default: 'bg-muted text-muted-foreground',
-  primary: 'bg-primary/20 text-primary',
-  success: 'bg-emerald-500/20 text-emerald-500',
-  warning: 'bg-amber-500/20 text-amber-500',
-  danger: 'bg-red-500/20 text-red-500',
+  primary: 'bg-emerald-500/20 text-emerald-400',
+  success: 'bg-emerald-500/20 text-emerald-400',
+  warning: 'bg-amber-500/20 text-amber-400',
+  danger: 'bg-red-500/20 text-red-400',
 };
 
 export function StatCard({
@@ -43,11 +43,11 @@ export function StatCard({
   className,
 }: StatCardProps) {
   const TrendIcon = trend && trend > 0 ? TrendingUp : trend && trend < 0 ? TrendingDown : Minus;
-  const trendColor = trend && trend > 0 ? 'text-emerald-500' : trend && trend < 0 ? 'text-red-500' : 'text-muted-foreground';
+  const trendColor = trend && trend > 0 ? 'text-emerald-400' : trend && trend < 0 ? 'text-red-400' : 'text-muted-foreground';
 
   return (
-    <Card className={cn('overflow-hidden border-border/50 glass-hover', className)}>
-      <CardContent className={cn('p-6 bg-gradient-to-br', variantStyles[variant])}>
+    <Card className={cn('overflow-hidden border-border/50', variantStyles[variant], className)}>
+      <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">{title}</p>

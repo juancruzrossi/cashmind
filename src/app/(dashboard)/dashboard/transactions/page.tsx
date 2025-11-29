@@ -71,7 +71,14 @@ function TransactionsPage() {
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
-  const allCategories = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES];
+  const allCategories = useMemo(() => {
+    const seen = new Set<string>();
+    return [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES].filter((cat) => {
+      if (seen.has(cat.value)) return false;
+      seen.add(cat.value);
+      return true;
+    });
+  }, []);
 
   const filteredTransactions = useMemo(() => {
     return transactions
