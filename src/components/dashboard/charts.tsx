@@ -235,6 +235,8 @@ export function CategoryPieChart({ data, title, description }: CategoryPieChartP
 }
 
 export function SavingsChart({ data }: SavingsChartProps) {
+  const hasData = data.some(item => item.income > 0 || item.expenses > 0);
+
   return (
     <Card className="border-border/50 glass">
       <CardHeader>
@@ -243,38 +245,45 @@ export function SavingsChart({ data }: SavingsChartProps) {
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="savingsGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={INCOME_COLOR} stopOpacity={0.3} />
-                  <stop offset="95%" stopColor={INCOME_COLOR} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
-              <XAxis
-                dataKey="month"
-                tick={{ fill: AXIS_COLOR, fontSize: 12 }}
-                axisLine={{ stroke: GRID_COLOR }}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fill: AXIS_COLOR, fontSize: 12 }}
-                axisLine={false}
-                tickLine={false}
-                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Area
-                type="monotone"
-                dataKey="savings"
-                name="Ahorro"
-                stroke={INCOME_COLOR}
-                strokeWidth={2}
-                fill="url(#savingsGradient)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          {!hasData ? (
+            <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
+              <p className="text-sm">No hay datos para mostrar</p>
+              <p className="text-xs mt-1">Agrega transacciones para ver el gráfico</p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="savingsGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={INCOME_COLOR} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={INCOME_COLOR} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                  axisLine={{ stroke: GRID_COLOR }}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="savings"
+                  name="Ahorro"
+                  stroke={INCOME_COLOR}
+                  strokeWidth={2}
+                  fill="url(#savingsGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </CardContent>
     </Card>

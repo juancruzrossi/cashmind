@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenAI } from '@google/genai';
 
 const GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
 
     const bytes = await file.arrayBuffer();
     const base64 = Buffer.from(bytes).toString('base64');
-
     const mimeType = file.type || 'application/pdf';
 
     const prompt = `Analiza este recibo de sueldo/nómina y extrae la siguiente información en formato JSON.
@@ -69,46 +68,33 @@ Notas importantes:
 - Los tipos de bonos son: regular, performance (desempeño), holiday (aguinaldo/vacaciones), other
 - Analiza cuidadosamente el documento para extraer todos los conceptos de haberes y deducciones`;
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              { text: prompt },
-              {
-                inline_data: {
-                  mime_type: mimeType,
-                  data: base64,
-                },
+    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            { text: prompt },
+            {
+              inlineData: {
+                mimeType: mimeType,
+                data: base64,
               },
-            ],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.1,
-          topK: 32,
-          topP: 1,
-          maxOutputTokens: 4096,
+            },
+          ],
         },
-      }),
+      ],
+      config: {
+        temperature: 0.1,
+        topK: 32,
+        topP: 1,
+        maxOutputTokens: 4096,
+      },
     });
 
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error('Gemini API error:', errorData);
-      return NextResponse.json(
-        { error: 'Error analyzing document' },
-        { status: 500 }
-      );
-    }
-
-    const data = await response.json();
-
-    const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const textContent = response.text;
 
     if (!textContent) {
       return NextResponse.json(

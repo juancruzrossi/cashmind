@@ -346,38 +346,45 @@ export default function ReportsPage() {
               </CardHeader>
               <CardContent>
                 <div className="h-[350px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={monthlyData}>
-                      <defs>
-                        <linearGradient id="savingsGradientReport" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor={INCOME_COLOR} stopOpacity={0.3} />
-                          <stop offset="95%" stopColor={INCOME_COLOR} stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
-                      <XAxis
-                        dataKey="month"
-                        tick={{ fill: AXIS_COLOR, fontSize: 12 }}
-                        axisLine={{ stroke: GRID_COLOR }}
-                        tickLine={false}
-                      />
-                      <YAxis
-                        tick={{ fill: AXIS_COLOR, fontSize: 12 }}
-                        axisLine={false}
-                        tickLine={false}
-                        tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Area
-                        type="monotone"
-                        dataKey="savings"
-                        name="Ahorro"
-                        stroke={INCOME_COLOR}
-                        strokeWidth={2}
-                        fill="url(#savingsGradientReport)"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                  {!monthlyData.some(item => item.income > 0 || item.expenses > 0) ? (
+                    <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
+                      <p className="text-sm">No hay datos para mostrar</p>
+                      <p className="text-xs mt-1">Agrega transacciones para ver el gráfico</p>
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={monthlyData}>
+                        <defs>
+                          <linearGradient id="savingsGradientReport" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={INCOME_COLOR} stopOpacity={0.3} />
+                            <stop offset="95%" stopColor={INCOME_COLOR} stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
+                        <XAxis
+                          dataKey="month"
+                          tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                          axisLine={{ stroke: GRID_COLOR }}
+                          tickLine={false}
+                        />
+                        <YAxis
+                          tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                          axisLine={false}
+                          tickLine={false}
+                          tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area
+                          type="monotone"
+                          dataKey="savings"
+                          name="Ahorro"
+                          stroke={INCOME_COLOR}
+                          strokeWidth={2}
+                          fill="url(#savingsGradientReport)"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -390,42 +397,49 @@ export default function ReportsPage() {
             </CardHeader>
             <CardContent>
               <div className="h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={monthlyData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
-                    <XAxis
-                      dataKey="month"
-                      tick={{ fill: AXIS_COLOR, fontSize: 12 }}
-                      axisLine={{ stroke: GRID_COLOR }}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      tick={{ fill: AXIS_COLOR, fontSize: 12 }}
-                      axisLine={false}
-                      tickLine={false}
-                      tickFormatter={(value) => `${value}%`}
-                      domain={[-50, 100]}
-                    />
-                    <Tooltip
-                      formatter={(value: number) => [`${value.toFixed(1)}%`, 'Tasa de Ahorro']}
-                      contentStyle={{
-                        backgroundColor: '#1f2937',
-                        border: '1px solid #374151',
-                        borderRadius: '8px',
-                        color: '#e5e7eb',
-                      }}
-                      labelStyle={{ color: '#e5e7eb' }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="savingsRate"
-                      name="Tasa de Ahorro"
-                      stroke={SAVINGS_COLOR}
-                      strokeWidth={2}
-                      dot={{ fill: SAVINGS_COLOR }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                {!monthlyData.some(item => item.income > 0 || item.expenses > 0) ? (
+                  <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
+                    <p className="text-sm">No hay datos para mostrar</p>
+                    <p className="text-xs mt-1">Agrega transacciones para ver el gráfico</p>
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={monthlyData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
+                      <XAxis
+                        dataKey="month"
+                        tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                        axisLine={{ stroke: GRID_COLOR }}
+                        tickLine={false}
+                      />
+                      <YAxis
+                        tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                        axisLine={false}
+                        tickLine={false}
+                        tickFormatter={(value) => `${value}%`}
+                        domain={[-50, 100]}
+                      />
+                      <Tooltip
+                        formatter={(value: number) => [`${value.toFixed(1)}%`, 'Tasa de Ahorro']}
+                        contentStyle={{
+                          backgroundColor: '#1f2937',
+                          border: '1px solid #374151',
+                          borderRadius: '8px',
+                          color: '#e5e7eb',
+                        }}
+                        labelStyle={{ color: '#e5e7eb' }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="savingsRate"
+                        name="Tasa de Ahorro"
+                        stroke={SAVINGS_COLOR}
+                        strokeWidth={2}
+                        dot={{ fill: SAVINGS_COLOR }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </CardContent>
           </Card>
