@@ -161,6 +161,7 @@ class Budget(models.Model):
     class Meta:
         db_table = 'budgets'
         unique_together = ['user', 'category', 'period']
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.name} - ${self.limit} ({self.period})"
@@ -190,6 +191,7 @@ class Goal(models.Model):
 
     class Meta:
         db_table = 'goals'
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.name} - ${self.current_amount}/${self.target_amount}"
