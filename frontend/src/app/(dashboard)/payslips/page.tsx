@@ -32,7 +32,19 @@ import {
   Calendar,
   DollarSign,
   Receipt,
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus,
 } from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+} from 'recharts';
 import { cn } from '@/lib/utils';
 
 interface Payslip {
@@ -114,6 +126,31 @@ function PayslipsPage() {
   const totalNet = payslips.reduce((sum, p) => sum + Number(p.net_salary), 0);
   const totalDeductions = totalGross - totalNet;
   const avgDeductionRate = totalGross > 0 ? ((totalDeductions / totalGross) * 100) : 0;
+
+  // Calculate salary variation data (chronologically sorted for the chart)
+  const chronologicalPayslips = [...payslips].sort((a, b) => {
+    const monthA = MONTH_ORDER[a.month.toLowerCase()] || 0;
+    const monthB = MONTH_ORDER[b.month.toLowerCase()] || 0;
+    if (a.year !== b.year) return a.year - b.year;
+    return monthA - monthB;
+  });
+
+  const salaryVariationData = chronologicalPayslips.map((payslip, index) => {
+    const currentNet = Number(payslip.net_salary);
+    const prevNet = index > 0 ? Number(chronologicalPayslips[index - 1].net_salary) : currentNet;
+    const variation = index > 0 ? ((currentNet - prevNet) / prevNet) * 100 : 0;
+    const monthShort = payslip.month.substring(0, 3).charAt(0).toUpperCase() + payslip.month.substring(1, 3).toLowerCase();
+
+    return {
+      month: `${monthShort} ${payslip.year.toString().slice(-2)}`,
+      variation: Number(variation.toFixed(1)),
+      salary: currentNet,
+    };
+  });
+
+  const latestVariation = salaryVariationData.length > 1
+    ? salaryVariationData[salaryVariationData.length - 1].variation
+    : 0;
 
   const handleDelete = async (id: number) => {
     if (confirm('¿Estás seguro de eliminar este recibo?')) {
@@ -211,6 +248,97 @@ function PayslipsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Salary Variation Chart */}
+      {salaryVariationData.length > 1 && (
+        <Card className="border-border/50 glass">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg">Variación Salarial</CardTitle>
+                <CardDescription>Cambio porcentual mes a mes</CardDescription>
+              </div>
+              <div className={cn(
+                "flex items-center gap-2 px-3 py-2 rounded-lg",
+                latestVariation > 0 && "bg-emerald-500/20 text-emerald-500",
+                latestVariation < 0 && "bg-red-500/20 text-red-500",
+                latestVariation === 0 && "bg-muted text-muted-foreground"
+              )}>
+                {latestVariation > 0 ? (
+                  <ArrowUpRight className="w-5 h-5" />
+                ) : latestVariation < 0 ? (
+                  <ArrowDownRight className="w-5 h-5" />
+                ) : (
+                  <Minus className="w-5 h-5" />
+                )}
+                <span className="text-xl font-bold">
+                  {latestVariation > 0 ? '+' : ''}{latestVariation}%
+                </span>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={salaryVariationData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="variationGradientPositive" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="oklch(0.75 0.18 165)" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="oklch(0.75 0.18 165)" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="variationGradientNegative" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="5%" stopColor="oklch(0.70 0.12 15)" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="oklch(0.70 0.12 15)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis
+                    dataKey="month"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'oklch(0.65 0.02 260)', fontSize: 12 }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'oklch(0.65 0.02 260)', fontSize: 12 }}
+                    tickFormatter={(value) => `${value}%`}
+                  />
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="glass rounded-lg p-3 shadow-lg border border-border/50">
+                            <p className="text-sm font-medium">{data.month}</p>
+                            <p className={cn(
+                              "text-lg font-bold",
+                              data.variation > 0 ? "text-emerald-500" : data.variation < 0 ? "text-red-500" : "text-muted-foreground"
+                            )}>
+                              {data.variation > 0 ? '+' : ''}{data.variation}%
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Neto: {formatCurrency(data.salary)}
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <ReferenceLine y={0} stroke="oklch(0.40 0.02 260)" strokeDasharray="3 3" />
+                  <Area
+                    type="monotone"
+                    dataKey="variation"
+                    stroke="oklch(0.75 0.18 165)"
+                    strokeWidth={2}
+                    fill="url(#variationGradientPositive)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="border-border/50 glass">
         <CardHeader>
