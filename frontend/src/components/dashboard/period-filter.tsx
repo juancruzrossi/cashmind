@@ -34,29 +34,35 @@ const MONTHS = [
 
 export function getDateRange(period: PeriodValue): { startDate: string; endDate: string } {
   const today = getLocalToday();
-  const endDate = formatLocalDate(today);
   let startDate: string;
+  let endDate: string;
 
   switch (period.type) {
     case 'current_month':
       startDate = formatLocalDate(getLocalMonthStart(today));
+      endDate = formatLocalDate(getLocalMonthEnd(today));
       break;
     case 'current_year':
       startDate = formatLocalDate(getLocalYearStart(today));
+      endDate = formatLocalDate(new Date(today.getFullYear(), 11, 31));
       break;
     case 'last_365_days':
       startDate = formatLocalDate(subtractDays(today, 365));
+      endDate = formatLocalDate(today);
       break;
     case 'custom_month':
       if (period.month !== undefined && period.year !== undefined) {
         const monthDate = new Date(period.year, period.month, 1);
         startDate = formatLocalDate(getLocalMonthStart(monthDate));
-        return { startDate, endDate: formatLocalDate(getLocalMonthEnd(monthDate)) };
+        endDate = formatLocalDate(getLocalMonthEnd(monthDate));
+      } else {
+        startDate = formatLocalDate(getLocalMonthStart(today));
+        endDate = formatLocalDate(getLocalMonthEnd(today));
       }
-      startDate = formatLocalDate(getLocalMonthStart(today));
       break;
     default:
       startDate = formatLocalDate(getLocalYearStart(today));
+      endDate = formatLocalDate(new Date(today.getFullYear(), 11, 31));
       break;
   }
 
