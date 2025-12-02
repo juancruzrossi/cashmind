@@ -2,6 +2,35 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+class InvitationCode(models.Model):
+    """Invitation codes for controlled user registration"""
+    code = models.CharField(max_length=50, unique=True)
+    is_used = models.BooleanField(default=False)
+    used_by = models.ForeignKey(
+        'User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='invitation_used'
+    )
+    used_at = models.DateTimeField(null=True, blank=True)
+    notes = models.CharField(max_length=255, blank=True, help_text="Ej: 'Para Juan', 'Prueba beta'")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'invitation_codes'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        if self.is_used and self.used_by:
+            status = f"Usado por {self.used_by.username}"
+        elif self.is_used:
+            status = "Usado (usuario eliminado)"
+        else:
+            status = "Disponible"
+        return f"{self.code} - {status}"
+
+
 class User(AbstractUser):
     """Custom User model for CashMind"""
     created_at = models.DateTimeField(auto_now_add=True)

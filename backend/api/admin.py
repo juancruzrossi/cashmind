@@ -1,6 +1,25 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Payslip, Deduction, Bonus, Transaction, Budget, Goal
+from .models import User, Payslip, Deduction, Bonus, Transaction, Budget, Goal, InvitationCode
+
+
+@admin.register(InvitationCode)
+class InvitationCodeAdmin(admin.ModelAdmin):
+    list_display = ['code', 'is_used', 'used_by', 'notes', 'created_at', 'used_at']
+    list_filter = ['is_used', 'created_at']
+    search_fields = ['code', 'notes', 'used_by__username']
+    readonly_fields = ['used_by', 'used_at']
+    ordering = ['-created_at']
+
+    fieldsets = (
+        (None, {'fields': ('code', 'notes')}),
+        ('Estado', {'fields': ('is_used', 'used_by', 'used_at'), 'classes': ('collapse',)}),
+    )
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj and obj.is_used:
+            return ['code', 'is_used', 'used_by', 'used_at', 'notes']
+        return ['used_by', 'used_at']
 
 
 @admin.register(User)

@@ -117,6 +117,20 @@ class ApiService {
     return data;
   }
 
+  async register(username: string, password: string, invitationCode: string, email?: string): Promise<TokenResponse> {
+    const data = await this.request<TokenResponse>('/auth/register/', {
+      method: 'POST',
+      body: JSON.stringify({
+        username,
+        password,
+        invitation_code: invitationCode,
+        email: email || '',
+      }),
+    });
+    this.accessToken = data.access;
+    return data;
+  }
+
   async logout(): Promise<void> {
     const refresh = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null;
     if (refresh) {

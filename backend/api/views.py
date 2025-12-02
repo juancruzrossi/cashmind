@@ -6,11 +6,12 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.db.models import Sum, Avg
+from django.db import transaction
 from django.utils import timezone
 from datetime import timedelta
 import json
 
-from .models import Payslip, Transaction, Budget, Goal
+from .models import Payslip, Transaction, Budget, Goal, InvitationCode
 from .serializers import (
     UserSerializer, PayslipSerializer, PayslipCreateSerializer,
     TransactionSerializer, BudgetSerializer, GoalSerializer,
@@ -39,6 +40,81 @@ class LogoutView(APIView):
             return Response({'detail': 'Logout successful'}, status=status.HTTP_200_OK)
         except Exception:
             return Response({'detail': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RegisterView(APIView):
+    """Register new user with invitation code"""
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        invitation_code = request.data.get('invitation_code', '').strip().upper()
+        username = request.data.get('username', '').strip()
+        password = request.data.get('password', '')
+        email = request.data.get('email', '').strip()
+
+        if not invitation_code:
+            return Response(
+                {'detail': 'Código de invitación requerido'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not username or not password:
+            return Response(
+                {'detail': 'Usuario y contraseña son requeridos'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if len(password) < 6:
+            return Response(
+                {'detail': 'La contraseña debe tener al menos 6 caracteres'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            code = InvitationCode.objects.get(code__iexact=invitation_code)
+        except InvitationCode.DoesNotExist:
+            return Response(
+                {'detail': 'Código de invitación inválido'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if code.is_used:
+            return Response(
+                {'detail': 'Este código de invitación ya fue utilizado'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if User.objects.filter(username=username).exists():
+            return Response(
+                {'detail': 'Este nombre de usuario ya está en uso'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if email and User.objects.filter(email=email).exists():
+            return Response(
+                {'detail': 'Este email ya está registrado'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                email=email or ''
+            )
+
+            code.is_used = True
+            code.used_by = user
+            code.used_at = timezone.now()
+            code.save()
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            'detail': 'Usuario creado exitosamente',
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+        }, status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET'])

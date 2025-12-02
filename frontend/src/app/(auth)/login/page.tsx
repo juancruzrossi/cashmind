@@ -7,15 +7,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Wallet, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
+import { Wallet, Lock, User, ArrowRight, Sparkles, Ticket, Mail } from 'lucide-react';
 
 export default function LoginPage() {
+  const [isNewUser, setIsNewUser] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [invitationCode, setInvitationCode] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { login, register, isAuthenticated, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -29,13 +32,22 @@ export default function LoginPage() {
     setError('');
 
     try {
-      await login(username, password);
+      if (isNewUser) {
+        await register(username, password, invitationCode, email);
+      } else {
+        await login(username, password);
+      }
       router.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Credenciales inválidas');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleMode = () => {
+    setIsNewUser(!isNewUser);
+    setError('');
   };
 
   if (authLoading) {
@@ -88,13 +100,37 @@ export default function LoginPage() {
 
         <Card className="glass border-border/50 glow-emerald">
           <CardHeader className="text-center pb-4">
-            <CardTitle className="text-xl">Bienvenido</CardTitle>
+            <CardTitle className="text-xl">
+              {isNewUser ? 'Crear cuenta' : 'Bienvenido'}
+            </CardTitle>
             <CardDescription>
-              Ingresa tus credenciales para continuar
+              {isNewUser
+                ? 'Ingresa tu código de invitación para registrarte'
+                : 'Ingresa tus credenciales para continuar'}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {isNewUser && (
+                <div className="space-y-2">
+                  <Label htmlFor="invitationCode" className="text-sm font-medium">
+                    Código de invitación
+                  </Label>
+                  <div className="relative">
+                    <Ticket className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="invitationCode"
+                      type="text"
+                      value={invitationCode}
+                      onChange={(e) => setInvitationCode(e.target.value)}
+                      className="pl-10 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/20 transition-all"
+                      placeholder="Tu código de invitación"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-sm font-medium">
                   Usuario
@@ -107,11 +143,30 @@ export default function LoginPage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="pl-10 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/20 transition-all"
-                    placeholder="Ingresa tu usuario"
+                    placeholder={isNewUser ? 'Elige tu usuario' : 'Ingresa tu usuario'}
                     required
                   />
                 </div>
               </div>
+
+              {isNewUser && (
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-medium">
+                    Email <span className="text-muted-foreground">(opcional)</span>
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="pl-10 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/20 transition-all"
+                      placeholder="tu@email.com"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium">
@@ -125,7 +180,8 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/20 transition-all"
-                    placeholder="Ingresa tu contraseña"
+                    placeholder={isNewUser ? 'Mínimo 6 caracteres' : 'Ingresa tu contraseña'}
+                    minLength={isNewUser ? 6 : undefined}
                     required
                   />
                 </div>
@@ -146,11 +202,23 @@ export default function LoginPage() {
                   <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                 ) : (
                   <>
-                    Iniciar Sesión
+                    {isNewUser ? 'Crear cuenta' : 'Iniciar Sesión'}
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
               </Button>
+
+              <div className="text-center pt-2">
+                <button
+                  type="button"
+                  onClick={toggleMode}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {isNewUser
+                    ? '¿Ya tienes cuenta? Inicia sesión'
+                    : '¿Tienes un código de invitación? Regístrate'}
+                </button>
+              </div>
             </form>
           </CardContent>
         </Card>
