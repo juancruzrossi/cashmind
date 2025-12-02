@@ -102,7 +102,7 @@ export function TransactionForm({ open, onOpenChange, editTransaction }: Transac
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] glass">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{editTransaction ? 'Editar' : 'Nueva'} Transacción</DialogTitle>
           <DialogDescription>
@@ -168,7 +168,7 @@ export function TransactionForm({ open, onOpenChange, editTransaction }: Transac
                       {date ? format(date, 'PPP', { locale: es }) : 'Seleccionar'}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 glass" align="start">
+                  <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
                       selected={date}
@@ -185,7 +185,7 @@ export function TransactionForm({ open, onOpenChange, editTransaction }: Transac
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar" />
                   </SelectTrigger>
-                  <SelectContent className="glass">
+                  <SelectContent>
                     {categories.map((cat) => (
                       <SelectItem key={cat.value} value={cat.value}>
                         {cat.label}

@@ -38,7 +38,7 @@ const formatCurrency = (value: number) => {
 };
 
 export default function DashboardPage() {
-  const [period, setPeriod] = useState<PeriodValue>({ type: 'current_year' });
+  const [period, setPeriod] = useState<PeriodValue>({ type: 'current_month' });
   const { startDate, endDate } = getDateRange(period);
 
   const { transactions, isLoading: transactionsLoading } = useTransactions();

@@ -98,7 +98,7 @@ function GoalsPage() {
   const [currentAmount, setCurrentAmount] = useState('');
   const [category, setCategory] = useState<Goal['category']>('savings');
   const [deadline, setDeadline] = useState<Date | undefined>(undefined);
-  const [filterPeriod, setFilterPeriod] = useState<PeriodValue>({ type: 'current_year' });
+  const [filterPeriod, setFilterPeriod] = useState<PeriodValue>({ type: 'current_month' });
   const { startDate, endDate } = getDateRange(filterPeriod);
 
   const filteredGoals = useMemo(() => {

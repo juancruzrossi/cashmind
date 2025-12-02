@@ -80,7 +80,7 @@ function TransactionsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [period, setPeriod] = useState<PeriodValue>({ type: 'current_year' });
+  const [period, setPeriod] = useState<PeriodValue>({ type: 'current_month' });
   const { startDate, endDate } = getDateRange(period);
 
   const allCategories = useMemo(() => {

@@ -106,7 +106,7 @@ function PayslipsPage() {
 
   const [isUploaderOpen, setIsUploaderOpen] = useState(searchParams.get('upload') === 'true');
   const [selectedPayslip, setSelectedPayslip] = useState<Payslip | null>(null);
-  const [period, setPeriod] = useState<PeriodValue>({ type: 'current_year' });
+  const [period, setPeriod] = useState<PeriodValue>({ type: 'current_month' });
   const { startDate, endDate } = getDateRange(period);
 
   const MONTH_ORDER: Record<string, number> = {
