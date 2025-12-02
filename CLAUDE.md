@@ -127,3 +127,49 @@ getLocalToday()              // Today at 00:00 local
 - Income/positive: `text-emerald-400`
 - Expense/negative: `text-red-400`
 - Neutral: `text-foreground` (white)
+
+## Git Workflow (CRITICAL)
+
+**NEVER push directly to `main`.** Use GitFlow with feature branches.
+
+### Branch Naming
+- `feature/...` - New features
+- `enhancement/...` - Improvements to existing features
+- `fix/...` - Bug fixes
+- `migration/...` - Database migrations
+- `refactor/...` - Code refactoring
+
+### Workflow
+```bash
+# 1. Create branch from main
+git checkout main
+git pull origin main
+git checkout -b feature/my-feature
+
+# 2. Make changes and commit with conventional commits
+git add .
+git commit -m "feat: add new feature"
+
+# 3. Push branch and create PR with GitHub CLI
+git push -u origin feature/my-feature
+gh pr create --base main --title "feat: add new feature" --body "Description"
+
+# 4. After approval, merge with squash
+gh pr merge --squash --delete-branch
+```
+
+### Conventional Commits
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation
+- `style:` - Formatting
+- `refactor:` - Code refactoring
+- `test:` - Tests
+- `chore:` - Maintenance
+
+### CRITICAL RULES
+1. **NEVER** push directly to `main`
+2. **NEVER** include "Co-Authored-By: Claude" in commits
+3. **NEVER** reference Claude or AI in commit messages
+4. **ALWAYS** use GitHub CLI (`gh`) for PRs
+5. **ALWAYS** use squash and merge for PRs
