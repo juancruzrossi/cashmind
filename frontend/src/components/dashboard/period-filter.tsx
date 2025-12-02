@@ -154,13 +154,16 @@ export function PeriodFilter({ value, onChange }: PeriodFilterProps) {
   return (
     <Popover open={monthPickerOpen} onOpenChange={setMonthPickerOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="w-[160px] justify-start">
-          <Calendar className="w-4 h-4 mr-2" />
-          <span className="truncate">{getPeriodLabel(value)}</span>
+        <Button
+          variant="outline"
+          className="w-[160px] justify-start bg-[#12121a] border-[rgba(255,255,255,0.06)] hover:bg-white/[0.03] hover:border-primary/20"
+        >
+          <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
+          <span className="truncate text-sm">{getPeriodLabel(value)}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 glass" align="end">
-        <div className="p-2 border-b border-border">
+      <PopoverContent className="w-auto p-0" align="end">
+        <div className="p-2 border-b border-[rgba(255,255,255,0.04)]">
           <div className="grid grid-cols-2 gap-1">
             <Button
               variant={value.type === 'current_month' ? 'default' : 'ghost'}
@@ -188,7 +191,7 @@ export function PeriodFilter({ value, onChange }: PeriodFilterProps) {
             </Button>
           </div>
         </div>
-        <div className="p-2 border-t border-border/50">
+        <div className="p-2 border-t border-[rgba(255,255,255,0.04)]">
           <p className="text-xs text-muted-foreground mb-2 px-1">O elegí un mes:</p>
           <MonthPicker
             selectedMonth={value.type === 'custom_month' ? value.month : undefined}

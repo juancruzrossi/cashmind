@@ -90,7 +90,7 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
       </div>
     );
   }
@@ -99,8 +99,8 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground mt-1 text-sm">
             Resumen de tus finanzas personales
           </p>
         </div>
@@ -122,14 +122,14 @@ export default function DashboardPage() {
           value={formatCurrency(stats?.totalIncome || 0)}
           subtitle={getPeriodLabel(period)}
           icon={TrendingUp}
-          variant="primary"
+          variant="success"
         />
         <StatCard
           title="Gastos Totales"
           value={formatCurrency(stats?.totalExpenses || 0)}
           subtitle={getPeriodLabel(period)}
           icon={TrendingDown}
-          variant="warning"
+          variant="danger"
         />
         <StatCard
           title="Tasa de Ahorro"

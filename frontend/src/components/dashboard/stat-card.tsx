@@ -1,7 +1,6 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -17,19 +16,19 @@ interface StatCardProps {
 }
 
 const variantStyles = {
-  default: 'bg-card',
-  primary: 'bg-emerald-950/30 border-emerald-500/20',
-  success: 'bg-emerald-950/30 border-emerald-500/20',
-  warning: 'bg-amber-950/30 border-amber-500/20',
-  danger: 'bg-red-950/30 border-red-500/20',
+  default: '',
+  primary: 'border-primary/10',
+  success: 'border-emerald-500/10',
+  warning: 'border-amber-500/10',
+  danger: 'border-red-500/10',
 };
 
 const iconVariantStyles = {
-  default: 'bg-muted text-muted-foreground',
-  primary: 'bg-emerald-500/20 text-emerald-400',
-  success: 'bg-emerald-500/20 text-emerald-400',
-  warning: 'bg-amber-500/20 text-amber-400',
-  danger: 'bg-red-500/20 text-red-400',
+  default: 'bg-white/[0.03] text-muted-foreground',
+  primary: 'bg-primary/10 text-primary',
+  success: 'bg-emerald-500/10 text-emerald-400',
+  warning: 'bg-amber-500/10 text-amber-400',
+  danger: 'bg-red-500/10 text-red-400',
 };
 
 export function StatCard({
@@ -46,33 +45,41 @@ export function StatCard({
   const trendColor = trend && trend > 0 ? 'text-emerald-400' : trend && trend < 0 ? 'text-red-400' : 'text-muted-foreground';
 
   return (
-    <Card className={cn('overflow-hidden border-border/50', variantStyles[variant], className)}>
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <p className="text-2xl font-bold tracking-tight">{value}</p>
-            {subtitle && (
-              <p className="text-xs text-muted-foreground">{subtitle}</p>
-            )}
-          </div>
-          <div className={cn('p-3 rounded-xl', iconVariantStyles[variant])}>
-            <Icon className="w-5 h-5" />
-          </div>
+    <div
+      className={cn(
+        'glass rounded-xl p-5 transition-all duration-300 hover:bg-[rgba(24,24,30,0.7)] hover:border-primary/10',
+        variantStyles[variant],
+        className
+      )}
+    >
+      <div className="flex items-start justify-between">
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            {title}
+          </p>
+          <p className="text-2xl font-semibold tracking-tight text-foreground">
+            {value}
+          </p>
+          {subtitle && (
+            <p className="text-xs text-muted-foreground">{subtitle}</p>
+          )}
         </div>
+        <div className={cn('p-2.5 rounded-lg', iconVariantStyles[variant])}>
+          <Icon className="w-[18px] h-[18px]" />
+        </div>
+      </div>
 
-        {trend !== undefined && (
-          <div className="flex items-center gap-1 mt-4">
-            <TrendIcon className={cn('w-4 h-4', trendColor)} />
-            <span className={cn('text-sm font-medium', trendColor)}>
-              {Math.abs(trend).toFixed(1)}%
-            </span>
-            {trendLabel && (
-              <span className="text-xs text-muted-foreground ml-1">{trendLabel}</span>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      {trend !== undefined && (
+        <div className="flex items-center gap-1.5 mt-4 pt-4 border-t border-[rgba(255,255,255,0.04)]">
+          <TrendIcon className={cn('w-3.5 h-3.5', trendColor)} />
+          <span className={cn('text-sm font-medium', trendColor)}>
+            {Math.abs(trend).toFixed(1)}%
+          </span>
+          {trendLabel && (
+            <span className="text-xs text-muted-foreground ml-1">{trendLabel}</span>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

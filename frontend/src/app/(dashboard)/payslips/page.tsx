@@ -215,8 +215,8 @@ function PayslipsPage() {
                 <p className="text-sm text-muted-foreground">Recibos</p>
                 <p className="text-2xl font-bold">{filteredPayslips.length}</p>
               </div>
-              <div className="p-3 rounded-xl bg-primary/20">
-                <Receipt className="w-5 h-5 text-primary" />
+              <div className="p-3 rounded-xl bg-white/[0.03]">
+                <Receipt className="w-5 h-5 text-muted-foreground" />
               </div>
             </div>
           </CardContent>
@@ -227,10 +227,10 @@ function PayslipsPage() {
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-muted-foreground">Total Bruto</p>
-                <p className="text-lg sm:text-xl font-bold text-emerald-500 truncate">{formatCurrency(totalGross)}</p>
+                <p className="text-lg sm:text-xl font-bold text-foreground truncate">{formatCurrency(totalGross)}</p>
               </div>
-              <div className="p-3 rounded-xl bg-emerald-500/20 shrink-0">
-                <TrendingUp className="w-5 h-5 text-emerald-500" />
+              <div className="p-3 rounded-xl bg-white/[0.03] shrink-0">
+                <TrendingUp className="w-5 h-5 text-muted-foreground" />
               </div>
             </div>
           </CardContent>
@@ -241,10 +241,10 @@ function PayslipsPage() {
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-muted-foreground">Total Neto</p>
-                <p className="text-lg sm:text-xl font-bold text-primary truncate">{formatCurrency(totalNet)}</p>
+                <p className="text-lg sm:text-xl font-bold text-emerald-400 truncate">{formatCurrency(totalNet)}</p>
               </div>
-              <div className="p-3 rounded-xl bg-primary/20 shrink-0">
-                <DollarSign className="w-5 h-5 text-primary" />
+              <div className="p-3 rounded-xl bg-emerald-500/10 shrink-0">
+                <DollarSign className="w-5 h-5 text-emerald-400" />
               </div>
             </div>
           </CardContent>
@@ -255,10 +255,10 @@ function PayslipsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Tasa Deducción</p>
-                <p className="text-2xl font-bold text-amber-500">{avgDeductionRate.toFixed(1)}%</p>
+                <p className="text-2xl font-bold text-red-400">{avgDeductionRate.toFixed(1)}%</p>
               </div>
-              <div className="p-3 rounded-xl bg-amber-500/20">
-                <TrendingDown className="w-5 h-5 text-amber-500" />
+              <div className="p-3 rounded-xl bg-red-500/10">
+                <TrendingDown className="w-5 h-5 text-red-400" />
               </div>
             </div>
           </CardContent>
@@ -432,26 +432,26 @@ function PayslipsPage() {
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-muted-foreground">Bruto</span>
-                        <span className="font-medium text-emerald-500">
+                        <span className="font-medium text-foreground">
                           {formatCurrency(Number(payslip.gross_salary))}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-muted-foreground">Neto</span>
-                        <span className="font-bold text-primary">
+                        <span className="font-bold text-emerald-400">
                           {formatCurrency(Number(payslip.net_salary))}
                         </span>
                       </div>
                       <div className="pt-2">
                         <div className="flex justify-between items-center text-xs mb-1">
                           <span className="text-muted-foreground">Deducciones</span>
-                          <span className="text-red-500">
+                          <span className="text-red-400">
                             {((1 - Number(payslip.net_salary) / Number(payslip.gross_salary)) * 100).toFixed(1)}%
                           </span>
                         </div>
                         <Progress
                           value={(1 - Number(payslip.net_salary) / Number(payslip.gross_salary)) * 100}
-                          className="h-1.5"
+                          className="h-1.5 [&>div]:bg-red-400"
                         />
                       </div>
                     </div>
@@ -473,7 +473,7 @@ function PayslipsPage() {
       <PayslipUploader open={isUploaderOpen} onOpenChange={handleUploaderClose} />
 
       <Dialog open={!!selectedPayslip} onOpenChange={() => setSelectedPayslip(null)}>
-        <DialogContent className="sm:max-w-[600px] glass max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           {selectedPayslip && (
             <>
               <DialogHeader>
@@ -508,18 +508,18 @@ function PayslipsPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <Card className="border-emerald-500/30 bg-emerald-500/5">
+                  <Card className="border-border/50">
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Salario Bruto</p>
-                      <p className="text-2xl font-bold text-emerald-500">
+                      <p className="text-2xl font-bold text-foreground">
                         {formatCurrency(Number(selectedPayslip.gross_salary))}
                       </p>
                     </CardContent>
                   </Card>
-                  <Card className="border-primary/30 bg-primary/5">
+                  <Card className="border-emerald-500/30 bg-emerald-500/5">
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Salario Neto</p>
-                      <p className="text-2xl font-bold text-primary">
+                      <p className="text-2xl font-bold text-emerald-400">
                         {formatCurrency(Number(selectedPayslip.net_salary))}
                       </p>
                     </CardContent>
@@ -562,7 +562,7 @@ function PayslipsPage() {
                 {selectedPayslip.bonuses.length > 0 && (
                   <div>
                     <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-emerald-500" />
+                      <TrendingUp className="w-4 h-4 text-emerald-400" />
                       Adicionales
                     </h4>
                     <div className="space-y-2">
@@ -572,7 +572,7 @@ function PayslipsPage() {
                           className="flex justify-between items-center p-3 rounded-lg bg-secondary/30"
                         >
                           <span className="text-sm">{b.name}</span>
-                          <span className="text-sm font-medium text-emerald-500">
+                          <span className="text-sm font-medium text-emerald-400">
                             +{formatCurrency(Number(b.amount))}
                           </span>
                         </div>

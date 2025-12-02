@@ -35,6 +35,10 @@ interface Payslip {
 interface AnalyzedPayslip {
   employer?: string;
   position?: string;
+  paymentDate?: {
+    month: string;
+    year: number;
+  };
   period?: {
     month: string;
     year: number;

@@ -111,11 +111,11 @@ function TransactionsPage() {
 
   const totalIncome = filteredTransactions
     .filter((t) => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + Number(t.amount), 0);
 
   const totalExpenses = filteredTransactions
     .filter((t) => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + Number(t.amount), 0);
 
   const handleEdit = (transaction: Transaction) => {
     setEditTransaction(transaction);
@@ -168,10 +168,10 @@ function TransactionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Ingresos</p>
-                <p className="text-2xl font-bold text-emerald-500">{formatCurrency(totalIncome)}</p>
+                <p className="text-2xl font-bold text-emerald-400">{formatCurrency(totalIncome)}</p>
               </div>
-              <div className="p-3 rounded-xl bg-emerald-500/20">
-                <ArrowDownLeft className="w-5 h-5 text-emerald-500" />
+              <div className="p-3 rounded-xl bg-emerald-500/10">
+                <ArrowUpRight className="w-5 h-5 text-emerald-400" />
               </div>
             </div>
           </CardContent>
@@ -182,10 +182,10 @@ function TransactionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Gastos</p>
-                <p className="text-2xl font-bold text-red-500">{formatCurrency(totalExpenses)}</p>
+                <p className="text-2xl font-bold text-red-400">{formatCurrency(totalExpenses)}</p>
               </div>
-              <div className="p-3 rounded-xl bg-red-500/20">
-                <ArrowUpRight className="w-5 h-5 text-red-500" />
+              <div className="p-3 rounded-xl bg-red-500/10">
+                <ArrowDownLeft className="w-5 h-5 text-red-400" />
               </div>
             </div>
           </CardContent>
@@ -198,7 +198,7 @@ function TransactionsPage() {
                 <p className="text-sm text-muted-foreground">Balance</p>
                 <p className={cn(
                   'text-2xl font-bold',
-                  totalIncome - totalExpenses >= 0 ? 'text-emerald-500' : 'text-red-500'
+                  totalIncome - totalExpenses >= 0 ? 'text-emerald-400' : 'text-red-400'
                 )}>
                   {formatCurrency(totalIncome - totalExpenses)}
                 </p>
@@ -301,14 +301,14 @@ function TransactionsPage() {
                             className={cn(
                               'w-8 h-8 rounded-lg flex items-center justify-center',
                               transaction.type === 'income'
-                                ? 'bg-emerald-500/20 text-emerald-500'
-                                : 'bg-red-500/20 text-red-500'
+                                ? 'bg-emerald-500/10 text-emerald-400'
+                                : 'bg-red-500/10 text-red-400'
                             )}
                           >
                             {transaction.type === 'income' ? (
-                              <ArrowDownLeft className="w-4 h-4" />
-                            ) : (
                               <ArrowUpRight className="w-4 h-4" />
+                            ) : (
+                              <ArrowDownLeft className="w-4 h-4" />
                             )}
                           </div>
                           <div>
@@ -331,8 +331,8 @@ function TransactionsPage() {
                           variant="outline"
                           className={cn(
                             transaction.type === 'income'
-                              ? 'border-emerald-500/30 text-emerald-500'
-                              : 'border-red-500/30 text-red-500'
+                              ? 'border-emerald-500/30 text-emerald-400'
+                              : 'border-red-500/30 text-red-400'
                           )}
                         >
                           {transaction.type === 'income' ? 'Ingreso' : 'Gasto'}
@@ -341,7 +341,7 @@ function TransactionsPage() {
                       <TableCell
                         className={cn(
                           'text-right font-semibold',
-                          transaction.type === 'income' ? 'text-emerald-500' : 'text-red-500'
+                          transaction.type === 'income' ? 'text-emerald-400' : 'text-red-400'
                         )}
                       >
                         {transaction.type === 'income' ? '+' : '-'}

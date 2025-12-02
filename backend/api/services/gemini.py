@@ -27,9 +27,9 @@ El JSON debe tener esta estructura exacta:
 {
   "employer": "nombre de la empresa o empleador",
   "position": "cargo o puesto del empleado",
-  "period": {
-    "month": "nombre del mes en español",
-    "year": número del año
+  "paymentDate": {
+    "month": "nombre del mes en español de la FECHA DE PAGO",
+    "year": número del año de la FECHA DE PAGO
   },
   "grossSalary": número (salario bruto total),
   "netSalary": número (salario neto a cobrar),
@@ -51,6 +51,7 @@ El JSON debe tener esta estructura exacta:
 }
 
 Notas importantes:
+- CRÍTICO: Para "paymentDate", usa la FECHA DE PAGO (cuando se cobra el sueldo), NO el periodo abonado. Por ejemplo, si dice "Fecha de pago: 01/11/2025" y "Periodo abonado: Octubre 2025", el paymentDate debe ser Noviembre 2025.
 - Todos los montos deben ser números positivos
 - Si no encuentras algún dato, usa null
 - Las categorías de deducciones son: tax (impuestos), social_security (seguridad social), retirement (jubilación), health (salud), other (otros)

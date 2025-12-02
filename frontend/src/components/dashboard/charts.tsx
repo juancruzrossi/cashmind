@@ -41,11 +41,13 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-const AXIS_COLOR = '#9ca3af';
-const GRID_COLOR = '#374151';
-const INCOME_COLOR = '#34d399';
+const AXIS_COLOR = '#6a6a78';
+const GRID_COLOR = 'rgba(255, 255, 255, 0.04)';
+const INCOME_COLOR = '#4ade80';
 const EXPENSE_COLOR = '#f87171';
-const EMPTY_BAR_COLOR = '#4b5563';
+const SAVINGS_COLOR = '#4ade80';
+const GROSS_COLOR = '#d4a853';
+const NET_COLOR = '#4ade80';
 
 const CustomTooltip = ({ active, payload, label }: {
   active?: boolean;
@@ -54,12 +56,12 @@ const CustomTooltip = ({ active, payload, label }: {
 }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-popover/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl">
+      <div className="glass rounded-lg p-3">
         <p className="text-sm font-medium text-foreground mb-2">{label}</p>
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center gap-2 text-sm">
             <div
-              className="w-3 h-3 rounded-full"
+              className="w-2 h-2 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
             <span className="text-muted-foreground">{entry.name}:</span>
@@ -262,8 +264,8 @@ export function SavingsChart({ data }: SavingsChartProps) {
               <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="savingsGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={INCOME_COLOR} stopOpacity={0.3} />
-                    <stop offset="95%" stopColor={INCOME_COLOR} stopOpacity={0} />
+                    <stop offset="5%" stopColor={SAVINGS_COLOR} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={SAVINGS_COLOR} stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
@@ -284,7 +286,7 @@ export function SavingsChart({ data }: SavingsChartProps) {
                   type="monotone"
                   dataKey="savings"
                   name="Ahorro"
-                  stroke={INCOME_COLOR}
+                  stroke={SAVINGS_COLOR}
                   strokeWidth={2}
                   fill="url(#savingsGradient)"
                 />
@@ -328,12 +330,12 @@ export function PayslipChart({ data }: PayslipChartProps) {
               <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="grossGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={INCOME_COLOR} stopOpacity={0.3} />
-                    <stop offset="95%" stopColor={INCOME_COLOR} stopOpacity={0} />
+                    <stop offset="5%" stopColor={GROSS_COLOR} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={GROSS_COLOR} stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="netGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#60a5fa" stopOpacity={0} />
+                    <stop offset="5%" stopColor={NET_COLOR} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={NET_COLOR} stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
@@ -358,7 +360,7 @@ export function PayslipChart({ data }: PayslipChartProps) {
                   type="monotone"
                   dataKey="grossSalary"
                   name="Bruto"
-                  stroke={INCOME_COLOR}
+                  stroke={GROSS_COLOR}
                   strokeWidth={2}
                   fill="url(#grossGradient)"
                 />
@@ -366,7 +368,7 @@ export function PayslipChart({ data }: PayslipChartProps) {
                   type="monotone"
                   dataKey="netSalary"
                   name="Neto"
-                  stroke="#60a5fa"
+                  stroke={NET_COLOR}
                   strokeWidth={2}
                   fill="url(#netGradient)"
                 />

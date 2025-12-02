@@ -20,7 +20,7 @@ export function Header() {
   const initials = username.slice(0, 2).toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 h-16 border-b border-border bg-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 h-14 border-b border-[rgba(255,255,255,0.04)] bg-[#0a0a0c]/80 backdrop-blur-xl">
       <div className="flex items-center justify-between h-full px-4 md:px-6">
         <div className="lg:hidden">
           <MobileSidebar />
@@ -28,26 +28,33 @@ export function Header() {
         <div className="hidden lg:block" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-              <Avatar className="h-10 w-10 border-2 border-primary/20">
-                <AvatarFallback className="bg-gradient-to-br from-primary to-chart-2 text-primary-foreground font-semibold">
+            <Button
+              variant="ghost"
+              className="relative h-9 w-9 rounded-full hover:bg-white/[0.03]"
+            >
+              <Avatar className="h-9 w-9 border border-[rgba(255,255,255,0.08)]">
+                <AvatarFallback className="gradient-gold text-[#0a0a0c] text-xs font-semibold">
                   {initials}
                 </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 glass" align="end" forceMount>
+          <DropdownMenuContent
+            className="w-56"
+            align="end"
+            forceMount
+          >
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{username}</p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {user?.email}
+                  {user?.email || 'Sin email'}
                 </p>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="bg-[rgba(255,255,255,0.06)]" />
             <DropdownMenuItem
-              className="cursor-pointer text-destructive focus:text-destructive"
+              className="cursor-pointer text-muted-foreground focus:text-destructive focus:bg-destructive/10"
               onClick={logout}
             >
               <LogOut className="w-4 h-4 mr-2" />

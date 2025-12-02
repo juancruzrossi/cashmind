@@ -13,8 +13,6 @@ import {
   Database,
   LogOut,
   CheckCircle2,
-  Info,
-  Sparkles,
 } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -27,8 +25,8 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Configuración</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="text-2xl font-semibold tracking-tight">Configuración</h1>
+        <p className="text-muted-foreground mt-1 text-sm">
           Gestiona tu cuenta y preferencias
         </p>
       </div>
@@ -36,11 +34,11 @@ export default function SettingsPage() {
       <Card className="border-border/50 glass">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/20">
+            <div className="p-2 rounded-lg bg-primary/10">
               <User className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <CardTitle>Cuenta</CardTitle>
+              <CardTitle className="text-base">Cuenta</CardTitle>
               <CardDescription>Información de tu cuenta</CardDescription>
             </div>
           </div>
@@ -49,7 +47,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/30">
             <div>
               <p className="font-medium">{user?.username}</p>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
+              <p className="text-sm text-muted-foreground">{user?.email || 'Sin email'}</p>
             </div>
             <Badge variant="secondary" className="gap-1">
               <CheckCircle2 className="w-3 h-3" />
@@ -59,7 +57,7 @@ export default function SettingsPage() {
 
           <Button
             variant="outline"
-            className="w-full justify-start text-destructive hover:text-destructive"
+            className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
             onClick={logout}
           >
             <LogOut className="w-4 h-4 mr-2" />
@@ -71,16 +69,16 @@ export default function SettingsPage() {
       <Card className="border-border/50 glass">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-chart-2/20">
-              <Database className="w-5 h-5 text-chart-2" />
+            <div className="p-2 rounded-lg bg-white/[0.03]">
+              <Database className="w-5 h-5 text-muted-foreground" />
             </div>
             <div>
-              <CardTitle>Datos</CardTitle>
+              <CardTitle className="text-base">Datos</CardTitle>
               <CardDescription>Resumen de tus datos financieros</CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="p-4 rounded-lg bg-secondary/30 text-center">
               <p className="text-3xl font-bold">{transactions.length}</p>
@@ -97,45 +95,6 @@ export default function SettingsPage() {
             <div className="p-4 rounded-lg bg-secondary/30 text-center">
               <p className="text-3xl font-bold">{goals.length}</p>
               <p className="text-sm text-muted-foreground">Metas</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-border/50 glass">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-chart-3/20">
-              <Sparkles className="w-5 h-5 text-chart-3" />
-            </div>
-            <div>
-              <CardTitle>Acerca de CashMind</CardTitle>
-              <CardDescription>Información de la aplicación</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/30">
-            <div>
-              <p className="font-medium">CashMind</p>
-              <p className="text-sm text-muted-foreground">Tu mente financiera personal</p>
-            </div>
-            <Badge>v1.0.0</Badge>
-          </div>
-
-          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-            <div className="flex items-start gap-3">
-              <Info className="w-5 h-5 text-primary mt-0.5" />
-              <div>
-                <p className="font-medium text-sm">Características principales</p>
-                <ul className="text-sm text-muted-foreground mt-2 space-y-1">
-                  <li>• Análisis de recibos de sueldo con IA (Gemini)</li>
-                  <li>• Seguimiento detallado de gastos e ingresos</li>
-                  <li>• Presupuestos por categoría</li>
-                  <li>• Metas financieras con seguimiento</li>
-                  <li>• Multi-usuario con autenticación JWT</li>
-                </ul>
-              </div>
             </div>
           </div>
         </CardContent>

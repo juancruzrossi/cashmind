@@ -58,20 +58,20 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
               {transactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="flex items-center gap-4 p-3 rounded-xl bg-secondary/30 hover:bg-secondary/50 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-xl bg-secondary/30 hover:bg-secondary/50 transition-colors"
                 >
                   <div
                     className={cn(
-                      'w-10 h-10 rounded-xl flex items-center justify-center',
+                      'w-10 h-10 rounded-xl flex items-center justify-center shrink-0',
                       transaction.type === 'income'
-                        ? 'bg-emerald-500/20 text-emerald-500'
-                        : 'bg-red-500/20 text-red-500'
+                        ? 'bg-emerald-500/10 text-emerald-400'
+                        : 'bg-red-500/10 text-red-400'
                     )}
                   >
                     {transaction.type === 'income' ? (
-                      <ArrowDownLeft className="w-5 h-5" />
-                    ) : (
                       <ArrowUpRight className="w-5 h-5" />
+                    ) : (
+                      <ArrowDownLeft className="w-5 h-5" />
                     )}
                   </div>
 
@@ -90,7 +90,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
                   <div
                     className={cn(
                       'text-right font-semibold shrink-0 text-sm whitespace-nowrap',
-                      transaction.type === 'income' ? 'text-emerald-500' : 'text-red-500'
+                      transaction.type === 'income' ? 'text-emerald-400' : 'text-red-400'
                     )}
                   >
                     {transaction.type === 'income' ? '+' : '-'}

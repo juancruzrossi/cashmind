@@ -49,6 +49,10 @@ const MONTHS = [
 interface AnalyzedData {
   employer?: string;
   position?: string;
+  paymentDate?: {
+    month: string;
+    year: number;
+  };
   period?: {
     month: string;
     year: number;
@@ -106,10 +110,10 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
       setAnalyzedData(result.data);
       setFileName(result.file_name || file.name);
 
-      // Set editable fields
+      // Set editable fields - prefer paymentDate over period (payment date = when you receive money)
       setEmployer(result.data.employer || '');
-      setMonth(result.data.period?.month || '');
-      setYear(result.data.period?.year || new Date().getFullYear());
+      setMonth(result.data.paymentDate?.month || result.data.period?.month || '');
+      setYear(result.data.paymentDate?.year || result.data.period?.year || new Date().getFullYear());
       setGrossSalary(result.data.grossSalary || 0);
       setNetSalary(result.data.netSalary || 0);
 
@@ -126,8 +130,8 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
 
     try {
       await addPayslip({
-        month: month || analyzedData.period?.month || 'Desconocido',
-        year: year || analyzedData.period?.year || new Date().getFullYear(),
+        month: month || analyzedData.paymentDate?.month || analyzedData.period?.month || 'Desconocido',
+        year: year || analyzedData.paymentDate?.year || analyzedData.period?.year || new Date().getFullYear(),
         gross_salary: grossSalary || analyzedData.grossSalary || 0,
         net_salary: netSalary || analyzedData.netSalary || 0,
         employer: employer || analyzedData.employer,
@@ -194,7 +198,7 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
 
   return (
     <Dialog open={open} onOpenChange={resetAndClose}>
-      <DialogContent className="sm:max-w-[600px] glass max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary" />
@@ -351,27 +355,27 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
                   </Card>
                   <Card className="border-border/50">
                     <CardContent className="pt-4">
-                      <p className="text-sm text-muted-foreground">Período</p>
+                      <p className="text-sm text-muted-foreground">Mes de cobro</p>
                       <p className="font-medium">
-                        {month || analyzedData.period?.month} {year || analyzedData.period?.year}
+                        {month || analyzedData.paymentDate?.month || analyzedData.period?.month} {year || analyzedData.paymentDate?.year || analyzedData.period?.year}
                       </p>
                     </CardContent>
                   </Card>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Card className="border-emerald-500/30 bg-emerald-500/5">
+                  <Card className="border-primary/30 bg-primary/5">
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Salario Bruto</p>
-                      <p className="text-2xl font-bold text-emerald-500">
+                      <p className="text-2xl font-bold text-primary">
                         {formatCurrency(grossSalary || analyzedData.grossSalary || 0)}
                       </p>
                     </CardContent>
                   </Card>
-                  <Card className="border-primary/30 bg-primary/5">
+                  <Card className="border-emerald-500/30 bg-emerald-500/5">
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Salario Neto</p>
-                      <p className="text-2xl font-bold text-primary">
+                      <p className="text-2xl font-bold text-emerald-400">
                         {formatCurrency(netSalary || analyzedData.netSalary || 0)}
                       </p>
                     </CardContent>
@@ -428,7 +432,7 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
               <div>
                 <p className="text-sm font-medium">Crear transacción de ingreso</p>
                 <p className="text-xs text-muted-foreground">
-                  Se creará automáticamente un ingreso de {formatCurrency(netSalary || analyzedData.netSalary || 0)} para {month || analyzedData.period?.month} {year || analyzedData.period?.year}
+                  Se creará automáticamente un ingreso de {formatCurrency(netSalary || analyzedData.netSalary || 0)} para {month || analyzedData.paymentDate?.month || analyzedData.period?.month} {year || analyzedData.paymentDate?.year || analyzedData.period?.year}
                 </p>
               </div>
             </div>
