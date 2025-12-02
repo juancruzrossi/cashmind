@@ -1,0 +1,582 @@
+[
+{
+  "model": "api.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$YGSn97CfWUZxCFEdkDD8GG$JXvC+h3qCQJzryDgMAocK1jMdK0z9xYyZ6ZzXYUASTE=",
+    "last_login": "2025-11-30T22:14:21.494Z",
+    "is_superuser": true,
+    "username": "jxjx",
+    "first_name": "",
+    "last_name": "",
+    "email": "jcrzrossi@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-11-30T22:14:00.462Z",
+    "created_at": "2025-11-30T22:14:00.696Z",
+    "updated_at": "2025-11-30T22:14:00.696Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "api.payslip",
+  "pk": 2,
+  "fields": {
+    "user": 1,
+    "month": "octubre",
+    "year": 2025,
+    "upload_date": "2025-12-02T02:24:48.202Z",
+    "gross_salary": "5034159.00",
+    "net_salary": "3811288.50",
+    "employer": "MercadoLibre S.R.L.",
+    "position": "Sr Software Engineer",
+    "raw_text": null
+  }
+},
+{
+  "model": "api.payslip",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "month": "Septiembre",
+    "year": 2025,
+    "upload_date": "2025-12-02T02:25:13.440Z",
+    "gross_salary": "5045731.00",
+    "net_salary": "3827402.67",
+    "employer": "MercadoLibre S.R.L.",
+    "position": "Sr Software Engineer",
+    "raw_text": null
+  }
+},
+{
+  "model": "api.payslip",
+  "pk": 4,
+  "fields": {
+    "user": 1,
+    "month": "Agosto",
+    "year": 2025,
+    "upload_date": "2025-12-02T02:29:53.378Z",
+    "gross_salary": "5004899.00",
+    "net_salary": "3806375.98",
+    "employer": "MercadoLibre S.R.L.",
+    "position": "Sr Software Engineer",
+    "raw_text": null
+  }
+},
+{
+  "model": "api.payslip",
+  "pk": 5,
+  "fields": {
+    "user": 1,
+    "month": "Julio",
+    "year": 2025,
+    "upload_date": "2025-12-02T02:30:43.462Z",
+    "gross_salary": "4992734.00",
+    "net_salary": "3912243.77",
+    "employer": "MercadoLibre S.R.L.",
+    "position": "Sr Software Engineer",
+    "raw_text": null
+  }
+},
+{
+  "model": "api.payslip",
+  "pk": 6,
+  "fields": {
+    "user": 1,
+    "month": "Junio",
+    "year": 2025,
+    "upload_date": "2025-12-02T02:31:06.812Z",
+    "gross_salary": "4546628.00",
+    "net_salary": "3393635.24",
+    "employer": "MercadoLibre S.R.L.",
+    "position": "Sr Software Engineer",
+    "raw_text": null
+  }
+},
+{
+  "model": "api.payslip",
+  "pk": 7,
+  "fields": {
+    "user": 1,
+    "month": "noviembre",
+    "year": 2025,
+    "upload_date": "2025-12-02T02:31:49.715Z",
+    "gross_salary": "5070085.73",
+    "net_salary": "3827771.50",
+    "employer": "MercadoLibre S.R.L.",
+    "position": "Sr Software Engineer",
+    "raw_text": null
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 6,
+  "fields": {
+    "payslip": 2,
+    "name": "Aporte SIJP sobre sueldo",
+    "amount": "392876.94",
+    "percentage": "11.00",
+    "category": "retirement"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 7,
+  "fields": {
+    "payslip": 2,
+    "name": "Aporte INSSJP sobre suel",
+    "amount": "107148.26",
+    "percentage": "3.00",
+    "category": "social_security"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 8,
+  "fields": {
+    "payslip": 2,
+    "name": "Aporte O.SOC. sobre suel.",
+    "amount": "107148.26",
+    "percentage": "3.00",
+    "category": "health"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 9,
+  "fields": {
+    "payslip": 2,
+    "name": "Impuesto pagado/devuelto",
+    "amount": "615697.04",
+    "percentage": null,
+    "category": "tax"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 10,
+  "fields": {
+    "payslip": 3,
+    "name": "Aporte SIJP",
+    "amount": "385627.15",
+    "percentage": "11.00",
+    "category": "retirement"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 11,
+  "fields": {
+    "payslip": 3,
+    "name": "Aporte INSSJP",
+    "amount": "105171.04",
+    "percentage": "3.00",
+    "category": "social_security"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 12,
+  "fields": {
+    "payslip": 3,
+    "name": "Aporte O.SOC.",
+    "amount": "105171.04",
+    "percentage": "3.00",
+    "category": "health"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 13,
+  "fields": {
+    "payslip": 3,
+    "name": "Impuesto pagado/devuelto",
+    "amount": "622359.10",
+    "percentage": null,
+    "category": "tax"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 14,
+  "fields": {
+    "payslip": 4,
+    "name": "Aporte SIJP sobre sueldo",
+    "amount": "378436.85",
+    "percentage": "11.00",
+    "category": "retirement"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 15,
+  "fields": {
+    "payslip": 4,
+    "name": "Aporte INSSJP sobre suel",
+    "amount": "103210.05",
+    "percentage": "3.00",
+    "category": "social_security"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 16,
+  "fields": {
+    "payslip": 4,
+    "name": "Aporte O.SOC. sobre suel.",
+    "amount": "103210.05",
+    "percentage": "3.00",
+    "category": "health"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 17,
+  "fields": {
+    "payslip": 4,
+    "name": "Impuesto pagado/devuelto",
+    "amount": "613666.07",
+    "percentage": null,
+    "category": "tax"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 18,
+  "fields": {
+    "payslip": 5,
+    "name": "Aporte SIJP",
+    "amount": "372403.91",
+    "percentage": "11.00",
+    "category": "retirement"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 19,
+  "fields": {
+    "payslip": 5,
+    "name": "Aporte INSSJP",
+    "amount": "101564.70",
+    "percentage": "3.00",
+    "category": "social_security"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 20,
+  "fields": {
+    "payslip": 5,
+    "name": "Aporte Obra Social",
+    "amount": "101564.70",
+    "percentage": "3.00",
+    "category": "health"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 21,
+  "fields": {
+    "payslip": 5,
+    "name": "Impuesto a las Ganancias",
+    "amount": "504956.92",
+    "percentage": null,
+    "category": "tax"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 22,
+  "fields": {
+    "payslip": 6,
+    "name": "Aporte SIJP sobre sueldo",
+    "amount": "366900.40",
+    "percentage": "11.00",
+    "category": "retirement"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 23,
+  "fields": {
+    "payslip": 6,
+    "name": "Aporte INSSJP sobre suel",
+    "amount": "100063.75",
+    "percentage": "3.00",
+    "category": "health"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 24,
+  "fields": {
+    "payslip": 6,
+    "name": "Aporte O.SOC. sobre suel.",
+    "amount": "100063.75",
+    "percentage": "3.00",
+    "category": "health"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 25,
+  "fields": {
+    "payslip": 6,
+    "name": "Impuesto pagado/devuelto",
+    "amount": "585964.86",
+    "percentage": null,
+    "category": "tax"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 26,
+  "fields": {
+    "payslip": 7,
+    "name": "Aporte SIJP sobre sueldo",
+    "amount": "401048.78",
+    "percentage": "11.00",
+    "category": "retirement"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 27,
+  "fields": {
+    "payslip": 7,
+    "name": "Aporte INSSJP sobre suel",
+    "amount": "109376.94",
+    "percentage": "3.00",
+    "category": "social_security"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 28,
+  "fields": {
+    "payslip": 7,
+    "name": "Aporte O.SOC. sobre suel.",
+    "amount": "109376.94",
+    "percentage": "3.00",
+    "category": "health"
+  }
+},
+{
+  "model": "api.deduction",
+  "pk": 29,
+  "fields": {
+    "payslip": 7,
+    "name": "Impuesto pagado/devuelto",
+    "amount": "622511.57",
+    "percentage": null,
+    "category": "tax"
+  }
+},
+{
+  "model": "api.bonus",
+  "pk": 3,
+  "fields": {
+    "payslip": 2,
+    "name": "Adicional IT",
+    "amount": "360443.00",
+    "type": "regular"
+  }
+},
+{
+  "model": "api.bonus",
+  "pk": 4,
+  "fields": {
+    "payslip": 3,
+    "name": "Adicional IT",
+    "amount": "372015.00",
+    "type": "regular"
+  }
+},
+{
+  "model": "api.bonus",
+  "pk": 5,
+  "fields": {
+    "payslip": 4,
+    "name": "Adicional IT",
+    "amount": "331183.00",
+    "type": "regular"
+  }
+},
+{
+  "model": "api.bonus",
+  "pk": 6,
+  "fields": {
+    "payslip": 5,
+    "name": "Adicional IT",
+    "amount": "319018.00",
+    "type": "regular"
+  }
+},
+{
+  "model": "api.bonus",
+  "pk": 7,
+  "fields": {
+    "payslip": 6,
+    "name": "Adicional IT",
+    "amount": "297795.00",
+    "type": "other"
+  }
+},
+{
+  "model": "api.bonus",
+  "pk": 8,
+  "fields": {
+    "payslip": 7,
+    "name": "Ajuste Remunerativo",
+    "amount": "2418.62",
+    "type": "regular"
+  }
+},
+{
+  "model": "api.bonus",
+  "pk": 9,
+  "fields": {
+    "payslip": 7,
+    "name": "Adicional IT",
+    "amount": "362793.00",
+    "type": "other"
+  }
+},
+{
+  "model": "api.bonus",
+  "pk": 10,
+  "fields": {
+    "payslip": 7,
+    "name": "Pago de Vacaciones",
+    "amount": "186948.64",
+    "type": "holiday"
+  }
+},
+{
+  "model": "api.transaction",
+  "pk": 2,
+  "fields": {
+    "user": 1,
+    "date": "2025-11-30",
+    "description": "Estacionamiento",
+    "amount": "38000.00",
+    "type": "expense",
+    "category": "transportation",
+    "subcategory": null,
+    "notes": "Estacionamiento",
+    "is_recurring": false,
+    "recurring_frequency": null,
+    "payslip": null,
+    "created_at": "2025-11-30T22:23:27.937Z"
+  }
+},
+{
+  "model": "api.transaction",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "date": "2025-10-15",
+    "description": "Sueldo octubre 2025",
+    "amount": "3811288.50",
+    "type": "income",
+    "category": "salary",
+    "subcategory": null,
+    "notes": "Generado automáticamente desde recibo de MercadoLibre S.R.L.",
+    "is_recurring": false,
+    "recurring_frequency": null,
+    "payslip": 2,
+    "created_at": "2025-12-02T02:24:48.230Z"
+  }
+},
+{
+  "model": "api.transaction",
+  "pk": 5,
+  "fields": {
+    "user": 1,
+    "date": "2025-09-15",
+    "description": "Sueldo Septiembre 2025",
+    "amount": "3827402.67",
+    "type": "income",
+    "category": "salary",
+    "subcategory": null,
+    "notes": "Generado automáticamente desde recibo de MercadoLibre S.R.L.",
+    "is_recurring": false,
+    "recurring_frequency": null,
+    "payslip": 3,
+    "created_at": "2025-12-02T02:25:13.453Z"
+  }
+},
+{
+  "model": "api.transaction",
+  "pk": 7,
+  "fields": {
+    "user": 1,
+    "date": "2025-08-15",
+    "description": "Sueldo Agosto 2025",
+    "amount": "3806375.98",
+    "type": "income",
+    "category": "salary",
+    "subcategory": null,
+    "notes": "Generado automáticamente desde recibo de MercadoLibre S.R.L.",
+    "is_recurring": false,
+    "recurring_frequency": null,
+    "payslip": 4,
+    "created_at": "2025-12-02T02:29:53.394Z"
+  }
+},
+{
+  "model": "api.transaction",
+  "pk": 9,
+  "fields": {
+    "user": 1,
+    "date": "2025-07-15",
+    "description": "Sueldo Julio 2025",
+    "amount": "3912243.77",
+    "type": "income",
+    "category": "salary",
+    "subcategory": null,
+    "notes": "Generado automáticamente desde recibo de MercadoLibre S.R.L.",
+    "is_recurring": false,
+    "recurring_frequency": null,
+    "payslip": 5,
+    "created_at": "2025-12-02T02:30:43.472Z"
+  }
+},
+{
+  "model": "api.transaction",
+  "pk": 11,
+  "fields": {
+    "user": 1,
+    "date": "2025-06-15",
+    "description": "Sueldo Junio 2025",
+    "amount": "3393635.24",
+    "type": "income",
+    "category": "salary",
+    "subcategory": null,
+    "notes": "Generado automáticamente desde recibo de MercadoLibre S.R.L.",
+    "is_recurring": false,
+    "recurring_frequency": null,
+    "payslip": 6,
+    "created_at": "2025-12-02T02:31:06.826Z"
+  }
+},
+{
+  "model": "api.transaction",
+  "pk": 13,
+  "fields": {
+    "user": 1,
+    "date": "2025-11-15",
+    "description": "Sueldo noviembre 2025",
+    "amount": "3827771.50",
+    "type": "income",
+    "category": "salary",
+    "subcategory": null,
+    "notes": "Generado automáticamente desde recibo de MercadoLibre S.R.L.",
+    "is_recurring": false,
+    "recurring_frequency": null,
+    "payslip": 7,
+    "created_at": "2025-12-02T02:31:49.732Z"
+  }
+}
+]
