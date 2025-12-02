@@ -173,3 +173,4 @@ gh pr merge --squash --delete-branch
 3. **NEVER** reference Claude or AI in commit messages
 4. **ALWAYS** use GitHub CLI (`gh`) for PRs
 5. **ALWAYS** use squash and merge for PRs
+6. **ALWAYS** delete branches after merging
