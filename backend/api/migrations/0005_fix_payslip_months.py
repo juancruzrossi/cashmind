@@ -24,7 +24,7 @@ def fix_payslip_months(apps, schema_editor):
         month_lower = p.month.lower()
         if month_lower not in MONTHS:
             continue
-            
+
         idx = MONTHS.index(month_lower)
         if idx == 11:
             p.month = 'Enero'
@@ -41,13 +41,13 @@ def fix_payslip_months(apps, schema_editor):
 
 
 def reverse_fix(apps, schema_editor):
-    pass  # No reverse needed
+    pass
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0002_invitationcode'),
+        ('api', '0004_invitationcode'),
     ]
 
     operations = [
