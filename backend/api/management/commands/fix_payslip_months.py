@@ -108,7 +108,7 @@ class Command(BaseCommand):
 
                             related_tx = Transaction.objects.filter(payslip=p).first()
                             if related_tx:
-                                new_date = date(change['new_year'], change['new_month_idx'] + 1, 15)
+                                new_date = date(change['new_year'], change['new_month_idx'] + 1, 1)
                                 related_tx.date = new_date
                                 related_tx.save()
                                 self.stdout.write(f'    -> Transaction updated to {new_date}')
