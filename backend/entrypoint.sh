@@ -10,10 +10,10 @@ if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; t
     python manage.py createsuperuser --noinput || echo "Superuser already exists"
 fi
 
-# Import data if IMPORT_DATA env var is set and data_export.json exists
-if [ "$IMPORT_DATA" = "true" ] && [ -f "data_export.json" ]; then
-    echo "Importing data from data_export.json..."
-    python manage.py loaddata data_export.json || echo "Data import failed or already imported"
+# Import data if IMPORT_DATA env var is set
+if [ "$IMPORT_DATA" = "true" ]; then
+    echo "Running data import..."
+    python manage.py import_data
 fi
 
 echo "Starting gunicorn..."
