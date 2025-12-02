@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useGoals } from '@/hooks/useGoals';
+import { PeriodFilter, PeriodValue, getDateRange } from '@/components/dashboard/period-filter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -97,11 +98,21 @@ function GoalsPage() {
   const [currentAmount, setCurrentAmount] = useState('');
   const [category, setCategory] = useState<Goal['category']>('savings');
   const [deadline, setDeadline] = useState<Date | undefined>(undefined);
+  const [filterPeriod, setFilterPeriod] = useState<PeriodValue>({ type: 'current_year' });
+  const { startDate, endDate } = getDateRange(filterPeriod);
 
-  const activeGoals = goals.filter((g) => g.current_amount < g.target_amount).length;
-  const completedGoals = goals.filter((g) => g.current_amount >= g.target_amount).length;
-  const totalSaved = goals.reduce((sum, g) => sum + Number(g.current_amount), 0);
-  const totalTarget = goals.reduce((sum, g) => sum + Number(g.target_amount), 0);
+  const filteredGoals = useMemo(() => {
+    return goals.filter((g) => {
+      if (!g.deadline) return true;
+      const goalDeadline = new Date(g.deadline);
+      return goalDeadline >= new Date(startDate) && goalDeadline <= new Date(endDate);
+    });
+  }, [goals, startDate, endDate]);
+
+  const activeGoals = filteredGoals.filter((g) => g.current_amount < g.target_amount).length;
+  const completedGoals = filteredGoals.filter((g) => g.current_amount >= g.target_amount).length;
+  const totalSaved = filteredGoals.reduce((sum, g) => sum + Number(g.current_amount), 0);
+  const totalTarget = filteredGoals.reduce((sum, g) => sum + Number(g.target_amount), 0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -190,23 +201,28 @@ function GoalsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Metas Financieras</h1>
-          <p className="text-muted-foreground mt-1">
-            Establece y alcanza tus objetivos
-          </p>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Metas Financieras</h1>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+              Establece y alcanza tus objetivos
+            </p>
+          </div>
+          <Button
+            onClick={() => {
+              resetForm();
+              setIsFormOpen(true);
+            }}
+            className="bg-gradient-to-r from-primary to-chart-2 w-full sm:w-auto"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Nueva Meta
+          </Button>
         </div>
-        <Button
-          onClick={() => {
-            resetForm();
-            setIsFormOpen(true);
-          }}
-          className="bg-gradient-to-r from-primary to-chart-2"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Nueva Meta
-        </Button>
+        <div className="flex justify-start sm:justify-end">
+          <PeriodFilter value={filterPeriod} onChange={setFilterPeriod} />
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
@@ -275,7 +291,7 @@ function GoalsPage() {
           <CardDescription>Progreso hacia tus objetivos financieros</CardDescription>
         </CardHeader>
         <CardContent>
-          {goals.length === 0 ? (
+          {filteredGoals.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16">
               <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
                 <Target className="w-10 h-10 text-muted-foreground" />
@@ -295,7 +311,7 @@ function GoalsPage() {
             </div>
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {goals.map((goal) => {
+              {filteredGoals.map((goal) => {
                 const percentage = (Number(goal.current_amount) / Number(goal.target_amount)) * 100;
                 const isCompleted = percentage >= 100;
                 const categoryInfo = getCategoryInfo(goal.category);

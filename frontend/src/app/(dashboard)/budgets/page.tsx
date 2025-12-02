@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useBudgets } from '@/hooks/useBudgets';
 import { useTransactions } from '@/hooks/useTransactions';
+import { PeriodFilter, PeriodValue, getDateRange } from '@/components/dashboard/period-filter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -72,23 +73,23 @@ function BudgetsPage() {
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
   const [limit, setLimit] = useState('');
-  const [period, setPeriod] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
+  const [budgetPeriod, setBudgetPeriod] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
+  const [filterPeriod, setFilterPeriod] = useState<PeriodValue>({ type: 'current_month' });
+  const { startDate, endDate } = getDateRange(filterPeriod);
 
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
+  const budgetsWithSpent = useMemo(() => {
+    return budgets.map((budget) => {
+      const spent = transactions
+        .filter((t) => {
+          const tDate = new Date(t.date);
+          const isInPeriod = tDate >= new Date(startDate) && tDate <= new Date(endDate);
+          return t.type === 'expense' && t.category === budget.category && isInPeriod;
+        })
+        .reduce((sum, t) => sum + t.amount, 0);
 
-  const budgetsWithSpent = budgets.map((budget) => {
-    const spent = transactions
-      .filter((t) => {
-        const tDate = new Date(t.date);
-        const isCurrentMonth = tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear;
-        return t.type === 'expense' && t.category === budget.category && isCurrentMonth;
-      })
-      .reduce((sum, t) => sum + t.amount, 0);
-
-    return { ...budget, calculatedSpent: spent };
-  });
+      return { ...budget, calculatedSpent: spent };
+    });
+  }, [budgets, transactions, startDate, endDate]);
 
   const totalBudget = budgets.reduce((sum, b) => sum + Number(b.limit), 0);
   const totalSpent = budgetsWithSpent.reduce((sum, b) => sum + b.calculatedSpent, 0);
@@ -104,7 +105,7 @@ function BudgetsPage() {
         name,
         category,
         limit: parseFloat(limit),
-        period,
+        period: budgetPeriod,
         color: CATEGORY_COLORS[category] || '#6B7280',
       };
 
@@ -126,7 +127,7 @@ function BudgetsPage() {
     setName('');
     setCategory('');
     setLimit('');
-    setPeriod('monthly');
+    setBudgetPeriod('monthly');
     setEditBudget(null);
     setIsFormOpen(false);
   };
@@ -136,7 +137,7 @@ function BudgetsPage() {
     setName(budget.name);
     setCategory(budget.category);
     setLimit(budget.limit.toString());
-    setPeriod(budget.period);
+    setBudgetPeriod(budget.period);
     setIsFormOpen(true);
   };
 
@@ -160,23 +161,28 @@ function BudgetsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Presupuestos</h1>
-          <p className="text-muted-foreground mt-1">
-            Controla tus gastos por categoría
-          </p>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Presupuestos</h1>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+              Controla tus gastos por categoría
+            </p>
+          </div>
+          <Button
+            onClick={() => {
+              resetForm();
+              setIsFormOpen(true);
+            }}
+            className="bg-gradient-to-r from-primary to-chart-2 w-full sm:w-auto"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Nuevo Presupuesto
+          </Button>
         </div>
-        <Button
-          onClick={() => {
-            resetForm();
-            setIsFormOpen(true);
-          }}
-          className="bg-gradient-to-r from-primary to-chart-2"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Nuevo Presupuesto
-        </Button>
+        <div className="flex justify-start sm:justify-end">
+          <PeriodFilter value={filterPeriod} onChange={setFilterPeriod} />
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
@@ -424,7 +430,7 @@ function BudgetsPage() {
 
               <div className="grid gap-2">
                 <Label>Período</Label>
-                <Select value={period} onValueChange={(v) => setPeriod(v as typeof period)}>
+                <Select value={budgetPeriod} onValueChange={(v) => setBudgetPeriod(v as typeof budgetPeriod)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

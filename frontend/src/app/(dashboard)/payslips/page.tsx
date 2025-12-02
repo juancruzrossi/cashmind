@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { usePayslips } from '@/hooks/usePayslips';
 import { PayslipUploader } from '@/components/payslip/payslip-uploader';
+import { PeriodFilter, PeriodValue, getDateRange } from '@/components/dashboard/period-filter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -105,6 +106,8 @@ function PayslipsPage() {
 
   const [isUploaderOpen, setIsUploaderOpen] = useState(searchParams.get('upload') === 'true');
   const [selectedPayslip, setSelectedPayslip] = useState<Payslip | null>(null);
+  const [period, setPeriod] = useState<PeriodValue>({ type: 'current_year' });
+  const { startDate, endDate } = getDateRange(period);
 
   const MONTH_ORDER: Record<string, number> = {
     'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4,
@@ -112,7 +115,15 @@ function PayslipsPage() {
     'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12
   };
 
-  const sortedPayslips = [...payslips].sort((a, b) => {
+  const filteredPayslips = useMemo(() => {
+    return payslips.filter((p) => {
+      const monthNum = MONTH_ORDER[p.month.toLowerCase()] || 1;
+      const payslipDate = new Date(p.year, monthNum - 1, 15);
+      return payslipDate >= new Date(startDate) && payslipDate <= new Date(endDate);
+    });
+  }, [payslips, startDate, endDate]);
+
+  const sortedPayslips = [...filteredPayslips].sort((a, b) => {
     const monthA = MONTH_ORDER[a.month.toLowerCase()] || 0;
     const monthB = MONTH_ORDER[b.month.toLowerCase()] || 0;
 
@@ -122,13 +133,13 @@ function PayslipsPage() {
     return monthB - monthA;
   });
 
-  const totalGross = payslips.reduce((sum, p) => sum + Number(p.gross_salary), 0);
-  const totalNet = payslips.reduce((sum, p) => sum + Number(p.net_salary), 0);
+  const totalGross = filteredPayslips.reduce((sum, p) => sum + Number(p.gross_salary), 0);
+  const totalNet = filteredPayslips.reduce((sum, p) => sum + Number(p.net_salary), 0);
   const totalDeductions = totalGross - totalNet;
   const avgDeductionRate = totalGross > 0 ? ((totalDeductions / totalGross) * 100) : 0;
 
   // Calculate salary variation data (chronologically sorted for the chart)
-  const chronologicalPayslips = [...payslips].sort((a, b) => {
+  const chronologicalPayslips = [...filteredPayslips].sort((a, b) => {
     const monthA = MONTH_ORDER[a.month.toLowerCase()] || 0;
     const monthB = MONTH_ORDER[b.month.toLowerCase()] || 0;
     if (a.year !== b.year) return a.year - b.year;
@@ -175,20 +186,25 @@ function PayslipsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Recibos de Sueldo</h1>
-          <p className="text-muted-foreground mt-1">
-            Analiza y gestiona tus recibos con IA
-          </p>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Recibos de Sueldo</h1>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+              Analiza y gestiona tus recibos con IA
+            </p>
+          </div>
+          <Button
+            onClick={() => setIsUploaderOpen(true)}
+            className="bg-gradient-to-r from-primary to-chart-2 w-full sm:w-auto"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Subir Recibo
+          </Button>
         </div>
-        <Button
-          onClick={() => setIsUploaderOpen(true)}
-          className="bg-gradient-to-r from-primary to-chart-2"
-        >
-          <Upload className="w-4 h-4 mr-2" />
-          Subir Recibo
-        </Button>
+        <div className="flex justify-start sm:justify-end">
+          <PeriodFilter value={period} onChange={setPeriod} />
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
@@ -196,8 +212,8 @@ function PayslipsPage() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Recibos Totales</p>
-                <p className="text-2xl font-bold">{payslips.length}</p>
+                <p className="text-sm text-muted-foreground">Recibos</p>
+                <p className="text-2xl font-bold">{filteredPayslips.length}</p>
               </div>
               <div className="p-3 rounded-xl bg-primary/20">
                 <Receipt className="w-5 h-5 text-primary" />
