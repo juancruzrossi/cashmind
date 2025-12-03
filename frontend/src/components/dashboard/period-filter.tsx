@@ -112,14 +112,10 @@ function YearPicker({
   onSelect: (year: number) => void;
 }) {
   const currentYear = new Date().getFullYear();
-  const [viewYear, setViewYear] = useState(selectedYear || currentYear);
+  const [page, setPage] = useState(0);
 
-  const years = Array.from({ length: 6 }, (_, i) => viewYear - i);
-
-  const handleSelect = (year: number) => {
-    setViewYear(year);
-    onSelect(year);
-  };
+  const startYear = currentYear - 5 - (page * 6);
+  const years = Array.from({ length: 6 }, (_, i) => startYear + i);
 
   return (
     <div className="w-[280px]">
@@ -128,7 +124,7 @@ function YearPicker({
           variant="ghost"
           size="icon"
           className="h-7 w-7"
-          onClick={() => setViewYear(viewYear - 6)}
+          onClick={() => setPage(page + 1)}
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
@@ -137,8 +133,8 @@ function YearPicker({
           variant="ghost"
           size="icon"
           className="h-7 w-7"
-          onClick={() => setViewYear(Math.min(viewYear + 6, currentYear))}
-          disabled={viewYear >= currentYear}
+          onClick={() => setPage(page - 1)}
+          disabled={page === 0}
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
@@ -150,7 +146,7 @@ function YearPicker({
             variant={selectedYear === year ? 'default' : 'ghost'}
             size="sm"
             className="h-9 text-xs"
-            onClick={() => handleSelect(year)}
+            onClick={() => onSelect(year)}
           >
             {year}
           </Button>
