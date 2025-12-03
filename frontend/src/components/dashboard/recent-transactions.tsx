@@ -77,24 +77,25 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
 
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate text-sm">{transaction.description}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <Badge variant="secondary" className="text-xs shrink-0">
-                        {getCategoryLabel(transaction.category, transaction.type)}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground shrink-0">
-                        {formatDate(transaction.date)}
+                    <div className="flex items-center justify-between gap-2 mt-0.5">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="text-xs shrink-0">
+                          {getCategoryLabel(transaction.category, transaction.type)}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground shrink-0">
+                          {formatDate(transaction.date)}
+                        </span>
+                      </div>
+                      <span
+                        className={cn(
+                          'text-sm font-semibold whitespace-nowrap',
+                          transaction.type === 'income' ? 'text-emerald-400' : 'text-red-400'
+                        )}
+                      >
+                        {transaction.type === 'income' ? '+' : '-'}
+                        {formatCurrency(transaction.amount)}
                       </span>
                     </div>
-                  </div>
-
-                  <div
-                    className={cn(
-                      'text-right font-semibold shrink-0 text-sm whitespace-nowrap pl-2',
-                      transaction.type === 'income' ? 'text-emerald-400' : 'text-red-400'
-                    )}
-                  >
-                    {transaction.type === 'income' ? '+' : '-'}
-                    {formatCurrency(transaction.amount)}
                   </div>
                 </div>
               ))}
