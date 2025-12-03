@@ -113,24 +113,53 @@ function YearPicker({
 }) {
   const now = new Date();
   const currentYear = now.getFullYear();
-  const years = Array.from({ length: 6 }, (_, i) => currentYear - i);
+  const [startYear, setStartYear] = useState(selectedYear ? Math.floor(selectedYear / 6) * 6 : Math.floor(currentYear / 6) * 6);
+
+  const years = Array.from({ length: 6 }, (_, i) => startYear + 5 - i);
 
   return (
-    <div className="grid grid-cols-3 gap-2">
-      {years.map((year) => {
-        const isSelected = selectedYear === year;
-        return (
-          <Button
-            key={year}
-            variant={isSelected ? 'default' : 'ghost'}
-            size="sm"
-            className="h-9 text-xs"
-            onClick={() => onSelect(year)}
-          >
-            {year}
-          </Button>
-        );
-      })}
+    <div className="w-[280px]">
+      <div className="flex items-center justify-between mb-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => setStartYear(startYear - 6)}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <span className="font-semibold text-sm">{years[years.length - 1]} - {years[0]}</span>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => setStartYear(startYear + 6)}
+          disabled={startYear + 6 > currentYear}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        {years.map((year) => {
+          const isFuture = year > currentYear;
+          const isSelected = selectedYear === year;
+          return (
+            <Button
+              key={year}
+              variant={isSelected ? 'default' : 'ghost'}
+              size="sm"
+              className={cn(
+                'h-9 text-xs',
+                isFuture && 'opacity-50 cursor-not-allowed'
+              )}
+              disabled={isFuture}
+              onClick={() => onSelect(year)}
+            >
+              {year}
+            </Button>
+          );
+        })}
+      </div>
     </div>
   );
 }
