@@ -119,11 +119,13 @@ function GoalsPage() {
     setIsSubmitting(true);
 
     try {
+      const normalizedTarget = targetAmount.replace(',', '.');
+      const normalizedCurrent = currentAmount.replace(',', '.');
       const goalData = {
         name,
         description,
-        target_amount: parseFloat(targetAmount),
-        current_amount: parseFloat(currentAmount) || 0,
+        target_amount: parseFloat(normalizedTarget),
+        current_amount: parseFloat(normalizedCurrent) || 0,
         category,
         deadline: deadline?.toISOString().split('T')[0],
         color: GOAL_CATEGORIES.find((c) => c.value === category)?.color,
@@ -175,7 +177,8 @@ function GoalsPage() {
     if (selectedGoal && contributeAmount) {
       setIsSubmitting(true);
       try {
-        await contributeToGoal(selectedGoal.id, parseFloat(contributeAmount));
+        const normalizedContribute = contributeAmount.replace(',', '.');
+        await contributeToGoal(selectedGoal.id, parseFloat(normalizedContribute));
         setIsContributeOpen(false);
         setContributeAmount('');
         setSelectedGoal(null);
@@ -490,13 +493,12 @@ function GoalsPage() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                   <Input
                     id="targetAmount"
-                    type="number"
-                    step="0.01"
-                    min="0"
+                    type="text"
+                    inputMode="decimal"
                     value={targetAmount}
-                    onChange={(e) => setTargetAmount(e.target.value)}
+                    onChange={(e) => setTargetAmount(e.target.value.replace(/[^0-9.,]/g, ''))}
                     className="pl-8"
-                    placeholder="0.00"
+                    placeholder="0,00"
                     required
                   />
                 </div>
@@ -508,13 +510,12 @@ function GoalsPage() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                   <Input
                     id="currentAmount"
-                    type="number"
-                    step="0.01"
-                    min="0"
+                    type="text"
+                    inputMode="decimal"
                     value={currentAmount}
-                    onChange={(e) => setCurrentAmount(e.target.value)}
+                    onChange={(e) => setCurrentAmount(e.target.value.replace(/[^0-9.,]/g, ''))}
                     className="pl-8"
-                    placeholder="0.00"
+                    placeholder="0,00"
                   />
                 </div>
               </div>
@@ -576,13 +577,12 @@ function GoalsPage() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                 <Input
                   id="contributeAmount"
-                  type="number"
-                  step="0.01"
-                  min="0"
+                  type="text"
+                  inputMode="decimal"
                   value={contributeAmount}
-                  onChange={(e) => setContributeAmount(e.target.value)}
+                  onChange={(e) => setContributeAmount(e.target.value.replace(/[^0-9.,]/g, ''))}
                   className="pl-8"
-                  placeholder="0.00"
+                  placeholder="0,00"
                 />
               </div>
             </div>

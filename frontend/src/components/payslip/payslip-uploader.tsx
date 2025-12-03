@@ -86,8 +86,8 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
   const [employer, setEmployer] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState(new Date().getFullYear());
-  const [grossSalary, setGrossSalary] = useState(0);
-  const [netSalary, setNetSalary] = useState(0);
+  const [grossSalary, setGrossSalary] = useState('');
+  const [netSalary, setNetSalary] = useState('');
 
   const handleAnalyze = async (file: File) => {
     setStatus('uploading');
@@ -114,8 +114,8 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
       setEmployer(result.data.employer || '');
       setMonth(result.data.paymentDate?.month || result.data.period?.month || '');
       setYear(result.data.paymentDate?.year || result.data.period?.year || new Date().getFullYear());
-      setGrossSalary(result.data.grossSalary || 0);
-      setNetSalary(result.data.netSalary || 0);
+      setGrossSalary(result.data.grossSalary?.toString() || '');
+      setNetSalary(result.data.netSalary?.toString() || '');
 
       setProgress(100);
       setStatus('success');
@@ -129,11 +129,13 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
     if (!analyzedData) return;
 
     try {
+      const normalizedGross = grossSalary ? parseFloat(grossSalary.replace(',', '.')) : 0;
+      const normalizedNet = netSalary ? parseFloat(netSalary.replace(',', '.')) : 0;
       await addPayslip({
         month: month || analyzedData.paymentDate?.month || analyzedData.period?.month || 'Desconocido',
         year: year || analyzedData.paymentDate?.year || analyzedData.period?.year || new Date().getFullYear(),
-        gross_salary: grossSalary || analyzedData.grossSalary || 0,
-        net_salary: netSalary || analyzedData.netSalary || 0,
+        gross_salary: normalizedGross || analyzedData.grossSalary || 0,
+        net_salary: normalizedNet || analyzedData.netSalary || 0,
         employer: employer || analyzedData.employer,
         position: analyzedData.position,
         deductions: analyzedData.deductions?.map(d => ({
@@ -166,8 +168,8 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
     setEmployer('');
     setMonth('');
     setYear(new Date().getFullYear());
-    setGrossSalary(0);
-    setNetSalary(0);
+    setGrossSalary('');
+    setNetSalary('');
     onOpenChange(false);
   };
 
@@ -329,17 +331,21 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
                   <div className="space-y-2">
                     <Label>Salario Bruto</Label>
                     <Input
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
                       value={grossSalary}
-                      onChange={(e) => setGrossSalary(parseFloat(e.target.value) || 0)}
+                      onChange={(e) => setGrossSalary(e.target.value.replace(/[^0-9.,]/g, ''))}
+                      placeholder="0,00"
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Salario Neto</Label>
                     <Input
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
                       value={netSalary}
-                      onChange={(e) => setNetSalary(parseFloat(e.target.value) || 0)}
+                      onChange={(e) => setNetSalary(e.target.value.replace(/[^0-9.,]/g, ''))}
+                      placeholder="0,00"
                     />
                   </div>
                 </div>
@@ -368,7 +374,7 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Salario Bruto</p>
                       <p className="text-2xl font-bold text-primary">
-                        {formatCurrency(grossSalary || analyzedData.grossSalary || 0)}
+                        {formatCurrency(grossSalary ? parseFloat(grossSalary.replace(',', '.')) : analyzedData.grossSalary || 0)}
                       </p>
                     </CardContent>
                   </Card>
@@ -376,7 +382,7 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Salario Neto</p>
                       <p className="text-2xl font-bold text-emerald-400">
-                        {formatCurrency(netSalary || analyzedData.netSalary || 0)}
+                        {formatCurrency(netSalary ? parseFloat(netSalary.replace(',', '.')) : analyzedData.netSalary || 0)}
                       </p>
                     </CardContent>
                   </Card>
@@ -432,7 +438,7 @@ export function PayslipUploader({ open, onOpenChange }: PayslipUploaderProps) {
               <div>
                 <p className="text-sm font-medium">Crear transacción de ingreso</p>
                 <p className="text-xs text-muted-foreground">
-                  Se creará automáticamente un ingreso de {formatCurrency(netSalary || analyzedData.netSalary || 0)} para {month || analyzedData.paymentDate?.month || analyzedData.period?.month} {year || analyzedData.paymentDate?.year || analyzedData.period?.year}
+                  Se creará automáticamente un ingreso de {formatCurrency(netSalary ? parseFloat(netSalary.replace(',', '.')) : analyzedData.netSalary || 0)} para {month || analyzedData.paymentDate?.month || analyzedData.period?.month} {year || analyzedData.paymentDate?.year || analyzedData.period?.year}
                 </p>
               </div>
             </div>

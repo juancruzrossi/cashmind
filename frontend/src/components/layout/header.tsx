@@ -20,7 +20,7 @@ export function Header() {
   const initials = username.slice(0, 2).toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 h-14 border-b border-[rgba(255,255,255,0.04)] bg-[#0a0a0c]/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 h-14 border-b border-[rgba(255,255,255,0.04)] bg-[#0a0a0c]">
       <div className="flex items-center justify-between h-full px-4 md:px-6">
         <div className="lg:hidden">
           <MobileSidebar />

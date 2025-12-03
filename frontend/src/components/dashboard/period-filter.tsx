@@ -14,7 +14,7 @@ import {
   subtractDays,
 } from '@/lib/date-utils';
 
-export type PeriodType = 'current_month' | 'current_year' | 'last_365_days' | 'custom_month';
+export type PeriodType = 'current_month' | 'current_year' | 'last_365_days' | 'custom_month' | 'custom_year';
 
 export interface PeriodValue {
   type: PeriodType;
@@ -60,6 +60,15 @@ export function getDateRange(period: PeriodValue): { startDate: string; endDate:
         endDate = formatLocalDate(getLocalMonthEnd(today));
       }
       break;
+    case 'custom_year':
+      if (period.year !== undefined) {
+        startDate = formatLocalDate(new Date(period.year, 0, 1));
+        endDate = formatLocalDate(new Date(period.year, 11, 31));
+      } else {
+        startDate = formatLocalDate(getLocalYearStart(today));
+        endDate = formatLocalDate(new Date(today.getFullYear(), 11, 31));
+      }
+      break;
     default:
       startDate = formatLocalDate(getLocalYearStart(today));
       endDate = formatLocalDate(new Date(today.getFullYear(), 11, 31));
@@ -85,9 +94,45 @@ export function getPeriodLabel(period: PeriodValue): string {
         return `${MONTHS_SHORT[period.month]} ${period.year}`;
       }
       return 'Elegir mes';
+    case 'custom_year':
+      if (period.year !== undefined) {
+        return `Año ${period.year}`;
+      }
+      return 'Elegir año';
     default:
       return 'Período';
   }
+}
+
+function YearPicker({
+  selectedYear,
+  onSelect
+}: {
+  selectedYear?: number;
+  onSelect: (year: number) => void;
+}) {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const years = Array.from({ length: 6 }, (_, i) => currentYear - i);
+
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {years.map((year) => {
+        const isSelected = selectedYear === year;
+        return (
+          <Button
+            key={year}
+            variant={isSelected ? 'default' : 'ghost'}
+            size="sm"
+            className="h-9 text-xs"
+            onClick={() => onSelect(year)}
+          >
+            {year}
+          </Button>
+        );
+      })}
+    </div>
+  );
 }
 
 function MonthPicker({
@@ -103,7 +148,7 @@ function MonthPicker({
   const [viewYear, setViewYear] = useState(selectedYear || now.getFullYear());
 
   return (
-    <div className="p-3 w-[280px]">
+    <div className="w-[280px]">
       <div className="flex items-center justify-between mb-4">
         <Button
           variant="ghost"
@@ -150,15 +195,20 @@ function MonthPicker({
 }
 
 export function PeriodFilter({ value, onChange }: PeriodFilterProps) {
-  const [monthPickerOpen, setMonthPickerOpen] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   const handleMonthSelect = (month: number, year: number) => {
     onChange({ type: 'custom_month', month, year });
-    setMonthPickerOpen(false);
+    setPickerOpen(false);
+  };
+
+  const handleYearSelect = (year: number) => {
+    onChange({ type: 'custom_year', year });
+    setPickerOpen(false);
   };
 
   return (
-    <Popover open={monthPickerOpen} onOpenChange={setMonthPickerOpen}>
+    <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -175,7 +225,7 @@ export function PeriodFilter({ value, onChange }: PeriodFilterProps) {
               variant={value.type === 'current_month' ? 'default' : 'ghost'}
               size="sm"
               className="text-xs justify-start"
-              onClick={() => { onChange({ type: 'current_month' }); setMonthPickerOpen(false); }}
+              onClick={() => { onChange({ type: 'current_month' }); setPickerOpen(false); }}
             >
               Mes actual
             </Button>
@@ -183,7 +233,7 @@ export function PeriodFilter({ value, onChange }: PeriodFilterProps) {
               variant={value.type === 'current_year' ? 'default' : 'ghost'}
               size="sm"
               className="text-xs justify-start"
-              onClick={() => { onChange({ type: 'current_year' }); setMonthPickerOpen(false); }}
+              onClick={() => { onChange({ type: 'current_year' }); setPickerOpen(false); }}
             >
               Año corriente
             </Button>
@@ -191,14 +241,21 @@ export function PeriodFilter({ value, onChange }: PeriodFilterProps) {
               variant={value.type === 'last_365_days' ? 'default' : 'ghost'}
               size="sm"
               className="text-xs justify-start col-span-2"
-              onClick={() => { onChange({ type: 'last_365_days' }); setMonthPickerOpen(false); }}
+              onClick={() => { onChange({ type: 'last_365_days' }); setPickerOpen(false); }}
             >
               Último año (365 días)
             </Button>
           </div>
         </div>
-        <div className="p-2 border-t border-[rgba(255,255,255,0.04)]">
-          <p className="text-xs text-muted-foreground mb-2 px-1">O elegí un mes:</p>
+        <div className="p-2 border-b border-[rgba(255,255,255,0.04)]">
+          <p className="text-xs text-muted-foreground mb-2 px-1">O elegí un año completo:</p>
+          <YearPicker
+            selectedYear={value.type === 'custom_year' ? value.year : undefined}
+            onSelect={handleYearSelect}
+          />
+        </div>
+        <div className="p-2">
+          <p className="text-xs text-muted-foreground mb-2 px-1">O elegí un mes específico:</p>
           <MonthPicker
             selectedMonth={value.type === 'custom_month' ? value.month : undefined}
             selectedYear={value.type === 'custom_month' ? value.year : undefined}
