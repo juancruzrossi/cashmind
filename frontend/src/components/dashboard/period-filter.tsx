@@ -111,11 +111,10 @@ function YearPicker({
   selectedYear?: number;
   onSelect: (year: number) => void;
 }) {
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const [startYear, setStartYear] = useState(selectedYear ? Math.floor(selectedYear / 6) * 6 : Math.floor(currentYear / 6) * 6);
+  const currentYear = new Date().getFullYear();
+  const [endYear, setEndYear] = useState(currentYear);
 
-  const years = Array.from({ length: 6 }, (_, i) => startYear + 5 - i);
+  const years = Array.from({ length: 6 }, (_, i) => endYear - i);
 
   return (
     <div className="w-[280px]">
@@ -124,41 +123,33 @@ function YearPicker({
           variant="ghost"
           size="icon"
           className="h-7 w-7"
-          onClick={() => setStartYear(startYear - 6)}
+          onClick={() => setEndYear(endYear - 6)}
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <span className="font-semibold text-sm">{years[years.length - 1]} - {years[0]}</span>
+        <span className="font-semibold">{endYear}</span>
         <Button
           variant="ghost"
           size="icon"
           className="h-7 w-7"
-          onClick={() => setStartYear(startYear + 6)}
-          disabled={startYear + 6 > currentYear}
+          onClick={() => setEndYear(endYear + 6)}
+          disabled={endYear >= currentYear}
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
       <div className="grid grid-cols-3 gap-2">
-        {years.map((year) => {
-          const isFuture = year > currentYear;
-          const isSelected = selectedYear === year;
-          return (
-            <Button
-              key={year}
-              variant={isSelected ? 'default' : 'ghost'}
-              size="sm"
-              className={cn(
-                'h-9 text-xs',
-                isFuture && 'opacity-50 cursor-not-allowed'
-              )}
-              disabled={isFuture}
-              onClick={() => onSelect(year)}
-            >
-              {year}
-            </Button>
-          );
-        })}
+        {years.map((year) => (
+          <Button
+            key={year}
+            variant={selectedYear === year ? 'default' : 'ghost'}
+            size="sm"
+            className="h-9 text-xs"
+            onClick={() => onSelect(year)}
+          >
+            {year}
+          </Button>
+        ))}
       </div>
     </div>
   );
