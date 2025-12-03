@@ -112,9 +112,14 @@ function YearPicker({
   onSelect: (year: number) => void;
 }) {
   const currentYear = new Date().getFullYear();
-  const [endYear, setEndYear] = useState(currentYear);
+  const [viewYear, setViewYear] = useState(selectedYear || currentYear);
 
-  const years = Array.from({ length: 6 }, (_, i) => endYear - i);
+  const years = Array.from({ length: 6 }, (_, i) => viewYear - i);
+
+  const handleSelect = (year: number) => {
+    setViewYear(year);
+    onSelect(year);
+  };
 
   return (
     <div className="w-[280px]">
@@ -123,17 +128,17 @@ function YearPicker({
           variant="ghost"
           size="icon"
           className="h-7 w-7"
-          onClick={() => setEndYear(endYear - 6)}
+          onClick={() => setViewYear(viewYear - 6)}
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <span className="font-semibold">{endYear}</span>
+        <span className="font-semibold">{selectedYear || currentYear}</span>
         <Button
           variant="ghost"
           size="icon"
           className="h-7 w-7"
-          onClick={() => setEndYear(endYear + 6)}
-          disabled={endYear >= currentYear}
+          onClick={() => setViewYear(Math.min(viewYear + 6, currentYear))}
+          disabled={viewYear >= currentYear}
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
@@ -145,7 +150,7 @@ function YearPicker({
             variant={selectedYear === year ? 'default' : 'ghost'}
             size="sm"
             className="h-9 text-xs"
-            onClick={() => onSelect(year)}
+            onClick={() => handleSelect(year)}
           >
             {year}
           </Button>
