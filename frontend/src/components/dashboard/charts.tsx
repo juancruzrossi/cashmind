@@ -192,7 +192,7 @@ export function CategoryPieChart({ data, title, description }: CategoryPieChartP
                   if (active && payload && payload.length) {
                     const data = payload[0].payload as CategoryBreakdown;
                     return (
-                      <div className="bg-popover/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl">
+                      <div className="bg-popover border border-border rounded-lg p-3 shadow-xl">
                         <p className="text-sm font-medium text-foreground">
                           {CATEGORY_LABELS[data.category] || data.category}
                         </p>

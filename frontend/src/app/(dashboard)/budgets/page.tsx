@@ -101,10 +101,11 @@ function BudgetsPage() {
     setIsSubmitting(true);
 
     try {
+      const normalizedLimit = limit.replace(',', '.');
       const budgetData = {
         name,
         category,
-        limit: parseFloat(limit),
+        limit: parseFloat(normalizedLimit),
         period: budgetPeriod,
         color: CATEGORY_COLORS[category] || '#6B7280',
       };
@@ -416,13 +417,12 @@ function BudgetsPage() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                   <Input
                     id="limit"
-                    type="number"
-                    step="0.01"
-                    min="0"
+                    type="text"
+                    inputMode="decimal"
                     value={limit}
-                    onChange={(e) => setLimit(e.target.value)}
+                    onChange={(e) => setLimit(e.target.value.replace(/[^0-9.,]/g, ''))}
                     className="pl-8"
-                    placeholder="0.00"
+                    placeholder="0,00"
                     required
                   />
                 </div>
