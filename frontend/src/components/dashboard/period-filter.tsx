@@ -112,7 +112,8 @@ function YearPicker({
   onSelect: (year: number) => void;
 }) {
   const currentYear = new Date().getFullYear();
-  const [page, setPage] = useState(0);
+  const initialPage = selectedYear ? Math.floor((currentYear - selectedYear) / 6) : 0;
+  const [page, setPage] = useState(initialPage);
 
   const startYear = currentYear - 5 - (page * 6);
   const years = Array.from({ length: 6 }, (_, i) => startYear + i);
