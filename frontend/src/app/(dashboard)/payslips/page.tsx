@@ -271,8 +271,8 @@ function PayslipsPage() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-lg">Variación Salarial</CardTitle>
-                <CardDescription>Evolución del salario neto en el período</CardDescription>
+                <CardTitle className="text-lg">Evolución Salarial</CardTitle>
+                <CardDescription>Cambio del salario neto en el período</CardDescription>
               </div>
               <div className={cn(
                 "flex items-center gap-2 px-3 py-2 rounded-lg",
