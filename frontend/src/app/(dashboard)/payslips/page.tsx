@@ -159,8 +159,8 @@ function PayslipsPage() {
     };
   });
 
-  const latestVariation = salaryVariationData.length > 1
-    ? salaryVariationData[salaryVariationData.length - 1].variation
+  const totalVariation = salaryVariationData.length > 1
+    ? Number((((salaryVariationData[salaryVariationData.length - 1].salary - salaryVariationData[0].salary) / salaryVariationData[0].salary) * 100).toFixed(1))
     : 0;
 
   const handleDelete = async (id: number) => {
@@ -271,24 +271,24 @@ function PayslipsPage() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-lg">Variación Salarial</CardTitle>
-                <CardDescription>Cambio porcentual mes a mes</CardDescription>
+                <CardTitle className="text-lg">Evolución Salarial</CardTitle>
+                <CardDescription>Cambio del salario neto en el período</CardDescription>
               </div>
               <div className={cn(
                 "flex items-center gap-2 px-3 py-2 rounded-lg",
-                latestVariation > 0 && "bg-emerald-500/20 text-emerald-500",
-                latestVariation < 0 && "bg-red-500/20 text-red-500",
-                latestVariation === 0 && "bg-muted text-muted-foreground"
+                totalVariation > 0 && "bg-emerald-500/20 text-emerald-500",
+                totalVariation < 0 && "bg-red-500/20 text-red-500",
+                totalVariation === 0 && "bg-muted text-muted-foreground"
               )}>
-                {latestVariation > 0 ? (
+                {totalVariation > 0 ? (
                   <ArrowUpRight className="w-5 h-5" />
-                ) : latestVariation < 0 ? (
+                ) : totalVariation < 0 ? (
                   <ArrowDownRight className="w-5 h-5" />
                 ) : (
                   <Minus className="w-5 h-5" />
                 )}
                 <span className="text-xl font-bold">
-                  {latestVariation > 0 ? '+' : ''}{latestVariation}%
+                  {totalVariation > 0 ? '+' : ''}{totalVariation}%
                 </span>
               </div>
             </div>
