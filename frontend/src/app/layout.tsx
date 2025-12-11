@@ -17,6 +17,15 @@ export const metadata: Metadata = {
   title: "CashMind - Tu Mente Financiera Personal",
   description: "Gestiona tus finanzas personales con inteligencia. Tracking de gastos, análisis de recibos de sueldo con IA, presupuestos y metas financieras.",
   keywords: ["finanzas personales", "gestión de gastos", "presupuesto", "OCR", "recibos de sueldo"],
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "CashMind",
+  },
+  icons: {
+    apple: "/icon-192.png",
+  },
 };
 
 export default function RootLayout({
