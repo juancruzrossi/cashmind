@@ -1,0 +1,21 @@
+{
+  "name": "CashMind - Tu Mente Financiera Personal",
+  "short_name": "CashMind",
+  "description": "Gestiona tus finanzas personales con inteligencia",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0c",
+  "theme_color": "#d4a853",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
