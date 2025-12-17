@@ -260,6 +260,24 @@ class ApiService {
       body: JSON.stringify({ amount }),
     });
   }
+
+  // Chat
+  async chatInterpret(message: string, context?: string, collectedData?: Record<string, unknown>) {
+    return this.request('/chat/interpret/', {
+      method: 'POST',
+      body: JSON.stringify({
+        message,
+        context,
+        collected_data: collectedData,
+      }),
+    });
+  }
+
+  async chatAnalyzeReceipt(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.requestFormData('/chat/analyze-receipt/', formData);
+  }
 }
 
 export const api = new ApiService();

@@ -18,6 +18,7 @@ from .serializers import (
     GoalContributeSerializer
 )
 from .services.gemini import GeminiService
+from .services.chat import ChatService
 
 User = get_user_model()
 
@@ -395,3 +396,77 @@ class GoalViewSet(viewsets.ModelViewSet):
             return Response(GoalSerializer(goal).data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChatInterpretView(APIView):
+    """Interpret user message for chatbot NLU"""
+
+    def post(self, request):
+        message = request.data.get('message', '').strip()
+        context = request.data.get('context')
+        collected_data = request.data.get('collected_data', {})
+
+        if not message:
+            return Response(
+                {'error': 'Message is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if len(message) > 500:
+            return Response(
+                {'error': 'Message too long (max 500 characters)'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            chat_service = ChatService()
+            result = chat_service.interpret_message(message, context, collected_data)
+            return Response(result)
+        except Exception as e:
+            return Response(
+                {
+                    'intent': 'unknown',
+                    'extractedData': None,
+                    'missingFields': [],
+                    'response': 'Perdón, hubo un error. ¿Podés intentar de nuevo?',
+                    'isComplete': False
+                },
+                status=status.HTTP_200_OK
+            )
+
+
+class ChatAnalyzeReceiptView(APIView):
+    """Analyze receipt image for chatbot"""
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        file = request.FILES.get('file')
+        if not file:
+            return Response(
+                {'success': False, 'error': 'No file provided'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']
+        if file.content_type not in allowed_types:
+            return Response(
+                {'success': False, 'error': 'Tipo de archivo no válido. Usá JPG, PNG o WebP.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if file.size > 5 * 1024 * 1024:
+            return Response(
+                {'success': False, 'error': 'Archivo muy grande. Máximo 5MB.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            file_content = file.read()
+            chat_service = ChatService()
+            result = chat_service.analyze_receipt(file_content, file.content_type)
+            return Response(result)
+        except Exception as e:
+            return Response(
+                {'success': False, 'error': 'No pude analizar la imagen. Intentá con otra foto.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
