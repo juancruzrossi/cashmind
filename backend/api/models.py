@@ -57,8 +57,7 @@ class Payslip(models.Model):
 
     class Meta:
         db_table = 'payslips'
-        unique_together = ['user', 'month', 'year']
-        ordering = ['-year', '-upload_date']
+        ordering = ['-year', '-month', '-upload_date']
 
     def __str__(self):
         return f"{self.user.username} - {self.month} {self.year}"
