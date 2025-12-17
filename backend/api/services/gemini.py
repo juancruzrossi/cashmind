@@ -1,14 +1,26 @@
 import base64
 import json
+import logging
 from django.conf import settings
 from google import genai
+
+logger = logging.getLogger(__name__)
+
+
+class GeminiAPIKeyError(Exception):
+    """Raised when Gemini API key is not configured"""
+    pass
 
 
 class GeminiService:
     """Service for analyzing payslips using Google Gemini AI"""
 
     def __init__(self):
-        self.client = genai.Client(api_key=settings.GOOGLE_GEMINI_API_KEY)
+        api_key = settings.GOOGLE_GEMINI_API_KEY
+        if not api_key:
+            logger.error("GOOGLE_GEMINI_API_KEY environment variable is not set")
+            raise GeminiAPIKeyError("El servicio de análisis de recibos no está configurado. Contacta al administrador.")
+        self.client = genai.Client(api_key=api_key)
 
     def analyze_payslip(self, file_content: bytes, mime_type: str) -> dict:
         """

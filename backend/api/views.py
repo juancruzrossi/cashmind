@@ -6,12 +6,15 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.db.models import Sum, Avg
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.utils import timezone
 from datetime import timedelta
 import json
+import logging
 
 from .models import Payslip, Transaction, Budget, Goal, InvitationCode
+
+logger = logging.getLogger(__name__)
 from .serializers import (
     UserSerializer, PayslipSerializer, PayslipCreateSerializer,
     TransactionSerializer, BudgetSerializer, GoalSerializer,
@@ -136,42 +139,84 @@ class PayslipViewSet(viewsets.ModelViewSet):
             return PayslipCreateSerializer
         return PayslipSerializer
 
-    def perform_create(self, serializer):
-        payslip = serializer.save(user=self.request.user)
+    def create(self, request, *args, **kwargs):
+        """Override create to handle duplicate payslip errors gracefully"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        # Optionally create income transaction
-        create_transaction = self.request.data.get('create_transaction', False)
-        if create_transaction in [True, 'true', 'True', '1']:
-            month_map = {
-                'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4,
-                'mayo': 5, 'junio': 6, 'julio': 7, 'agosto': 8,
-                'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12
-            }
-            month_num = month_map.get(payslip.month.lower(), 1)
-            transaction_date = f"{payslip.year}-{month_num:02d}-15"
+        try:
+            with transaction.atomic():
+                payslip = serializer.save(user=request.user)
+                self._create_transaction_if_requested(request, payslip)
 
-            Transaction.objects.create(
-                user=self.request.user,
-                date=transaction_date,
-                description=f"Sueldo {payslip.month} {payslip.year}",
-                amount=payslip.net_salary,
-                type='income',
-                category='salary',
-                notes=f"Generado desde recibo - {payslip.employer or 'Sin empleador'}",
-                payslip=payslip
+            headers = self.get_success_headers(serializer.data)
+            return Response(
+                PayslipSerializer(payslip).data,
+                status=status.HTTP_201_CREATED,
+                headers=headers
             )
+        except IntegrityError as e:
+            logger.warning(f"Duplicate payslip attempt: user={request.user.id}, month={request.data.get('month')}, year={request.data.get('year')}")
+            return Response(
+                {'detail': f"Ya existe un recibo para {request.data.get('month')} {request.data.get('year')}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def _create_transaction_if_requested(self, request, payslip):
+        """Create income transaction from payslip if requested"""
+        create_transaction = request.data.get('create_transaction', False)
+        if create_transaction not in [True, 'true', 'True', '1']:
+            return
+
+        month_map = {
+            'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4,
+            'mayo': 5, 'junio': 6, 'julio': 7, 'agosto': 8,
+            'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12
+        }
+
+        month_str = payslip.month.lower() if payslip.month else ''
+        month_num = month_map.get(month_str, 1)
+        transaction_date = f"{payslip.year}-{month_num:02d}-15"
+
+        Transaction.objects.create(
+            user=request.user,
+            date=transaction_date,
+            description=f"Sueldo {payslip.month} {payslip.year}",
+            amount=payslip.net_salary,
+            type='income',
+            category='salary',
+            notes=f"Generado desde recibo - {payslip.employer or 'Sin empleador'}",
+            payslip=payslip
+        )
 
     @action(detail=False, methods=['post'], parser_classes=[MultiPartParser, FormParser])
     def analyze(self, request):
         """Analyze payslip file with Gemini AI"""
+        from .services.gemini import GeminiAPIKeyError
+
         file = request.FILES.get('file')
         if not file:
-            return Response({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'No se proporcionó archivo'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate file size (max 10MB)
+        max_size = 10 * 1024 * 1024
+        if file.size > max_size:
+            return Response({
+                'success': False,
+                'error': 'El archivo es demasiado grande. Máximo 10MB.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate mime type
+        allowed_types = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp']
+        mime_type = file.content_type or 'application/pdf'
+        if mime_type not in allowed_types:
+            return Response({
+                'success': False,
+                'error': f'Tipo de archivo no soportado: {mime_type}. Use PDF o imagen.'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             file_content = file.read()
-            mime_type = file.content_type or 'application/pdf'
-
             gemini_service = GeminiService()
             result = gemini_service.analyze_payslip(file_content, mime_type)
 
@@ -180,10 +225,23 @@ class PayslipViewSet(viewsets.ModelViewSet):
                 'data': result,
                 'file_name': file.name
             })
-        except Exception as e:
+        except GeminiAPIKeyError as e:
+            logger.error(f"Gemini API key not configured: {e}")
             return Response({
                 'success': False,
                 'error': str(e)
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse Gemini response: {e}")
+            return Response({
+                'success': False,
+                'error': 'Error al procesar la respuesta del análisis. Intenta con otro archivo.'
+            }, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        except Exception as e:
+            logger.exception(f"Unexpected error analyzing payslip: {e}")
+            return Response({
+                'success': False,
+                'error': 'Error al analizar el recibo. Intenta nuevamente.'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
