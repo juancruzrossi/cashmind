@@ -64,6 +64,11 @@ housing, transportation, food, utilities, healthcare, entertainment, shopping, e
 CATEGORIAS VALIDAS PARA INGRESOS:
 salary, freelance, investments, rental, bonus, refund, other
 
+IMPORTANTE SOBRE CATEGORIAS:
+- Si el usuario menciona algo que NO esta en las listas anteriores (ej: "apuestas", "loteria", "casino", "juegos", etc.), usa la categoria "other" y guarda lo que dijo el usuario en la descripcion.
+- NUNCA respondas con intent "unknown" solo porque no reconoces una categoria. Usa "other" y continua.
+- La descripcion debe reflejar lo que el usuario dijo (ej: "Apuestas", "Loteria", "Casino")
+
 CAMPOS PARA PRESUPUESTOS (create_budget):
 - name: string - nombre del presupuesto
 - category: string - categoria a limitar

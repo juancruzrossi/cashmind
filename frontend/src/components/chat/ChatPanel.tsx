@@ -1,9 +1,8 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { X, RotateCcw, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { useChat } from '@/hooks/useChat';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
@@ -28,13 +27,18 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
     resetChat,
   } = useChat();
 
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = useCallback(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }, []);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
+    scrollToBottom();
+  }, [messages, pendingAction, scrollToBottom]);
 
   return (
     <div className="flex flex-col h-full">
@@ -76,7 +80,10 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 px-4 py-3">
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 min-h-0 overflow-y-auto px-4 py-3"
+      >
         <div className="space-y-3">
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
@@ -97,9 +104,9 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
             />
           )}
 
-          <div ref={scrollRef} />
+          <div ref={messagesEndRef} className="h-1" />
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Input */}
       <ChatInput
