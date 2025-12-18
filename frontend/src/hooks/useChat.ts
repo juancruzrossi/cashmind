@@ -5,7 +5,6 @@ import { api } from '@/lib/api';
 import { useTransactions } from './useTransactions';
 import { useBudgets } from './useBudgets';
 import { useGoals } from './useGoals';
-import { events, EVENTS } from '@/lib/events';
 import { chatReducer, initialState } from '@/lib/chat/state-machine';
 import { validateTransactionData } from '@/lib/chat/validators';
 import type {
@@ -114,7 +113,6 @@ export function useChat() {
             notes: data.notes,
             is_recurring: false,
           });
-          events.emit(EVENTS.TRANSACTION_CHANGED);
           break;
         }
         case 'create_budget': {
