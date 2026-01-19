@@ -8,6 +8,8 @@ import { StatCard } from '@/components/dashboard/stat-card';
 import { IncomeExpenseChart, CategoryPieChart, SavingsChart, PayslipChart } from '@/components/dashboard/charts';
 import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import { QuickActions } from '@/components/dashboard/quick-actions';
+import { HealthScoreWidget } from '@/components/dashboard/health-score-widget';
+import Link from 'next/link';
 import {
   Wallet,
   TrendingUp,
@@ -175,7 +177,16 @@ export default function DashboardPage() {
         <div className="lg:col-span-2">
           <IncomeExpenseChart data={monthlyData} />
         </div>
-        <div>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <HealthScoreWidget />
+            <Link
+              href="/health"
+              className="text-xs text-primary hover:text-primary/80 hover:underline text-center transition-colors"
+            >
+              Ver detalle →
+            </Link>
+          </div>
           <QuickActions />
         </div>
       </div>
