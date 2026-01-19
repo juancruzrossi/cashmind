@@ -65,18 +65,11 @@
 
 ## IN PROGRESS
 
-### MED-008: Integrar widget en página de dashboard
+## DONE
+
+### MED-008: Integrar widget en página de dashboard (2026-01-19) - PR #16
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Agregar HealthScoreWidget al dashboard existente con link a detalle
-- **Steps:**
-  1. Importar HealthScoreWidget en página dashboard
-  2. Agregar en grid de widgets existentes
-  3. Agregar link "Ver detalle" que navegue a /health
-  4. Responsive: full width en mobile, 1/3 en desktop
-- **Acceptance:** Dashboard muestra widget de salud financiera con link funcional
-
-## DONE
 
 ### MED-007: Crear widget HealthScoreWidget para dashboard (2026-01-19) - PR #15
 - **Category:** feature
