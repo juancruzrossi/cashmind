@@ -4,19 +4,11 @@
 
 ## IN PROGRESS
 
-### LOW-013: Tests unitarios backend para health score
+## DONE
+
+### LOW-013: Tests unitarios backend para health score (2026-01-19) - PR #21
 - **Category:** test
 - **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Tests para servicio y endpoints de health score
-- **Steps:**
-  1. Crear `api/tests/test_health_score.py`
-  2. Tests para cada método de cálculo en HealthScoreService
-  3. Tests para endpoint /api/health-score/ (con datos, sin datos)
-  4. Tests para endpoint /api/health-score/advice/
-  5. Test para caso sin ingresos = rojo automático
-- **Acceptance:** `python manage.py test api.tests.test_health_score` pasa
-
-## DONE
 
 ### LOW-012: Implementar onboarding guiado para nuevos usuarios (2026-01-19) - PR #20
 - **Category:** feature

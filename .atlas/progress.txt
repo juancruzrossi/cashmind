@@ -237,3 +237,20 @@ https://github.com/juancruzrossi/cashmind/pull/20
 - Progress bars show current/required counts
 - Navigation buttons link to relevant pages for adding data
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+
+## 2026-01-19 - LOW-013: Tests unitarios backend para health score (test)
+
+### Summary:
+Added comprehensive unit tests for health score backend endpoints. Fixed existing tests that called non-existent method, added 19 new endpoint tests covering all 3 API endpoints.
+
+### Changes:
+- backend/api/tests/test_health_score.py: Fixed `check_onboarding_needed` tests (renamed to `get_onboarding_status`), added HealthScoreEndpointTest (7 tests), HealthScoreAdviceEndpointTest (6 tests), HealthScoreHistoryEndpointTest (6 tests)
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/21
+
+### Notes for next developer:
+- Total: 51 tests, all passing
+- Endpoint tests use APITestCase with force_authenticate
+- Advice endpoint tests mock GeminiService to avoid API calls
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning
