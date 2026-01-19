@@ -128,3 +128,20 @@ https://github.com/juancruzrossi/cashmind/pull/14
 - Hook uses AbortController for cleanup on unmount
 - Advice is fetched separately from health score data (only if not in onboarding state)
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+
+## 2026-01-19 - MED-007: Crear widget HealthScoreWidget para dashboard (feature)
+
+### Summary:
+Added `HealthScoreWidget` component that displays financial health as a traffic light indicator (green/yellow/red) with proper loading, error, and onboarding states.
+
+### Changes:
+- frontend/src/components/dashboard/health-score-widget.tsx: New widget component with traffic light visualization
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/15
+
+### Notes for next developer:
+- Colors: green=#22c55e, yellow=#eab308, red=#ef4444
+- Status labels in Spanish: Excelente/Regular/Necesita Atención
+- Includes aria-live regions for accessibility
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning

@@ -76,20 +76,11 @@
 
 ## IN PROGRESS
 
-### MED-007: Crear widget HealthScoreWidget para dashboard
+## DONE
+
+### MED-007: Crear widget HealthScoreWidget para dashboard (2026-01-19) - PR #15
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Widget visual con semáforo para mostrar en dashboard
-- **Steps:**
-  1. Crear `components/dashboard/HealthScoreWidget.tsx`
-  2. Mostrar círculo con color según overall_status (green=#22c55e, yellow=#eab308, red=#ef4444)
-  3. Texto: "Salud Financiera" + estado en español (Excelente/Regular/Necesita Atención)
-  4. Estado loading: skeleton circular
-  5. Estado error: icono warning con retry
-  6. Usar hook useHealthScore
-- **Acceptance:** Widget muestra semáforo correcto según status del API
-
-## DONE
 
 ### MED-006: Crear hook useHealthScore en frontend (2026-01-19) - PR #14
 - **Category:** feature
