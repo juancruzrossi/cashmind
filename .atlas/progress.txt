@@ -178,3 +178,24 @@ https://github.com/juancruzrossi/cashmind/pull/17
 - MetricCard uses same status colors as HealthScoreWidget for consistency
 - Trend icon changes based on positive/negative value (TrendingUp/TrendingDown)
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+
+## 2026-01-19 - MED-010: Crear gráfica de evolución histórica (feature)
+
+### Summary:
+Added health score history chart showing evolution of the overall score over the last 6 months. Includes backend endpoint and frontend component using Recharts.
+
+### Changes:
+- backend/api/views.py: Added HealthScoreHistoryView returning last 6 months of snapshots
+- backend/api/urls.py: Added route for /health-score/history/
+- frontend/src/lib/api.ts: Added getHealthScoreHistory() method
+- frontend/src/components/health/history-chart.tsx: New chart component with area graph, colored dots per status, and reference lines at 40/70 thresholds
+- frontend/src/app/(dashboard)/health/page.tsx: Integrated HistoryChart below metrics grid
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/18
+
+### Notes for next developer:
+- Chart dots are colored based on overall_status (green/yellow/red)
+- Reference lines show threshold boundaries (40 for red, 70 for green)
+- Snapshots are created when user visits /health-score/ endpoint
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning
