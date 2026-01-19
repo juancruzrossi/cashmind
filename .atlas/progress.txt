@@ -161,3 +161,20 @@ https://github.com/juancruzrossi/cashmind/pull/16
 - Widget placed alongside QuickActions in 1/3 column section
 - Link uses primary color (#d4a853) with hover effect
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+
+## 2026-01-19 - MED-009: Crear página /health con sección de métricas (feature)
+
+### Summary:
+Created dedicated `/health` page with large traffic light header showing overall score and grid of 4 MetricCards for individual metrics (savings rate, fixed expenses, budget adherence, trend).
+
+### Changes:
+- frontend/src/app/(dashboard)/health/page.tsx: New page with header, error/loading/onboarding states, and metrics grid
+- frontend/src/components/health/metric-card.tsx: Reusable card component with status indicator, value, and progress bar
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/17
+
+### Notes for next developer:
+- MetricCard uses same status colors as HealthScoreWidget for consistency
+- Trend icon changes based on positive/negative value (TrendingUp/TrendingDown)
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning

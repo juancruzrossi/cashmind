@@ -53,19 +53,11 @@
 
 ## IN PROGRESS
 
-### MED-009: Crear página /health con sección de métricas
+## DONE
+
+### MED-009: Crear página /health con sección de métricas (2026-01-19) - PR #17
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Nueva página con header y grid de 4 MetricCards
-- **Steps:**
-  1. Crear `app/(dashboard)/health/page.tsx`
-  2. Header con semáforo grande + score numérico
-  3. Crear componente `components/health/MetricCard.tsx`
-  4. Grid 2x2 con 4 MetricCards: Ahorro (piggy-bank), Gastos Fijos (home), Presupuesto (target), Tendencia (trending-up/down)
-  5. Cada card muestra: semáforo, nombre, valor %, barra de progreso
-- **Acceptance:** Página /health muestra 4 cards con métricas del mes actual
-
-## DONE
 
 ### MED-008: Integrar widget en página de dashboard (2026-01-19) - PR #16
 - **Category:** feature
