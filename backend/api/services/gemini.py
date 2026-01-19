@@ -91,7 +91,7 @@ Notas importantes:
             metrics_data: Dictionary containing:
                 - savings_rate: {value: float, status: str}
                 - fixed_expenses: {value: float, status: str}
-                - budget_adherence: {value: float, status: str}
+                - expense_diversification: {value: float, status: str}
                 - trend: {value: float, status: str}
                 - overall_status: str
 

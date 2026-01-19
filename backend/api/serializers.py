@@ -142,7 +142,7 @@ class HealthScoreSerializer(serializers.Serializer):
     needs_onboarding = serializers.BooleanField()
     savings_rate = MetricSerializer()
     fixed_expenses = MetricSerializer()
-    budget_adherence = MetricSerializer()
+    expense_diversification = MetricSerializer()
     trend = MetricSerializer()
     month = serializers.DateField()
 
@@ -153,7 +153,7 @@ class HealthScoreSnapshotSerializer(serializers.ModelSerializer):
         model = HealthScoreSnapshot
         fields = [
             'id', 'month', 'savings_rate_score', 'fixed_expenses_score',
-            'budget_adherence_score', 'trend_score', 'overall_score',
+            'expense_diversification_score', 'trend_score', 'overall_score',
             'overall_status', 'cached_advice', 'advice_generated_at',
             'created_at', 'updated_at'
         ]
