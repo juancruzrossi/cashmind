@@ -111,3 +111,20 @@ https://github.com/juancruzrossi/cashmind/pull/13
 - POST always regenerates advice (for "regenerate" button)
 - Requires snapshot to exist first (call /health-score/ first)
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+
+## 2026-01-19 - MED-006: Crear hook useHealthScore en frontend (feature)
+
+### Summary:
+Added `useHealthScore` hook for fetching health score data from the backend API, including support for regenerating advice.
+
+### Changes:
+- frontend/src/hooks/useHealthScore.ts: New hook with states for data, advice, loading, error, needsOnboarding
+- frontend/src/lib/api.ts: Added getHealthScore(), getHealthScoreAdvice(), regenerateHealthScoreAdvice() methods
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/14
+
+### Notes for next developer:
+- Hook uses AbortController for cleanup on unmount
+- Advice is fetched separately from health score data (only if not in onboarding state)
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning

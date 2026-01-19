@@ -89,19 +89,11 @@
 
 ## IN PROGRESS
 
-### MED-006: Crear hook useHealthScore en frontend
+## DONE
+
+### MED-006: Crear hook useHealthScore en frontend (2026-01-19) - PR #14
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Hook para fetch de datos de salud financiera
-- **Steps:**
-  1. Crear `hooks/useHealthScore.ts`
-  2. Implementar `fetchHealthScore()` - GET /api/health-score/
-  3. Implementar `regenerateAdvice()` - POST /api/health-score/advice/
-  4. Manejar estados: loading, error, needsOnboarding, data
-  5. Seguir patrón de otros hooks (AbortController, error handling)
-- **Acceptance:** Hook exporta data, loading, error, needsOnboarding, regenerateAdvice
-
-## DONE
 
 ### MED-005: Crear endpoint API /api/health-score/advice/ (2026-01-19) - PR #13
 - **Category:** feature
