@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Payslip, Deduction, Bonus, Transaction, Budget, Goal, InvitationCode
+from .models import User, Payslip, Deduction, Bonus, Transaction, Budget, Goal, InvitationCode, HealthScoreSnapshot
 
 
 @admin.register(InvitationCode)
@@ -76,3 +76,20 @@ class GoalAdmin(admin.ModelAdmin):
     list_filter = ['category', 'deadline']
     search_fields = ['user__username', 'name', 'description']
     ordering = ['deadline', '-created_at']
+
+
+@admin.register(HealthScoreSnapshot)
+class HealthScoreSnapshotAdmin(admin.ModelAdmin):
+    list_display = ['user', 'month', 'overall_score', 'overall_status', 'created_at']
+    list_filter = ['overall_status', 'month']
+    search_fields = ['user__username']
+    ordering = ['-month', '-created_at']
+    readonly_fields = ['created_at', 'updated_at']
+
+    fieldsets = (
+        (None, {'fields': ('user', 'month')}),
+        ('Scores', {'fields': ('savings_rate_score', 'fixed_expenses_score', 'budget_adherence_score', 'trend_score')}),
+        ('Overall', {'fields': ('overall_score', 'overall_status')}),
+        ('Advice', {'fields': ('cached_advice', 'advice_generated_at'), 'classes': ('collapse',)}),
+        ('Timestamps', {'fields': ('created_at', 'updated_at'), 'classes': ('collapse',)}),
+    )
