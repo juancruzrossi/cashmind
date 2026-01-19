@@ -7,7 +7,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from api.models import User, Transaction, Budget, HealthScoreSnapshot
+from api.models import User, Transaction, HealthScoreSnapshot
 from api.services.health_score import HealthScoreService, MetricResult
 
 
@@ -42,16 +42,6 @@ class HealthScoreServiceTest(TestCase):
             amount=amount,
             type='expense',
             category=category
-        )
-
-    def _create_budget(self, category: str, limit: Decimal):
-        """Helper to create budget"""
-        return Budget.objects.create(
-            user=self.user,
-            name=f'{category} budget',
-            category=category,
-            limit=limit,
-            period='monthly'
         )
 
 
@@ -161,46 +151,45 @@ class TestCalculateFixedExpensesRatio(HealthScoreServiceTest):
         self.assertEqual(result.status, 'green')
 
 
-class TestCalculateBudgetAdherence(HealthScoreServiceTest):
-    """Test calculate_budget_adherence method"""
+class TestCalculateExpenseDiversification(HealthScoreServiceTest):
+    """Test calculate_expense_diversification method"""
 
-    def test_no_budgets_returns_red(self):
-        result = self.service.calculate_budget_adherence(self.user, self.test_month)
+    def test_no_expenses_returns_red(self):
+        result = self.service.calculate_expense_diversification(self.user, self.test_month)
         self.assertEqual(result.score, 0)
         self.assertEqual(result.status, 'red')
 
-    def test_all_budgets_met_is_green(self):
-        self._create_budget('comida', Decimal('500'))
-        self._create_budget('transporte', Decimal('200'))
-        self._create_expense(Decimal('400'), 'comida')
-        self._create_expense(Decimal('150'), 'transporte')
+    def test_well_distributed_expenses_is_green(self):
+        # Create expenses across 5 categories with equal distribution
+        categories = ['comida', 'transporte', 'entretenimiento', 'servicios', 'vivienda']
+        for cat in categories:
+            self._create_expense(Decimal('100'), cat)
 
-        result = self.service.calculate_budget_adherence(self.user, self.test_month)
-        self.assertEqual(result.value, Decimal('100'))
+        result = self.service.calculate_expense_diversification(self.user, self.test_month)
+        # HHI = 5 * (0.2)^2 = 0.2, diversification = 80%
+        self.assertGreaterEqual(result.value, 60)
         self.assertEqual(result.score, 100)
         self.assertEqual(result.status, 'green')
 
-    def test_some_budgets_exceeded_is_yellow(self):
-        self._create_budget('comida', Decimal('500'))
-        self._create_budget('transporte', Decimal('200'))
-        self._create_budget('entretenimiento', Decimal('100'))
+    def test_moderately_distributed_is_yellow(self):
+        # Create expenses with moderate concentration
         self._create_expense(Decimal('400'), 'comida')
-        self._create_expense(Decimal('250'), 'transporte')
-        self._create_expense(Decimal('50'), 'entretenimiento')
+        self._create_expense(Decimal('300'), 'transporte')
+        self._create_expense(Decimal('300'), 'entretenimiento')
 
-        result = self.service.calculate_budget_adherence(self.user, self.test_month)
-        adherence = (Decimal('2') / Decimal('3')) * 100
-        self.assertAlmostEqual(float(result.value), float(adherence), places=0)
+        result = self.service.calculate_expense_diversification(self.user, self.test_month)
+        # Check it falls in yellow range
+        self.assertGreaterEqual(result.value, 40)
+        self.assertLess(result.value, 60)
         self.assertEqual(result.status, 'yellow')
 
-    def test_most_budgets_exceeded_is_red(self):
-        self._create_budget('comida', Decimal('100'))
-        self._create_budget('transporte', Decimal('100'))
-        self._create_expense(Decimal('200'), 'comida')
-        self._create_expense(Decimal('200'), 'transporte')
+    def test_concentrated_expenses_is_red(self):
+        # All expenses in single category
+        self._create_expense(Decimal('1000'), 'comida')
 
-        result = self.service.calculate_budget_adherence(self.user, self.test_month)
-        self.assertEqual(result.value, Decimal('0'))
+        result = self.service.calculate_expense_diversification(self.user, self.test_month)
+        # HHI = 1 (100% concentration), diversification = 0%
+        self.assertEqual(result.value, 0)
         self.assertEqual(result.status, 'red')
 
 
@@ -283,21 +272,22 @@ class TestCalculateOverallScore(HealthScoreServiceTest):
     def test_weighted_calculation(self):
         savings = MetricResult(value=Decimal('25'), score=100, status='green')
         fixed = MetricResult(value=Decimal('35'), score=100, status='green')
-        budget = MetricResult(value=Decimal('90'), score=100, status='green')
+        diversification = MetricResult(value=Decimal('80'), score=100, status='green')
         trend = MetricResult(value=Decimal('10'), score=100, status='green')
 
-        overall, status = self.service.calculate_overall_score(savings, fixed, budget, trend)
+        overall, status = self.service.calculate_overall_score(savings, fixed, diversification, trend)
         self.assertEqual(overall, 100)
         self.assertEqual(status, 'green')
 
     def test_mixed_scores(self):
         savings = MetricResult(value=Decimal('15'), score=75, status='yellow')
         fixed = MetricResult(value=Decimal('50'), score=66, status='yellow')
-        budget = MetricResult(value=Decimal('60'), score=66, status='yellow')
+        diversification = MetricResult(value=Decimal('50'), score=75, status='yellow')
         trend = MetricResult(value=Decimal('-8'), score=60, status='yellow')
 
-        overall, status = self.service.calculate_overall_score(savings, fixed, budget, trend)
-        expected = (75 * 30 + 66 * 25 + 66 * 25 + 60 * 20) // 100
+        overall, status = self.service.calculate_overall_score(savings, fixed, diversification, trend)
+        # Weights: 35-25-20-20
+        expected = (75 * 35 + 66 * 25 + 75 * 20 + 60 * 20) // 100
         self.assertEqual(overall, expected)
         self.assertEqual(status, 'yellow')
 
@@ -312,61 +302,41 @@ class TestGetOnboardingStatus(HealthScoreServiceTest):
         self.assertTrue(needs_onboarding)
         self.assertEqual(onboarding_status.income_count, 0)
         self.assertEqual(onboarding_status.expense_count, 0)
-        self.assertEqual(onboarding_status.budget_count, 0)
 
     def test_missing_income_needs_onboarding(self):
-        for i in range(5):
+        for i in range(3):
             self._create_expense(Decimal('100'), 'comida', day=i+1)
-        for cat in ['comida', 'transporte', 'entretenimiento']:
-            self._create_budget(cat, Decimal('500'))
 
         needs_onboarding, onboarding_status = self.service.get_onboarding_status(
             self.user, self.test_month
         )
         self.assertTrue(needs_onboarding)
         self.assertEqual(onboarding_status.income_count, 0)
-        self.assertEqual(onboarding_status.expense_count, 5)
-        self.assertEqual(onboarding_status.budget_count, 3)
+        self.assertEqual(onboarding_status.expense_count, 3)
 
     def test_few_expenses_needs_onboarding(self):
         self._create_income(Decimal('1000'))
         self._create_expense(Decimal('100'), 'comida')
-        for cat in ['comida', 'transporte', 'entretenimiento']:
-            self._create_budget(cat, Decimal('500'))
+        self._create_expense(Decimal('100'), 'transporte', day=16)
 
         needs_onboarding, onboarding_status = self.service.get_onboarding_status(
             self.user, self.test_month
         )
         self.assertTrue(needs_onboarding)
         self.assertEqual(onboarding_status.income_count, 1)
-        self.assertEqual(onboarding_status.expense_count, 1)
-
-    def test_few_budgets_needs_onboarding(self):
-        self._create_income(Decimal('1000'))
-        for i in range(5):
-            self._create_expense(Decimal('100'), 'comida', day=i+1)
-        self._create_budget('comida', Decimal('500'))
-
-        needs_onboarding, onboarding_status = self.service.get_onboarding_status(
-            self.user, self.test_month
-        )
-        self.assertTrue(needs_onboarding)
-        self.assertEqual(onboarding_status.budget_count, 1)
+        self.assertEqual(onboarding_status.expense_count, 2)
 
     def test_sufficient_data_does_not_need_onboarding(self):
         self._create_income(Decimal('1000'))
-        for i in range(5):
-            self._create_expense(Decimal('100'), 'comida', day=i+1)
-        for cat in ['comida', 'transporte', 'entretenimiento']:
-            self._create_budget(cat, Decimal('500'))
+        for i in range(3):
+            self._create_expense(Decimal('100'), f'cat{i}', day=i+1)
 
         needs_onboarding, onboarding_status = self.service.get_onboarding_status(
             self.user, self.test_month
         )
         self.assertFalse(needs_onboarding)
         self.assertEqual(onboarding_status.income_count, 1)
-        self.assertEqual(onboarding_status.expense_count, 5)
-        self.assertEqual(onboarding_status.budget_count, 3)
+        self.assertEqual(onboarding_status.expense_count, 3)
 
 
 class TestCalculateHealthScore(HealthScoreServiceTest):
@@ -374,11 +344,10 @@ class TestCalculateHealthScore(HealthScoreServiceTest):
 
     def test_complete_calculation(self):
         self._create_income(Decimal('1000'))
-        for i in range(5):
-            self._create_expense(Decimal('100'), 'comida', day=i+1)
+        self._create_expense(Decimal('100'), 'comida', day=1)
+        self._create_expense(Decimal('100'), 'transporte', day=2)
+        self._create_expense(Decimal('100'), 'entretenimiento', day=3)
         self._create_expense(Decimal('200'), 'vivienda')
-        for cat in ['comida', 'transporte', 'entretenimiento']:
-            self._create_budget(cat, Decimal('500'))
 
         Transaction.objects.create(
             user=self.user,
@@ -438,15 +407,6 @@ class HealthScoreEndpointTest(APITestCase):
             category=category
         )
 
-    def _create_budget(self, category: str, limit: Decimal):
-        return Budget.objects.create(
-            user=self.user,
-            name=f'{category} budget',
-            category=category,
-            limit=limit,
-            period='monthly'
-        )
-
     def test_unauthenticated_request_fails(self):
         self.client.logout()
         response = self.client.get(self.url)
@@ -464,10 +424,8 @@ class HealthScoreEndpointTest(APITestCase):
     def test_get_health_score_with_data(self):
         """Test endpoint returns correct data with transactions"""
         self._create_income(Decimal('1000'))
-        for i in range(5):
-            self._create_expense(Decimal('100'), 'comida', day=i+1)
-        for cat in ['comida', 'transporte', 'entretenimiento']:
-            self._create_budget(cat, Decimal('500'))
+        for i in range(3):
+            self._create_expense(Decimal('100'), f'cat{i}', day=i+1)
 
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -475,11 +433,11 @@ class HealthScoreEndpointTest(APITestCase):
 
         self.assertIn('savings_rate', response.data)
         self.assertIn('fixed_expenses', response.data)
-        self.assertIn('budget_adherence', response.data)
+        self.assertIn('expense_diversification', response.data)
         self.assertIn('trend', response.data)
 
         # Check metric structure
-        for metric in ['savings_rate', 'fixed_expenses', 'budget_adherence', 'trend']:
+        for metric in ['savings_rate', 'fixed_expenses', 'expense_diversification', 'trend']:
             self.assertIn('value', response.data[metric])
             self.assertIn('score', response.data[metric])
             self.assertIn('status', response.data[metric])
@@ -515,7 +473,7 @@ class HealthScoreEndpointTest(APITestCase):
         self.assertIn('onboarding_status', response.data)
         self.assertIn('income_count', response.data['onboarding_status'])
         self.assertIn('expense_count', response.data['onboarding_status'])
-        self.assertIn('budget_count', response.data['onboarding_status'])
+        self.assertNotIn('budget_count', response.data['onboarding_status'])
 
     def test_no_income_returns_red_status(self):
         """Test AC-7: Month without income shows automatic red semaphore"""
@@ -649,7 +607,7 @@ class HealthScoreHistoryEndpointTest(APITestCase):
                 month=month,
                 savings_rate_score=70 + i,
                 fixed_expenses_score=70 + i,
-                budget_adherence_score=70 + i,
+                expense_diversification_score=70 + i,
                 trend_score=70 + i,
                 overall_score=70 + i,
                 overall_status='green'
@@ -678,7 +636,7 @@ class HealthScoreHistoryEndpointTest(APITestCase):
                 month=month.replace(day=1),
                 savings_rate_score=70,
                 fixed_expenses_score=70,
-                budget_adherence_score=70,
+                expense_diversification_score=70,
                 trend_score=70,
                 overall_score=70,
                 overall_status='green'
@@ -695,7 +653,7 @@ class HealthScoreHistoryEndpointTest(APITestCase):
             month=date(2026, 1, 1),
             savings_rate_score=80,
             fixed_expenses_score=75,
-            budget_adherence_score=90,
+            expense_diversification_score=90,
             trend_score=85,
             overall_score=82,
             overall_status='green'
@@ -711,7 +669,7 @@ class HealthScoreHistoryEndpointTest(APITestCase):
         self.assertIn('overall_status', entry)
         self.assertIn('savings_rate_score', entry)
         self.assertIn('fixed_expenses_score', entry)
-        self.assertIn('budget_adherence_score', entry)
+        self.assertIn('expense_diversification_score', entry)
         self.assertIn('trend_score', entry)
 
     def test_does_not_return_other_users_data(self):
@@ -726,7 +684,7 @@ class HealthScoreHistoryEndpointTest(APITestCase):
             month=date(2026, 1, 1),
             savings_rate_score=80,
             fixed_expenses_score=75,
-            budget_adherence_score=90,
+            expense_diversification_score=90,
             trend_score=85,
             overall_score=82,
             overall_status='green'
@@ -736,7 +694,7 @@ class HealthScoreHistoryEndpointTest(APITestCase):
             month=date(2026, 1, 1),
             savings_rate_score=50,
             fixed_expenses_score=50,
-            budget_adherence_score=50,
+            expense_diversification_score=50,
             trend_score=50,
             overall_score=50,
             overall_status='yellow'

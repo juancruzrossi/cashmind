@@ -489,7 +489,7 @@ class HealthScoreView(APIView):
             defaults={
                 'savings_rate_score': result.savings_rate.score,
                 'fixed_expenses_score': result.fixed_expenses.score,
-                'budget_adherence_score': result.budget_adherence.score,
+                'expense_diversification_score': result.expense_diversification.score,
                 'trend_score': result.trend.score,
                 'overall_score': result.overall_score,
                 'overall_status': result.overall_status,
@@ -510,10 +510,10 @@ class HealthScoreView(APIView):
                 'score': result.fixed_expenses.score,
                 'status': result.fixed_expenses.status,
             },
-            'budget_adherence': {
-                'value': float(result.budget_adherence.value),
-                'score': result.budget_adherence.score,
-                'status': result.budget_adherence.status,
+            'expense_diversification': {
+                'value': float(result.expense_diversification.value),
+                'score': result.expense_diversification.score,
+                'status': result.expense_diversification.status,
             },
             'trend': {
                 'value': float(result.trend.value),
@@ -527,10 +527,8 @@ class HealthScoreView(APIView):
             response_data['onboarding_status'] = {
                 'income_count': result.onboarding_status.income_count,
                 'expense_count': result.onboarding_status.expense_count,
-                'budget_count': result.onboarding_status.budget_count,
                 'income_required': result.onboarding_status.income_required,
                 'expense_required': result.onboarding_status.expense_required,
-                'budget_required': result.onboarding_status.budget_required,
             }
 
         return Response(response_data)
@@ -595,9 +593,9 @@ class HealthScoreAdviceView(APIView):
                 'value': float(result.fixed_expenses.value),
                 'status': result.fixed_expenses.status,
             },
-            'budget_adherence': {
-                'value': float(result.budget_adherence.value),
-                'status': result.budget_adherence.status,
+            'expense_diversification': {
+                'value': float(result.expense_diversification.value),
+                'status': result.expense_diversification.status,
             },
             'trend': {
                 'value': float(result.trend.value),
@@ -654,7 +652,7 @@ class HealthScoreHistoryView(APIView):
                 'overall_status': snapshot.overall_status,
                 'savings_rate_score': snapshot.savings_rate_score,
                 'fixed_expenses_score': snapshot.fixed_expenses_score,
-                'budget_adherence_score': snapshot.budget_adherence_score,
+                'expense_diversification_score': snapshot.expense_diversification_score,
                 'trend_score': snapshot.trend_score,
             })
 

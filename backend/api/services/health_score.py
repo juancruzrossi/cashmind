@@ -5,7 +5,7 @@ from typing import NamedTuple
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
 
-from api.models import Transaction, Budget, User
+from api.models import Transaction, User
 
 
 class MetricResult(NamedTuple):
@@ -19,17 +19,15 @@ class OnboardingStatus(NamedTuple):
     """Status of onboarding requirements"""
     income_count: int
     expense_count: int
-    budget_count: int
     income_required: int
     expense_required: int
-    budget_required: int
 
 
 class HealthScoreResult(NamedTuple):
     """Complete health score calculation result"""
     savings_rate: MetricResult
     fixed_expenses: MetricResult
-    budget_adherence: MetricResult
+    expense_diversification: MetricResult
     trend: MetricResult
     overall_score: int
     overall_status: str
@@ -146,54 +144,57 @@ class HealthScoreService:
 
         return MetricResult(value=ratio, score=score, status=status)
 
-    def calculate_budget_adherence(self, user: User, month: date) -> MetricResult:
+    def calculate_expense_diversification(self, user: User, month: date) -> MetricResult:
         """
-        Calculate budget adherence: categories_within_budget / total_budgeted_categories * 100
+        Calculate expense diversification using HHI (Herfindahl-Hirschman Index).
+
+        HHI = Σ(share_i²) where share_i = category_expense / total_expenses
+        Diversification = (1 - HHI) * 100 normalized
 
         Thresholds:
-        - Green: >= 80%
-        - Yellow: 50-79%
-        - Red: < 50% or no budgets defined
+        - Green: >= 60% (well distributed)
+        - Yellow: 40-59%
+        - Red: < 40% (concentrated) or no expenses
         """
         start, end = self._get_month_range(month)
 
-        budgets = Budget.objects.filter(user=user, period='monthly')
+        expenses_by_category = Transaction.objects.filter(
+            user=user,
+            type='expense',
+            date__gte=start,
+            date__lte=end
+        ).values('category').annotate(total=Sum('amount'))
 
-        if not budgets.exists():
+        if not expenses_by_category:
             return MetricResult(value=Decimal('0'), score=0, status='red')
 
-        categories_within_budget = 0
-        total_budgets = 0
+        total_expenses = sum(e['total'] for e in expenses_by_category)
 
-        for budget in budgets:
-            total_budgets += 1
-            spent = Transaction.objects.filter(
-                user=user,
-                type='expense',
-                category=budget.category,
-                date__gte=start,
-                date__lte=end
-            ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
-
-            if spent <= budget.limit:
-                categories_within_budget += 1
-
-        if total_budgets == 0:
+        if total_expenses == 0:
             return MetricResult(value=Decimal('0'), score=0, status='red')
 
-        adherence = Decimal(categories_within_budget) / Decimal(total_budgets) * 100
+        # Calculate HHI
+        hhi = Decimal('0')
+        for expense in expenses_by_category:
+            share = expense['total'] / total_expenses
+            hhi += share ** 2
 
-        if adherence >= 80:
+        # Convert HHI to diversification score (0-100)
+        # HHI ranges from 1/n (perfect distribution) to 1 (single category)
+        # We normalize: 1 - HHI gives us 0 when concentrated, ~1 when diversified
+        diversification = (1 - hhi) * 100
+
+        if diversification >= 60:
             score = 100
             status = 'green'
-        elif adherence >= 50:
-            score = int(50 + float(adherence - 50) * (50 / 30))
+        elif diversification >= 40:
+            score = int(50 + float(diversification - 40) * (50 / 20))
             status = 'yellow'
         else:
-            score = int(adherence)
+            score = max(0, int(diversification * 1.25))
             status = 'red'
 
-        return MetricResult(value=adherence, score=score, status=status)
+        return MetricResult(value=diversification, score=score, status=status)
 
     def calculate_trend(self, user: User, month: date) -> MetricResult:
         """
@@ -250,22 +251,22 @@ class HealthScoreService:
         self,
         savings: MetricResult,
         fixed: MetricResult,
-        budget: MetricResult,
+        diversification: MetricResult,
         trend: MetricResult
     ) -> tuple[int, str]:
         """
         Calculate weighted overall score.
 
         Weights:
-        - Savings rate: 30%
+        - Savings rate: 35%
         - Fixed expenses: 25%
-        - Budget adherence: 25%
+        - Expense diversification: 20%
         - Trend: 20%
         """
         weighted_score = (
-            savings.score * 30 +
+            savings.score * 35 +
             fixed.score * 25 +
-            budget.score * 25 +
+            diversification.score * 20 +
             trend.score * 20
         ) // 100
 
@@ -277,8 +278,7 @@ class HealthScoreService:
 
         Requirements:
         - At least 1 income
-        - At least 5 expense transactions
-        - At least 3 budgets defined
+        - At least 3 expense transactions
         """
         start, end = self._get_month_range(month)
 
@@ -296,25 +296,19 @@ class HealthScoreService:
             date__lte=end
         ).count()
 
-        budget_count = Budget.objects.filter(user=user, period='monthly').count()
-
         income_required = 1
-        expense_required = 5
-        budget_required = 3
+        expense_required = 3
 
         needs_onboarding = (
             income_count < income_required or
-            expense_count < expense_required or
-            budget_count < budget_required
+            expense_count < expense_required
         )
 
         onboarding_status = OnboardingStatus(
             income_count=income_count,
             expense_count=expense_count,
-            budget_count=budget_count,
             income_required=income_required,
             expense_required=expense_required,
-            budget_required=budget_required,
         )
 
         return needs_onboarding, onboarding_status
@@ -325,17 +319,17 @@ class HealthScoreService:
 
         savings = self.calculate_savings_rate(user, month)
         fixed = self.calculate_fixed_expenses_ratio(user, month)
-        budget = self.calculate_budget_adherence(user, month)
+        diversification = self.calculate_expense_diversification(user, month)
         trend = self.calculate_trend(user, month)
 
         overall_score, overall_status = self.calculate_overall_score(
-            savings, fixed, budget, trend
+            savings, fixed, diversification, trend
         )
 
         return HealthScoreResult(
             savings_rate=savings,
             fixed_expenses=fixed,
-            budget_adherence=budget,
+            expense_diversification=diversification,
             trend=trend,
             overall_score=overall_score,
             overall_status=overall_status,

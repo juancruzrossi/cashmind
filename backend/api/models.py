@@ -210,7 +210,7 @@ class HealthScoreSnapshot(models.Model):
     # Individual scores (0-100)
     savings_rate_score = models.IntegerField()
     fixed_expenses_score = models.IntegerField()
-    budget_adherence_score = models.IntegerField()
+    expense_diversification_score = models.IntegerField()
     trend_score = models.IntegerField()
 
     # Overall score (0-100)

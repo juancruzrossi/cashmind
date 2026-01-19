@@ -103,7 +103,7 @@ Notas importantes:
         metrics_info = [
             ('Tasa de Ahorro', metrics_data.get('savings_rate', {})),
             ('Gastos Fijos', metrics_data.get('fixed_expenses', {})),
-            ('Adherencia a Presupuesto', metrics_data.get('budget_adherence', {})),
+            ('Diversificación de Gastos', metrics_data.get('expense_diversification', {})),
             ('Tendencia Mensual', metrics_data.get('trend', {})),
         ]
 
@@ -135,7 +135,7 @@ INSTRUCCIONES:
 CONTEXTO DE MÉTRICAS:
 - Tasa de Ahorro: % de ingresos que quedan después de gastos. Verde ≥20%, Amarillo 10-19%, Rojo <10%
 - Gastos Fijos: % de ingresos en vivienda, servicios, transporte, seguros. Verde ≤40%, Amarillo 41-55%, Rojo >55%
-- Adherencia a Presupuesto: % de categorías donde cumpliste el límite. Verde ≥80%, Amarillo 50-79%, Rojo <50%
+- Diversificación de Gastos: qué tan distribuidos están tus gastos entre categorías. Verde ≥60%, Amarillo 40-59%, Rojo <40%
 - Tendencia Mensual: mejora/empeora vs mes anterior. Verde: mejora ≥5%, Amarillo: empeora 0-10%, Rojo: empeora >10%
 
 Responde SOLO con los consejos, sin introducción ni despedida."""

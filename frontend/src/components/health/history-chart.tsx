@@ -26,7 +26,7 @@ interface HistoryDataPoint {
   overall_status: Status;
   savings_rate_score: number;
   fixed_expenses_score: number;
-  budget_adherence_score: number;
+  expense_diversification_score: number;
   trend_score: number;
 }
 
