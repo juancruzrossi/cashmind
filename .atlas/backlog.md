@@ -2,18 +2,6 @@
 
 ## TODO
 
-### MED-010: Crear gráfica de evolución histórica
-- **Category:** feature
-- **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Line chart con evolución del score de últimos 6 meses
-- **Steps:**
-  1. Crear endpoint `GET /api/health-score/history/` que retorna últimos 6 snapshots
-  2. Crear componente `components/health/HistoryChart.tsx` usando Recharts
-  3. Eje X: meses, Eje Y: score 0-100
-  4. Línea con color según status de cada punto
-  5. Empty state si no hay historial
-- **Acceptance:** Gráfica muestra evolución con al menos 2 meses de datos
-
 ### MED-011: Crear panel de consejos con botón regenerar
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
@@ -52,6 +40,18 @@
 - **Acceptance:** `python manage.py test api.tests.test_health_score` pasa
 
 ## IN PROGRESS
+
+### MED-010: Crear gráfica de evolución histórica
+- **Category:** feature
+- **Spec:** .atlas/specs/spec-20260119-022238.md
+- **Description:** Line chart con evolución del score de últimos 6 meses
+- **Steps:**
+  1. Crear endpoint `GET /api/health-score/history/` que retorna últimos 6 snapshots
+  2. Crear componente `components/health/HistoryChart.tsx` usando Recharts
+  3. Eje X: meses, Eje Y: score 0-100
+  4. Línea con color según status de cada punto
+  5. Empty state si no hay historial
+- **Acceptance:** Gráfica muestra evolución con al menos 2 meses de datos
 
 ## DONE
 

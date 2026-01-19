@@ -617,3 +617,41 @@ class HealthScoreAdviceView(APIView):
             'generated_at': snapshot.advice_generated_at,
             'cached': False
         })
+
+
+class HealthScoreHistoryView(APIView):
+    """Get health score history for the last 6 months"""
+
+    def get(self, request):
+        from dateutil.relativedelta import relativedelta
+
+        current_month = date.today().replace(day=1)
+        six_months_ago = current_month - relativedelta(months=5)
+
+        snapshots = HealthScoreSnapshot.objects.filter(
+            user=request.user,
+            month__gte=six_months_ago,
+            month__lte=current_month
+        ).order_by('month')
+
+        MONTHS_ES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                     'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+
+        history = []
+        for snapshot in snapshots:
+            month_label = f"{MONTHS_ES[snapshot.month.month - 1]} {str(snapshot.month.year)[2:]}"
+            history.append({
+                'month': month_label,
+                'month_date': snapshot.month.isoformat(),
+                'overall_score': snapshot.overall_score,
+                'overall_status': snapshot.overall_status,
+                'savings_rate_score': snapshot.savings_rate_score,
+                'fixed_expenses_score': snapshot.fixed_expenses_score,
+                'budget_adherence_score': snapshot.budget_adherence_score,
+                'trend_score': snapshot.trend_score,
+            })
+
+        return Response({
+            'history': history,
+            'count': len(history)
+        })
