@@ -85,7 +85,7 @@ class HealthScoreService:
         if income == 0:
             return MetricResult(value=Decimal('0'), score=0, status='red')
 
-        savings_rate = ((income - expenses) / income) * 100
+        savings_rate = ((income - expenses) / income) * Decimal('100')
 
         if savings_rate >= 20:
             score = 100
@@ -130,16 +130,16 @@ class HealthScoreService:
             date__lte=end
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
-        ratio = (fixed_expenses / income) * 100
+        ratio = (fixed_expenses / income) * Decimal('100')
 
         if ratio <= 40:
             score = 100
             status = 'green'
         elif ratio <= 55:
-            score = int(100 - float(ratio - 40) * (50 / 15))
+            score = int(Decimal('100') - (ratio - Decimal('40')) * (Decimal('50') / Decimal('15')))
             status = 'yellow'
         else:
-            score = max(0, int(50 - float(ratio - 55) * 2))
+            score = max(0, int(Decimal('50') - (ratio - Decimal('55')) * 2))
             status = 'red'
 
         return MetricResult(value=ratio, score=score, status=status)
@@ -182,16 +182,16 @@ class HealthScoreService:
         # Convert HHI to diversification score (0-100)
         # HHI ranges from 1/n (perfect distribution) to 1 (single category)
         # We normalize: 1 - HHI gives us 0 when concentrated, ~1 when diversified
-        diversification = (1 - hhi) * 100
+        diversification = (Decimal('1') - hhi) * Decimal('100')
 
         if diversification >= 60:
             score = 100
             status = 'green'
         elif diversification >= 40:
-            score = int(50 + float(diversification - 40) * (50 / 20))
+            score = int(Decimal('50') + (diversification - Decimal('40')) * (Decimal('50') / Decimal('20')))
             status = 'yellow'
         else:
-            score = max(0, int(float(diversification) * 1.25))
+            score = max(0, int(diversification * Decimal('1.25')))
             status = 'red'
 
         return MetricResult(value=diversification, score=score, status=status)
@@ -230,7 +230,7 @@ class HealthScoreService:
                 return MetricResult(value=Decimal('0'), score=75, status='green')
             return MetricResult(value=Decimal('-100'), score=0, status='red')
 
-        improvement = ((previous_expenses - current_expenses) / previous_expenses) * 100
+        improvement = ((previous_expenses - current_expenses) / previous_expenses) * Decimal('100')
 
         if improvement >= 5:
             score = 100
@@ -239,10 +239,10 @@ class HealthScoreService:
             score = 75
             status = 'green'
         elif improvement >= -10:
-            score = int(50 + (improvement + 10) * 5)
+            score = int(Decimal('50') + (improvement + Decimal('10')) * 5)
             status = 'yellow'
         else:
-            score = max(0, int(50 + improvement * 2))
+            score = max(0, int(Decimal('50') + improvement * 2))
             status = 'red'
 
         return MetricResult(value=improvement, score=score, status=status)
