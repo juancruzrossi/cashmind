@@ -278,6 +278,19 @@ class ApiService {
     formData.append('file', file);
     return this.requestFormData('/chat/analyze-receipt/', formData);
   }
+
+  // Health Score
+  async getHealthScore() {
+    return this.request('/health-score/');
+  }
+
+  async getHealthScoreAdvice() {
+    return this.request('/health-score/advice/');
+  }
+
+  async regenerateHealthScoreAdvice() {
+    return this.request('/health-score/advice/', { method: 'POST' });
+  }
 }
 
 export const api = new ApiService();
