@@ -14,17 +14,15 @@ interface Metric {
 interface OnboardingStatus {
   income_count: number;
   expense_count: number;
-  budget_count: number;
   income_required: number;
   expense_required: number;
-  budget_required: number;
 }
 
 interface HealthScoreData {
   month: string;
   savings_rate: Metric;
   fixed_expenses: Metric;
-  budget_adherence: Metric;
+  expense_diversification: Metric;
   trend: Metric;
   overall_score: number;
   overall_status: MetricStatus;

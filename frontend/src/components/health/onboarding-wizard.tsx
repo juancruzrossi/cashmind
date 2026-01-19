@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Check, Circle, DollarSign, Receipt, Target } from 'lucide-react';
+import { Check, Circle, DollarSign, Receipt } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import type { OnboardingStatus } from '@/hooks/useHealthScore';
@@ -79,7 +79,6 @@ export function OnboardingWizard({ status }: OnboardingWizardProps) {
   const completedCount = [
     status.income_count >= status.income_required,
     status.expense_count >= status.expense_required,
-    status.budget_count >= status.budget_required,
   ].filter(Boolean).length;
 
   return (
@@ -97,7 +96,7 @@ export function OnboardingWizard({ status }: OnboardingWizardProps) {
         </p>
         <div className="flex items-center justify-center gap-2 mt-4">
           <span className="text-2xl font-bold text-foreground">{completedCount}</span>
-          <span className="text-muted-foreground">de 3 completados</span>
+          <span className="text-muted-foreground">de 2 completados</span>
         </div>
       </div>
 
@@ -115,13 +114,6 @@ export function OnboardingWizard({ status }: OnboardingWizardProps) {
           required={status.expense_required}
           href="/transactions?type=expense&action=new"
           icon={Receipt}
-        />
-        <RequirementItem
-          label="Presupuestos"
-          current={status.budget_count}
-          required={status.budget_required}
-          href="/budget"
-          icon={Target}
         />
       </div>
 

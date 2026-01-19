@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, RefreshCw, PiggyBank, Home, Target, TrendingUp, TrendingDown } from 'lucide-react';
+import { AlertTriangle, RefreshCw, PiggyBank, Home, PieChart, TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useHealthScore } from '@/hooks/useHealthScore';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -230,11 +230,11 @@ export default function HealthPage() {
           icon={Home}
         />
         <MetricCard
-          name="Adherencia a Presupuesto"
-          value={data.budget_adherence.value}
-          score={data.budget_adherence.score}
-          status={data.budget_adherence.status}
-          icon={Target}
+          name="Diversificación de Gastos"
+          value={data.expense_diversification.value}
+          score={data.expense_diversification.score}
+          status={data.expense_diversification.status}
+          icon={PieChart}
         />
         <MetricCard
           name="Tendencia Mensual"
