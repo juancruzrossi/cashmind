@@ -88,7 +88,7 @@ class HealthScoreSnapshotAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {'fields': ('user', 'month')}),
-        ('Scores', {'fields': ('savings_rate_score', 'fixed_expenses_score', 'budget_adherence_score', 'trend_score')}),
+        ('Scores', {'fields': ('savings_rate_score', 'fixed_expenses_score', 'expense_diversification_score', 'trend_score')}),
         ('Overall', {'fields': ('overall_score', 'overall_status')}),
         ('Advice', {'fields': ('cached_advice', 'advice_generated_at'), 'classes': ('collapse',)}),
         ('Timestamps', {'fields': ('created_at', 'updated_at'), 'classes': ('collapse',)}),
