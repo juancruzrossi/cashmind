@@ -477,61 +477,74 @@ class HealthScoreView(APIView):
     """Get current month's financial health score"""
 
     def get(self, request):
-        current_month = date.today().replace(day=1)
+        import logging
+        import traceback
+        logger = logging.getLogger(__name__)
 
-        service = HealthScoreService()
-        result = service.calculate_health_score(request.user, current_month)
+        try:
+            current_month = date.today().replace(day=1)
 
-        # Save/update snapshot for current month
-        snapshot, created = HealthScoreSnapshot.objects.update_or_create(
-            user=request.user,
-            month=current_month,
-            defaults={
-                'savings_rate_score': result.savings_rate.score,
-                'fixed_expenses_score': result.fixed_expenses.score,
-                'expense_diversification_score': result.expense_diversification.score,
-                'trend_score': result.trend.score,
+            service = HealthScoreService()
+            result = service.calculate_health_score(request.user, current_month)
+
+            # Save/update snapshot for current month
+            snapshot, created = HealthScoreSnapshot.objects.update_or_create(
+                user=request.user,
+                month=current_month,
+                defaults={
+                    'savings_rate_score': result.savings_rate.score,
+                    'fixed_expenses_score': result.fixed_expenses.score,
+                    'expense_diversification_score': result.expense_diversification.score,
+                    'trend_score': result.trend.score,
+                    'overall_score': result.overall_score,
+                    'overall_status': result.overall_status,
+                }
+            )
+
+            response_data = {
                 'overall_score': result.overall_score,
                 'overall_status': result.overall_status,
-            }
-        )
-
-        response_data = {
-            'overall_score': result.overall_score,
-            'overall_status': result.overall_status,
-            'needs_onboarding': result.needs_onboarding,
-            'savings_rate': {
-                'value': float(result.savings_rate.value),
-                'score': result.savings_rate.score,
-                'status': result.savings_rate.status,
-            },
-            'fixed_expenses': {
-                'value': float(result.fixed_expenses.value),
-                'score': result.fixed_expenses.score,
-                'status': result.fixed_expenses.status,
-            },
-            'expense_diversification': {
-                'value': float(result.expense_diversification.value),
-                'score': result.expense_diversification.score,
-                'status': result.expense_diversification.status,
-            },
-            'trend': {
-                'value': float(result.trend.value),
-                'score': result.trend.score,
-                'status': result.trend.status,
-            },
-            'month': current_month.isoformat(),
-        }
-
-        if result.onboarding_status:
-            response_data['onboarding_status'] = {
-                'income_count': result.onboarding_status.income_count,
-                'expense_count': result.onboarding_status.expense_count,
-                'income_required': result.onboarding_status.income_required,
-                'expense_required': result.onboarding_status.expense_required,
+                'needs_onboarding': result.needs_onboarding,
+                'savings_rate': {
+                    'value': float(result.savings_rate.value),
+                    'score': result.savings_rate.score,
+                    'status': result.savings_rate.status,
+                },
+                'fixed_expenses': {
+                    'value': float(result.fixed_expenses.value),
+                    'score': result.fixed_expenses.score,
+                    'status': result.fixed_expenses.status,
+                },
+                'expense_diversification': {
+                    'value': float(result.expense_diversification.value),
+                    'score': result.expense_diversification.score,
+                    'status': result.expense_diversification.status,
+                },
+                'trend': {
+                    'value': float(result.trend.value),
+                    'score': result.trend.score,
+                    'status': result.trend.status,
+                },
+                'month': current_month.isoformat(),
             }
 
-        return Response(response_data)
+            if result.onboarding_status:
+                response_data['onboarding_status'] = {
+                    'income_count': result.onboarding_status.income_count,
+                    'expense_count': result.onboarding_status.expense_count,
+                    'income_required': result.onboarding_status.income_required,
+                    'expense_required': result.onboarding_status.expense_required,
+                }
+
+            return Response(response_data)
+
+        except Exception as e:
+            logger.error(f"HealthScoreView error: {e}")
+            logger.error(traceback.format_exc())
+            return Response(
+                {'error': str(e), 'traceback': traceback.format_exc()},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class HealthScoreAdviceView(APIView):
