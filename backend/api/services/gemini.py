@@ -82,3 +82,76 @@ Notas importantes:
         )
 
         return json.loads(response.text)
+
+    def generate_financial_advice(self, metrics_data: dict) -> str:
+        """
+        Generate personalized financial advice based on health metrics.
+
+        Args:
+            metrics_data: Dictionary containing:
+                - savings_rate: {value: float, status: str}
+                - fixed_expenses: {value: float, status: str}
+                - budget_adherence: {value: float, status: str}
+                - trend: {value: float, status: str}
+                - overall_status: str
+
+        Returns:
+            str: Personalized advice in Spanish (max ~200 words)
+        """
+        metrics_summary = []
+
+        metrics_info = [
+            ('Tasa de Ahorro', metrics_data.get('savings_rate', {})),
+            ('Gastos Fijos', metrics_data.get('fixed_expenses', {})),
+            ('Adherencia a Presupuesto', metrics_data.get('budget_adherence', {})),
+            ('Tendencia Mensual', metrics_data.get('trend', {})),
+        ]
+
+        for name, metric in metrics_info:
+            status = metric.get('status', 'green')
+            value = metric.get('value', 0)
+            status_es = {'red': 'rojo', 'yellow': 'amarillo', 'green': 'verde'}.get(status, status)
+            metrics_summary.append(f"- {name}: {value:.1f}% (semáforo: {status_es})")
+
+        metrics_text = '\n'.join(metrics_summary)
+        overall_status = metrics_data.get('overall_status', 'green')
+        overall_status_es = {'red': 'rojo', 'yellow': 'amarillo', 'green': 'verde'}.get(overall_status, overall_status)
+
+        prompt = f"""Eres un asesor financiero personal. Analiza las siguientes métricas de salud financiera y genera consejos personalizados.
+
+MÉTRICAS DEL USUARIO:
+{metrics_text}
+
+Estado general: {overall_status_es}
+
+INSTRUCCIONES:
+1. Genera 2-3 consejos CONCRETOS y ACCIONABLES
+2. Prioriza consejos para las métricas en rojo o amarillo
+3. Si todas están en verde, felicita brevemente y da un consejo para mantener el buen estado
+4. Usa un tono amigable pero profesional
+5. Sé específico: menciona porcentajes, acciones concretas, tiempos
+6. MÁXIMO 200 palabras
+
+CONTEXTO DE MÉTRICAS:
+- Tasa de Ahorro: % de ingresos que quedan después de gastos. Verde ≥20%, Amarillo 10-19%, Rojo <10%
+- Gastos Fijos: % de ingresos en vivienda, servicios, transporte, seguros. Verde ≤40%, Amarillo 41-55%, Rojo >55%
+- Adherencia a Presupuesto: % de categorías donde cumpliste el límite. Verde ≥80%, Amarillo 50-79%, Rojo <50%
+- Tendencia Mensual: mejora/empeora vs mes anterior. Verde: mejora ≥5%, Amarillo: empeora 0-10%, Rojo: empeora >10%
+
+Responde SOLO con los consejos, sin introducción ni despedida."""
+
+        response = self.client.models.generate_content(
+            model='gemini-2.5-flash-lite',
+            contents=[
+                {
+                    'role': 'user',
+                    'parts': [{'text': prompt}]
+                }
+            ],
+            config={
+                'temperature': 0.7,
+                'max_output_tokens': 512,
+            }
+        )
+
+        return response.text.strip()
