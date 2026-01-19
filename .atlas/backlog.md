@@ -2,17 +2,6 @@
 
 ## TODO
 
-### MED-008: Integrar widget en página de dashboard
-- **Category:** feature
-- **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Agregar HealthScoreWidget al dashboard existente con link a detalle
-- **Steps:**
-  1. Importar HealthScoreWidget en página dashboard
-  2. Agregar en grid de widgets existentes
-  3. Agregar link "Ver detalle" que navegue a /health
-  4. Responsive: full width en mobile, 1/3 en desktop
-- **Acceptance:** Dashboard muestra widget de salud financiera con link funcional
-
 ### MED-009: Crear página /health con sección de métricas
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
@@ -75,6 +64,17 @@
 - **Acceptance:** `python manage.py test api.tests.test_health_score` pasa
 
 ## IN PROGRESS
+
+### MED-008: Integrar widget en página de dashboard
+- **Category:** feature
+- **Spec:** .atlas/specs/spec-20260119-022238.md
+- **Description:** Agregar HealthScoreWidget al dashboard existente con link a detalle
+- **Steps:**
+  1. Importar HealthScoreWidget en página dashboard
+  2. Agregar en grid de widgets existentes
+  3. Agregar link "Ver detalle" que navegue a /health
+  4. Responsive: full width en mobile, 1/3 en desktop
+- **Acceptance:** Dashboard muestra widget de salud financiera con link funcional
 
 ## DONE
 
