@@ -77,3 +77,19 @@ https://github.com/juancruzrossi/cashmind/pull/11
 - Response includes needs_onboarding flag for users without sufficient data
 - Snapshot is auto-saved/updated on each request using update_or_create
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+
+## 2026-01-19 - MED-004: Agregar método de consejos financieros a GeminiService (feature)
+
+### Summary:
+Added `generate_financial_advice(metrics_data)` method to GeminiService for generating personalized financial tips based on health score metrics.
+
+### Changes:
+- backend/api/services/gemini.py: Added new method that takes metrics dict and returns AI-generated advice in Spanish
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/12
+
+### Notes for next developer:
+- Method expects dict with: savings_rate, fixed_expenses, budget_adherence, trend (each with value and status)
+- Uses temperature=0.7 for varied responses
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning

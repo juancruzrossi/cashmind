@@ -112,18 +112,11 @@
 
 ## IN PROGRESS
 
-### MED-004: Agregar método de consejos financieros a GeminiService
+## DONE
+
+### MED-004: Agregar método de consejos financieros a GeminiService (2026-01-19) - PR #12
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Nuevo método para generar consejos personalizados basados en métricas
-- **Steps:**
-  1. Agregar método `generate_financial_advice(metrics_data)` en `api/services/gemini.py`
-  2. Crear prompt que reciba las 4 métricas con sus valores y status
-  3. Instrucciones: generar 2-3 consejos concretos para las métricas en rojo/amarillo
-  4. Limitar respuesta a 200 palabras máximo
-- **Acceptance:** Método retorna string con consejos relevantes basados en métricas
-
-## DONE
 
 ### HIGH-003: Crear endpoint API /api/health-score/ (2026-01-19) - PR #11
 - **Category:** feature
