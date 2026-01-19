@@ -4,6 +4,10 @@
 
 ## IN PROGRESS
 
+### TEST-001: Agregar comentario de prueba en README
+- **Category:** test
+- **Description:** Agregar un comentario al final del README.md para verificar el flujo de integration branch
+
 ## DONE
 
 ### LOW-013: Tests unitarios backend para health score (2026-01-19) - PR #21
