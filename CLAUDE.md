@@ -221,3 +221,16 @@ Code Review       → code-reviewer agent (PROACTIVO después de cambios)
 Explorar código   → Explore agent (NO usar Grep/Glob directamente)
 Planificación     → Plan agent o /planner skill
 ```
+
+## Frontend Testing (agent-browser)
+
+Before completing UI tasks, verify changes visually:
+
+```bash
+docker-compose up -d                       # Start services
+agent-browser open http://localhost:3000   # Navigate
+agent-browser snapshot -i                  # Check interactive elements
+agent-browser click @e1                    # Test interactions
+agent-browser screenshot /tmp/test.png    # Capture result
+agent-browser close                        # Cleanup
+```
