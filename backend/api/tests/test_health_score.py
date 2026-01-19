@@ -1,10 +1,14 @@
 from datetime import date
 from decimal import Decimal
+from unittest.mock import patch, MagicMock
 
 from django.test import TestCase
+from django.urls import reverse
+from rest_framework.test import APITestCase
+from rest_framework import status
 
-from api.models import User, Transaction, Budget
-from api.services.health_score import HealthScoreService
+from api.models import User, Transaction, Budget, HealthScoreSnapshot
+from api.services.health_score import HealthScoreService, MetricResult
 
 
 class HealthScoreServiceTest(TestCase):
@@ -277,8 +281,6 @@ class TestCalculateOverallScore(HealthScoreServiceTest):
     """Test calculate_overall_score method"""
 
     def test_weighted_calculation(self):
-        from api.services.health_score import MetricResult
-
         savings = MetricResult(value=Decimal('25'), score=100, status='green')
         fixed = MetricResult(value=Decimal('35'), score=100, status='green')
         budget = MetricResult(value=Decimal('90'), score=100, status='green')
@@ -289,8 +291,6 @@ class TestCalculateOverallScore(HealthScoreServiceTest):
         self.assertEqual(status, 'green')
 
     def test_mixed_scores(self):
-        from api.services.health_score import MetricResult
-
         savings = MetricResult(value=Decimal('15'), score=75, status='yellow')
         fixed = MetricResult(value=Decimal('50'), score=66, status='yellow')
         budget = MetricResult(value=Decimal('60'), score=66, status='yellow')
@@ -302,12 +302,17 @@ class TestCalculateOverallScore(HealthScoreServiceTest):
         self.assertEqual(status, 'yellow')
 
 
-class TestCheckOnboardingNeeded(HealthScoreServiceTest):
-    """Test check_onboarding_needed method"""
+class TestGetOnboardingStatus(HealthScoreServiceTest):
+    """Test get_onboarding_status method"""
 
     def test_no_data_needs_onboarding(self):
-        result = self.service.check_onboarding_needed(self.user, self.test_month)
-        self.assertTrue(result)
+        needs_onboarding, onboarding_status = self.service.get_onboarding_status(
+            self.user, self.test_month
+        )
+        self.assertTrue(needs_onboarding)
+        self.assertEqual(onboarding_status.income_count, 0)
+        self.assertEqual(onboarding_status.expense_count, 0)
+        self.assertEqual(onboarding_status.budget_count, 0)
 
     def test_missing_income_needs_onboarding(self):
         for i in range(5):
@@ -315,8 +320,13 @@ class TestCheckOnboardingNeeded(HealthScoreServiceTest):
         for cat in ['comida', 'transporte', 'entretenimiento']:
             self._create_budget(cat, Decimal('500'))
 
-        result = self.service.check_onboarding_needed(self.user, self.test_month)
-        self.assertTrue(result)
+        needs_onboarding, onboarding_status = self.service.get_onboarding_status(
+            self.user, self.test_month
+        )
+        self.assertTrue(needs_onboarding)
+        self.assertEqual(onboarding_status.income_count, 0)
+        self.assertEqual(onboarding_status.expense_count, 5)
+        self.assertEqual(onboarding_status.budget_count, 3)
 
     def test_few_expenses_needs_onboarding(self):
         self._create_income(Decimal('1000'))
@@ -324,8 +334,12 @@ class TestCheckOnboardingNeeded(HealthScoreServiceTest):
         for cat in ['comida', 'transporte', 'entretenimiento']:
             self._create_budget(cat, Decimal('500'))
 
-        result = self.service.check_onboarding_needed(self.user, self.test_month)
-        self.assertTrue(result)
+        needs_onboarding, onboarding_status = self.service.get_onboarding_status(
+            self.user, self.test_month
+        )
+        self.assertTrue(needs_onboarding)
+        self.assertEqual(onboarding_status.income_count, 1)
+        self.assertEqual(onboarding_status.expense_count, 1)
 
     def test_few_budgets_needs_onboarding(self):
         self._create_income(Decimal('1000'))
@@ -333,8 +347,11 @@ class TestCheckOnboardingNeeded(HealthScoreServiceTest):
             self._create_expense(Decimal('100'), 'comida', day=i+1)
         self._create_budget('comida', Decimal('500'))
 
-        result = self.service.check_onboarding_needed(self.user, self.test_month)
-        self.assertTrue(result)
+        needs_onboarding, onboarding_status = self.service.get_onboarding_status(
+            self.user, self.test_month
+        )
+        self.assertTrue(needs_onboarding)
+        self.assertEqual(onboarding_status.budget_count, 1)
 
     def test_sufficient_data_does_not_need_onboarding(self):
         self._create_income(Decimal('1000'))
@@ -343,8 +360,13 @@ class TestCheckOnboardingNeeded(HealthScoreServiceTest):
         for cat in ['comida', 'transporte', 'entretenimiento']:
             self._create_budget(cat, Decimal('500'))
 
-        result = self.service.check_onboarding_needed(self.user, self.test_month)
-        self.assertFalse(result)
+        needs_onboarding, onboarding_status = self.service.get_onboarding_status(
+            self.user, self.test_month
+        )
+        self.assertFalse(needs_onboarding)
+        self.assertEqual(onboarding_status.income_count, 1)
+        self.assertEqual(onboarding_status.expense_count, 5)
+        self.assertEqual(onboarding_status.budget_count, 3)
 
 
 class TestCalculateHealthScore(HealthScoreServiceTest):
@@ -373,3 +395,354 @@ class TestCalculateHealthScore(HealthScoreServiceTest):
         self.assertIn(result.overall_status, ['green', 'yellow', 'red'])
         self.assertGreaterEqual(result.overall_score, 0)
         self.assertLessEqual(result.overall_score, 100)
+
+    def test_no_income_automatic_red(self):
+        """Test that no income results in automatic red status"""
+        result = self.service.calculate_health_score(self.user, self.test_month)
+        self.assertEqual(result.savings_rate.status, 'red')
+        self.assertEqual(result.fixed_expenses.status, 'red')
+
+
+# ==============================================================================
+# API Endpoint Tests
+# ==============================================================================
+
+class HealthScoreEndpointTest(APITestCase):
+    """Tests for /api/health-score/ endpoint"""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=self.user)
+        self.url = reverse('health-score')
+
+    def _create_income(self, amount: Decimal, day: int = 1):
+        return Transaction.objects.create(
+            user=self.user,
+            date=date(2026, 1, day),
+            description='Salary',
+            amount=amount,
+            type='income',
+            category='salario'
+        )
+
+    def _create_expense(self, amount: Decimal, category: str, day: int = 15):
+        return Transaction.objects.create(
+            user=self.user,
+            date=date(2026, 1, day),
+            description=f'{category} expense',
+            amount=amount,
+            type='expense',
+            category=category
+        )
+
+    def _create_budget(self, category: str, limit: Decimal):
+        return Budget.objects.create(
+            user=self.user,
+            name=f'{category} budget',
+            category=category,
+            limit=limit,
+            period='monthly'
+        )
+
+    def test_unauthenticated_request_fails(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_health_score_without_data(self):
+        """Test endpoint returns data even without transactions"""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('overall_score', response.data)
+        self.assertIn('overall_status', response.data)
+        self.assertIn('needs_onboarding', response.data)
+        self.assertTrue(response.data['needs_onboarding'])
+
+    def test_get_health_score_with_data(self):
+        """Test endpoint returns correct data with transactions"""
+        self._create_income(Decimal('1000'))
+        for i in range(5):
+            self._create_expense(Decimal('100'), 'comida', day=i+1)
+        for cat in ['comida', 'transporte', 'entretenimiento']:
+            self._create_budget(cat, Decimal('500'))
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data['needs_onboarding'])
+
+        self.assertIn('savings_rate', response.data)
+        self.assertIn('fixed_expenses', response.data)
+        self.assertIn('budget_adherence', response.data)
+        self.assertIn('trend', response.data)
+
+        # Check metric structure
+        for metric in ['savings_rate', 'fixed_expenses', 'budget_adherence', 'trend']:
+            self.assertIn('value', response.data[metric])
+            self.assertIn('score', response.data[metric])
+            self.assertIn('status', response.data[metric])
+
+    def test_creates_snapshot(self):
+        """Test that endpoint creates a snapshot in the database"""
+        self._create_income(Decimal('1000'))
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        snapshot = HealthScoreSnapshot.objects.filter(user=self.user).first()
+        self.assertIsNotNone(snapshot)
+        self.assertEqual(snapshot.overall_score, response.data['overall_score'])
+
+    def test_updates_existing_snapshot(self):
+        """Test that endpoint updates existing snapshot"""
+        self._create_income(Decimal('1000'))
+        self.client.get(self.url)
+
+        # Add more income to change the score
+        self._create_income(Decimal('500'), day=2)
+        self.client.get(self.url)
+
+        snapshots = HealthScoreSnapshot.objects.filter(user=self.user)
+        self.assertEqual(snapshots.count(), 1)
+
+    def test_returns_onboarding_status_when_needed(self):
+        """Test that onboarding_status is returned when needs_onboarding is true"""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['needs_onboarding'])
+        self.assertIn('onboarding_status', response.data)
+        self.assertIn('income_count', response.data['onboarding_status'])
+        self.assertIn('expense_count', response.data['onboarding_status'])
+        self.assertIn('budget_count', response.data['onboarding_status'])
+
+    def test_no_income_returns_red_status(self):
+        """Test AC-7: Month without income shows automatic red semaphore"""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['savings_rate']['status'], 'red')
+        self.assertEqual(response.data['fixed_expenses']['status'], 'red')
+
+
+class HealthScoreAdviceEndpointTest(APITestCase):
+    """Tests for /api/health-score/advice/ endpoint"""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=self.user)
+        self.url = reverse('health-score-advice')
+        self.score_url = reverse('health-score')
+
+    def test_unauthenticated_request_fails(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_without_snapshot_returns_404(self):
+        """Test that endpoint requires a snapshot to exist"""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch('api.views.GeminiService')
+    def test_get_generates_advice_when_not_cached(self, mock_gemini):
+        """Test GET generates advice when no cached advice exists"""
+        mock_instance = MagicMock()
+        mock_instance.generate_financial_advice.return_value = "Test advice"
+        mock_gemini.return_value = mock_instance
+
+        # First create a snapshot by calling health-score
+        self.client.get(self.score_url)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('advice', response.data)
+        self.assertEqual(response.data['advice'], "Test advice")
+        self.assertFalse(response.data['cached'])
+
+    @patch('api.views.GeminiService')
+    def test_get_returns_cached_advice(self, mock_gemini):
+        """Test GET returns cached advice when it exists"""
+        # Create snapshot with cached advice
+        self.client.get(self.score_url)
+        snapshot = HealthScoreSnapshot.objects.get(user=self.user)
+        snapshot.cached_advice = "Cached advice"
+        snapshot.advice_generated_at = date.today()
+        snapshot.save()
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['advice'], "Cached advice")
+        self.assertTrue(response.data['cached'])
+        mock_gemini.assert_not_called()
+
+    @patch('api.views.GeminiService')
+    def test_post_regenerates_advice(self, mock_gemini):
+        """Test POST always regenerates advice"""
+        mock_instance = MagicMock()
+        mock_instance.generate_financial_advice.return_value = "New advice"
+        mock_gemini.return_value = mock_instance
+
+        # Create snapshot with cached advice
+        self.client.get(self.score_url)
+        snapshot = HealthScoreSnapshot.objects.get(user=self.user)
+        snapshot.cached_advice = "Old advice"
+        snapshot.save()
+
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['advice'], "New advice")
+        self.assertFalse(response.data['cached'])
+
+    @patch('api.views.GeminiService')
+    def test_gemini_error_returns_500(self, mock_gemini):
+        """Test that Gemini errors return 500"""
+        mock_instance = MagicMock()
+        mock_instance.generate_financial_advice.side_effect = Exception("API Error")
+        mock_gemini.return_value = mock_instance
+
+        self.client.get(self.score_url)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertIn('error', response.data)
+
+
+class HealthScoreHistoryEndpointTest(APITestCase):
+    """Tests for /api/health-score/history/ endpoint"""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=self.user)
+        self.url = reverse('health-score-history')
+
+    def test_unauthenticated_request_fails(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_empty_history(self):
+        """Test endpoint returns empty history when no snapshots"""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('history', response.data)
+        self.assertEqual(len(response.data['history']), 0)
+        self.assertEqual(response.data['count'], 0)
+
+    def test_returns_history_sorted_by_month(self):
+        """Test history is sorted by month ascending"""
+        # Create snapshots for multiple months
+        months = [
+            date(2026, 1, 1),
+            date(2025, 11, 1),
+            date(2025, 12, 1),
+        ]
+        for i, month in enumerate(months):
+            HealthScoreSnapshot.objects.create(
+                user=self.user,
+                month=month,
+                savings_rate_score=70 + i,
+                fixed_expenses_score=70 + i,
+                budget_adherence_score=70 + i,
+                trend_score=70 + i,
+                overall_score=70 + i,
+                overall_status='green'
+            )
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 3)
+
+        # Should be sorted ascending
+        history = response.data['history']
+        self.assertEqual(history[0]['month_date'], '2025-11-01')
+        self.assertEqual(history[1]['month_date'], '2025-12-01')
+        self.assertEqual(history[2]['month_date'], '2026-01-01')
+
+    def test_returns_only_last_6_months(self):
+        """Test history only returns last 6 months of snapshots"""
+        # Create snapshots for 8 months
+        base_date = date(2026, 1, 1)
+        from dateutil.relativedelta import relativedelta
+
+        for i in range(8):
+            month = base_date - relativedelta(months=i)
+            HealthScoreSnapshot.objects.create(
+                user=self.user,
+                month=month.replace(day=1),
+                savings_rate_score=70,
+                fixed_expenses_score=70,
+                budget_adherence_score=70,
+                trend_score=70,
+                overall_score=70,
+                overall_status='green'
+            )
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertLessEqual(response.data['count'], 6)
+
+    def test_history_contains_all_score_fields(self):
+        """Test history entries contain all required fields"""
+        HealthScoreSnapshot.objects.create(
+            user=self.user,
+            month=date(2026, 1, 1),
+            savings_rate_score=80,
+            fixed_expenses_score=75,
+            budget_adherence_score=90,
+            trend_score=85,
+            overall_score=82,
+            overall_status='green'
+        )
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        entry = response.data['history'][0]
+        self.assertIn('month', entry)
+        self.assertIn('month_date', entry)
+        self.assertIn('overall_score', entry)
+        self.assertIn('overall_status', entry)
+        self.assertIn('savings_rate_score', entry)
+        self.assertIn('fixed_expenses_score', entry)
+        self.assertIn('budget_adherence_score', entry)
+        self.assertIn('trend_score', entry)
+
+    def test_does_not_return_other_users_data(self):
+        """Test history only returns current user's snapshots"""
+        other_user = User.objects.create_user(
+            username='otheruser',
+            password='testpass123'
+        )
+
+        HealthScoreSnapshot.objects.create(
+            user=self.user,
+            month=date(2026, 1, 1),
+            savings_rate_score=80,
+            fixed_expenses_score=75,
+            budget_adherence_score=90,
+            trend_score=85,
+            overall_score=82,
+            overall_status='green'
+        )
+        HealthScoreSnapshot.objects.create(
+            user=other_user,
+            month=date(2026, 1, 1),
+            savings_rate_score=50,
+            fixed_expenses_score=50,
+            budget_adherence_score=50,
+            trend_score=50,
+            overall_score=50,
+            overall_status='yellow'
+        )
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['history'][0]['overall_score'], 82)

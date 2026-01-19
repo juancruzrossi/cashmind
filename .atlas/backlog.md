@@ -2,6 +2,8 @@
 
 ## TODO
 
+## IN PROGRESS
+
 ### LOW-013: Tests unitarios backend para health score
 - **Category:** test
 - **Spec:** .atlas/specs/spec-20260119-022238.md
@@ -13,8 +15,6 @@
   4. Tests para endpoint /api/health-score/advice/
   5. Test para caso sin ingresos = rojo automático
 - **Acceptance:** `python manage.py test api.tests.test_health_score` pasa
-
-## IN PROGRESS
 
 ## DONE
 
