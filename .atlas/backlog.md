@@ -2,20 +2,6 @@
 
 ## TODO
 
-### HIGH-002: Implementar servicio de cálculo de métricas de salud financiera
-- **Category:** feature
-- **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Lógica de negocio para calcular las 4 métricas y score global
-- **Steps:**
-  1. Crear `api/services/health_score.py` con clase `HealthScoreService`
-  2. Implementar `calculate_savings_rate(user, month)` - (ingresos-gastos)/ingresos
-  3. Implementar `calculate_fixed_expenses_ratio(user, month)` - categorías: vivienda, servicios, transporte, seguros
-  4. Implementar `calculate_budget_adherence(user, month)` - % categorías dentro de presupuesto
-  5. Implementar `calculate_trend(user, month)` - comparar con mes anterior
-  6. Implementar `calculate_overall_score()` - ponderación 30/25/25/20
-  7. Implementar `get_status(score)` - verde>=70, amarillo>=40, rojo<40
-- **Acceptance:** Tests unitarios pasan para cada método de cálculo
-
 ### HIGH-003: Crear endpoint API /api/health-score/
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
@@ -148,6 +134,20 @@
 - **Acceptance:** `python manage.py test api.tests.test_health_score` pasa
 
 ## IN PROGRESS
+
+### HIGH-002: Implementar servicio de cálculo de métricas de salud financiera
+- **Category:** feature
+- **Spec:** .atlas/specs/spec-20260119-022238.md
+- **Description:** Lógica de negocio para calcular las 4 métricas y score global
+- **Steps:**
+  1. Crear `api/services/health_score.py` con clase `HealthScoreService`
+  2. Implementar `calculate_savings_rate(user, month)` - (ingresos-gastos)/ingresos
+  3. Implementar `calculate_fixed_expenses_ratio(user, month)` - categorías: vivienda, servicios, transporte, seguros
+  4. Implementar `calculate_budget_adherence(user, month)` - % categorías dentro de presupuesto
+  5. Implementar `calculate_trend(user, month)` - comparar con mes anterior
+  6. Implementar `calculate_overall_score()` - ponderación 30/25/25/20
+  7. Implementar `get_status(score)` - verde>=70, amarillo>=40, rojo<40
+- **Acceptance:** Tests unitarios pasan para cada método de cálculo
 
 ## DONE
 
