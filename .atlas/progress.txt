@@ -40,3 +40,22 @@ https://github.com/juancruzrossi/cashmind/pull/9
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 - Created temporary .venv to generate migration (Docker not available in this environment)
 - Model uses unique_together constraint for [user, month] to prevent duplicates
+
+## 2026-01-19 - HIGH-002: Implementar servicio de cálculo de métricas de salud financiera (feature)
+
+### Summary:
+Implemented `HealthScoreService` class with 4 financial health metric calculations, weighted overall score, traffic light status, and onboarding check. Includes 31 unit tests.
+
+### Changes:
+- backend/api/services/health_score.py: New service with MetricResult, HealthScoreResult, and HealthScoreService
+- backend/api/tests/__init__.py: Created tests directory
+- backend/api/tests/test_health_score.py: 31 unit tests covering all metrics and edge cases
+- backend/requirements.txt: Added python-dateutil dependency
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/10
+
+### Notes for next developer:
+- Fixed expense categories are: vivienda, servicios, transporte, seguros
+- Decimal values need explicit float() conversion when multiplying with Python floats
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning

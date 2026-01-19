@@ -135,21 +135,11 @@
 
 ## IN PROGRESS
 
-### HIGH-002: Implementar servicio de cálculo de métricas de salud financiera
+## DONE
+
+### HIGH-002: Implementar servicio de cálculo de métricas de salud financiera (2026-01-19) - PR #10
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Lógica de negocio para calcular las 4 métricas y score global
-- **Steps:**
-  1. Crear `api/services/health_score.py` con clase `HealthScoreService`
-  2. Implementar `calculate_savings_rate(user, month)` - (ingresos-gastos)/ingresos
-  3. Implementar `calculate_fixed_expenses_ratio(user, month)` - categorías: vivienda, servicios, transporte, seguros
-  4. Implementar `calculate_budget_adherence(user, month)` - % categorías dentro de presupuesto
-  5. Implementar `calculate_trend(user, month)` - comparar con mes anterior
-  6. Implementar `calculate_overall_score()` - ponderación 30/25/25/20
-  7. Implementar `get_status(score)` - verde>=70, amarillo>=40, rojo<40
-- **Acceptance:** Tests unitarios pasan para cada método de cálculo
-
-## DONE
 
 ### HIGH-001: Crear modelo HealthScoreSnapshot y migración (2026-01-19) - PR #9
 - **Category:** feature

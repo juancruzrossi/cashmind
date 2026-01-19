@@ -66,4 +66,8 @@ When you encounter an error or learn something the hard way, add a Sign:
 
 ## Project-Specific Signs
 
-<!-- Add signs learned during this project below -->
+### Sign: Decimal to Float Conversion
+- **Trigger**: When performing arithmetic with Decimal and Python float values
+- **Instruction**: Explicitly convert Decimal to float before multiplying with Python floats (e.g., `float(decimal_value) * 0.5`)
+- **Type**: Preventive
+- **Learned from**: HIGH-002
