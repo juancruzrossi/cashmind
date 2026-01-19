@@ -16,19 +16,11 @@
 
 ## IN PROGRESS
 
-### LOW-012: Implementar onboarding guiado para nuevos usuarios
+## DONE
+
+### LOW-012: Implementar onboarding guiado para nuevos usuarios (2026-01-19) - PR #20
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Wizard cuando no hay datos suficientes para evaluar
-- **Steps:**
-  1. Crear componente `components/health/OnboardingWizard.tsx`
-  2. Detectar: < 1 ingreso, < 5 gastos, < 3 presupuestos
-  3. Mostrar checklist de requisitos con status (completado/pendiente)
-  4. Botones para navegar a: agregar ingreso, agregar gastos, definir presupuestos
-  5. Mostrar en lugar de métricas cuando needsOnboarding=true
-- **Acceptance:** Usuarios nuevos ven wizard con pasos claros para completar datos
-
-## DONE
 
 ### MED-011: Crear panel de consejos con botón regenerar (2026-01-19) - PR #19
 - **Category:** feature

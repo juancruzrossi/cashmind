@@ -216,3 +216,24 @@ https://github.com/juancruzrossi/cashmind/pull/18
 - Reference lines show threshold boundaries (40 for red, 70 for green)
 - Snapshots are created when user visits /health-score/ endpoint
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+
+## 2026-01-19 - LOW-012: Implementar onboarding guiado para nuevos usuarios (feature)
+
+### Summary:
+Added OnboardingWizard component that guides new users through the requirements needed to calculate their health score. Shows progress bars for each requirement with navigation buttons to add missing data.
+
+### Changes:
+- backend/api/services/health_score.py: Added OnboardingStatus type, get_onboarding_status method returns counts
+- backend/api/views.py: HealthScoreView now returns onboarding_status when needs_onboarding=true
+- frontend/src/hooks/useHealthScore.ts: Added OnboardingStatus interface and export
+- frontend/src/components/health/onboarding-wizard.tsx: New wizard component with checklist and progress bars
+- frontend/src/app/(dashboard)/health/page.tsx: Integrated OnboardingWizard when needsOnboarding is true
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/20
+
+### Notes for next developer:
+- Requirements: 1 income, 5 expenses, 3 budgets
+- Progress bars show current/required counts
+- Navigation buttons link to relevant pages for adding data
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning
