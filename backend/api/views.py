@@ -523,10 +523,17 @@ class HealthScoreView(APIView):
             'month': current_month.isoformat(),
         }
 
-        serializer = HealthScoreSerializer(data=response_data)
-        serializer.is_valid(raise_exception=True)
+        if result.onboarding_status:
+            response_data['onboarding_status'] = {
+                'income_count': result.onboarding_status.income_count,
+                'expense_count': result.onboarding_status.expense_count,
+                'budget_count': result.onboarding_status.budget_count,
+                'income_required': result.onboarding_status.income_required,
+                'expense_required': result.onboarding_status.expense_required,
+                'budget_required': result.onboarding_status.budget_required,
+            }
 
-        return Response(serializer.validated_data)
+        return Response(response_data)
 
 
 class HealthScoreAdviceView(APIView):

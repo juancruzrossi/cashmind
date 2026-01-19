@@ -11,6 +11,15 @@ interface Metric {
   status: MetricStatus;
 }
 
+interface OnboardingStatus {
+  income_count: number;
+  expense_count: number;
+  budget_count: number;
+  income_required: number;
+  expense_required: number;
+  budget_required: number;
+}
+
 interface HealthScoreData {
   month: string;
   savings_rate: Metric;
@@ -20,6 +29,7 @@ interface HealthScoreData {
   overall_score: number;
   overall_status: MetricStatus;
   needs_onboarding: boolean;
+  onboarding_status?: OnboardingStatus;
 }
 
 interface AdviceData {
@@ -90,7 +100,10 @@ export function useHealthScore() {
     isRegenerating,
     error,
     needsOnboarding: data?.needs_onboarding ?? false,
+    onboardingStatus: data?.onboarding_status ?? null,
     fetchHealthScore,
     regenerateAdvice,
   };
 }
+
+export type { OnboardingStatus };

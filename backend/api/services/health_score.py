@@ -15,6 +15,16 @@ class MetricResult(NamedTuple):
     status: str
 
 
+class OnboardingStatus(NamedTuple):
+    """Status of onboarding requirements"""
+    income_count: int
+    expense_count: int
+    budget_count: int
+    income_required: int
+    expense_required: int
+    budget_required: int
+
+
 class HealthScoreResult(NamedTuple):
     """Complete health score calculation result"""
     savings_rate: MetricResult
@@ -24,6 +34,7 @@ class HealthScoreResult(NamedTuple):
     overall_score: int
     overall_status: str
     needs_onboarding: bool
+    onboarding_status: OnboardingStatus | None
 
 
 FIXED_EXPENSE_CATEGORIES = ['vivienda', 'servicios', 'transporte', 'seguros']
@@ -260,9 +271,9 @@ class HealthScoreService:
 
         return weighted_score, self.get_status(weighted_score)
 
-    def check_onboarding_needed(self, user: User, month: date) -> bool:
+    def get_onboarding_status(self, user: User, month: date) -> tuple[bool, OnboardingStatus]:
         """
-        Check if user needs onboarding (not enough data).
+        Check if user needs onboarding and return status.
 
         Requirements:
         - At least 1 income
@@ -287,11 +298,30 @@ class HealthScoreService:
 
         budget_count = Budget.objects.filter(user=user, period='monthly').count()
 
-        return income_count < 1 or expense_count < 5 or budget_count < 3
+        income_required = 1
+        expense_required = 5
+        budget_required = 3
+
+        needs_onboarding = (
+            income_count < income_required or
+            expense_count < expense_required or
+            budget_count < budget_required
+        )
+
+        onboarding_status = OnboardingStatus(
+            income_count=income_count,
+            expense_count=expense_count,
+            budget_count=budget_count,
+            income_required=income_required,
+            expense_required=expense_required,
+            budget_required=budget_required,
+        )
+
+        return needs_onboarding, onboarding_status
 
     def calculate_health_score(self, user: User, month: date) -> HealthScoreResult:
         """Calculate complete financial health score for a user and month"""
-        needs_onboarding = self.check_onboarding_needed(user, month)
+        needs_onboarding, onboarding_status = self.get_onboarding_status(user, month)
 
         savings = self.calculate_savings_rate(user, month)
         fixed = self.calculate_fixed_expenses_ratio(user, month)
@@ -309,5 +339,6 @@ class HealthScoreService:
             trend=trend,
             overall_score=overall_score,
             overall_status=overall_status,
-            needs_onboarding=needs_onboarding
+            needs_onboarding=needs_onboarding,
+            onboarding_status=onboarding_status if needs_onboarding else None
         )
