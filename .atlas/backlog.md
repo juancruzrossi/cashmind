@@ -149,17 +149,10 @@
 
 ## IN PROGRESS
 
-### HIGH-001: Crear modelo HealthScoreSnapshot y migración
+## DONE
+
+### HIGH-001: Crear modelo HealthScoreSnapshot y migración (2026-01-19) - PR #9
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Nuevo modelo para almacenar snapshots mensuales del score de salud financiera
-- **Steps:**
-  1. Crear modelo `HealthScoreSnapshot` en `api/models.py` con campos: user, month, scores individuales (4), overall_score, overall_status, cached_advice, advice_generated_at
-  2. Agregar constraint unique_together para [user, month]
-  3. Crear y ejecutar migración
-  4. Registrar modelo en admin.py
-- **Acceptance:** `python manage.py migrate` ejecuta sin errores, modelo visible en admin
-
-## DONE
 
 ## DELAYED

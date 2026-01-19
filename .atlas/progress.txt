@@ -22,3 +22,21 @@ Any important context or gotchas.
 ---
 
 ================================================================================
+
+## 2026-01-19 - HIGH-001: Crear modelo HealthScoreSnapshot y migración (feature)
+
+### Summary:
+Added new Django model `HealthScoreSnapshot` to store monthly financial health scores with 4 individual metrics, overall score, status (semaphore), and cached Gemini advice.
+
+### Changes:
+- backend/api/models.py: Added HealthScoreSnapshot model with fields for scores, status, and advice caching
+- backend/api/admin.py: Registered model with organized fieldsets
+- backend/api/migrations/0006_health_score_snapshot.py: Created migration
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/9
+
+### Notes for next developer:
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+- Created temporary .venv to generate migration (Docker not available in this environment)
+- Model uses unique_together constraint for [user, month] to prevent duplicates
