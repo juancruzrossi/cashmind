@@ -59,3 +59,21 @@ https://github.com/juancruzrossi/cashmind/pull/10
 - Fixed expense categories are: vivienda, servicios, transporte, seguros
 - Decimal values need explicit float() conversion when multiplying with Python floats
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+
+## 2026-01-19 - HIGH-003: Crear endpoint API /api/health-score/ (feature)
+
+### Summary:
+Added REST endpoint `GET /api/health-score/` that returns the user's current financial health score with 4 metrics and their status. Auto-saves snapshot to database.
+
+### Changes:
+- backend/api/serializers.py: Added MetricSerializer, HealthScoreSerializer, HealthScoreSnapshotSerializer
+- backend/api/views.py: Added HealthScoreView that uses HealthScoreService
+- backend/api/urls.py: Added route for `/health-score/`
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/11
+
+### Notes for next developer:
+- Response includes needs_onboarding flag for users without sufficient data
+- Snapshot is auto-saved/updated on each request using update_or_create
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning

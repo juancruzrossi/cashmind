@@ -123,19 +123,11 @@
 
 ## IN PROGRESS
 
-### HIGH-003: Crear endpoint API /api/health-score/
+## DONE
+
+### HIGH-003: Crear endpoint API /api/health-score/ (2026-01-19) - PR #11
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Endpoint que devuelve score actual y las 4 métricas con su status
-- **Steps:**
-  1. Crear serializer `HealthScoreSerializer` en `api/serializers.py`
-  2. Crear view `HealthScoreView` en `api/views.py` que use HealthScoreService
-  3. Agregar ruta `GET /api/health-score/` en `api/urls.py`
-  4. Manejar caso sin datos suficientes (retornar needs_onboarding: true)
-  5. Guardar/actualizar snapshot del mes actual en DB
-- **Acceptance:** `GET /api/health-score/` retorna JSON con overall_score, overall_status, y 4 métricas
-
-## DONE
 
 ### HIGH-002: Implementar servicio de cálculo de métricas de salud financiera (2026-01-19) - PR #10
 - **Category:** feature
