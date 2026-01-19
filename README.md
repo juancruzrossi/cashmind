@@ -341,3 +341,5 @@ formatLocalDate(new Date()) // "2025-12-01" en zona local
 ## Licencia
 
 MIT License - Haz lo que quieras con el código.
+
+<!-- TEST-001: Integration branch flow verification - 2026-01-19 -->
