@@ -28,20 +28,11 @@
 
 ## IN PROGRESS
 
-### MED-011: Crear panel de consejos con botón regenerar
+## DONE
+
+### MED-011: Crear panel de consejos con botón regenerar (2026-01-19) - PR #19
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Panel que muestra consejos de Gemini con opción de regenerar
-- **Steps:**
-  1. Crear componente `components/health/AdvicePanel.tsx`
-  2. Mostrar consejos cacheados en formato lista
-  3. Botón "Regenerar consejo" que llama a regenerateAdvice()
-  4. Loading state mientras genera
-  5. Error state con retry si falla Gemini
-  6. Fallback a consejo genérico si no hay cached_advice
-- **Acceptance:** Panel muestra consejos y botón regenera correctamente
-
-## DONE
 
 ### MED-010: Crear gráfica de evolución histórica (2026-01-19) - PR #18
 - **Category:** feature

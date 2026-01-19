@@ -179,6 +179,23 @@ https://github.com/juancruzrossi/cashmind/pull/17
 - Trend icon changes based on positive/negative value (TrendingUp/TrendingDown)
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
+## 2026-01-19 - MED-011: Crear panel de consejos con botón regenerar (feature)
+
+### Summary:
+Added AdvicePanel component displaying cached Gemini financial advice with regenerate button, loading/error states, and fallback advice.
+
+### Changes:
+- frontend/src/components/health/advice-panel.tsx: New component with regenerate button, loading skeleton, error state with retry
+- frontend/src/app/(dashboard)/health/page.tsx: Integrated AdvicePanel below history chart
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/19
+
+### Notes for next developer:
+- AdvicePanel uses useHealthScore hook's advice and regenerateAdvice
+- Default fallback advice provided when no cached advice exists
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+
 ## 2026-01-19 - MED-010: Crear gráfica de evolución histórica (feature)
 
 ### Summary:
