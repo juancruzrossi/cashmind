@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { MetricCard } from '@/components/health/metric-card';
 import { HistoryChart } from '@/components/health/history-chart';
+import { AdvicePanel } from '@/components/health/advice-panel';
 
 type Status = 'green' | 'yellow' | 'red';
 
@@ -69,7 +70,16 @@ function MetricsSkeleton() {
 }
 
 export default function HealthPage() {
-  const { data, isLoading, error, needsOnboarding, fetchHealthScore } = useHealthScore();
+  const {
+    data,
+    advice,
+    isLoading,
+    isRegenerating,
+    error,
+    needsOnboarding,
+    fetchHealthScore,
+    regenerateAdvice,
+  } = useHealthScore();
 
   if (error) {
     return (
@@ -220,6 +230,15 @@ export default function HealthPage() {
       </div>
 
       <HistoryChart />
+
+      <AdvicePanel
+        advice={advice}
+        isLoading={isLoading}
+        isRegenerating={isRegenerating}
+        error={error}
+        onRegenerate={regenerateAdvice}
+        onRetry={fetchHealthScore}
+      />
     </div>
   );
 }
