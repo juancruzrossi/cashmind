@@ -2,18 +2,6 @@
 
 ## TODO
 
-### MED-006: Crear hook useHealthScore en frontend
-- **Category:** feature
-- **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Hook para fetch de datos de salud financiera
-- **Steps:**
-  1. Crear `hooks/useHealthScore.ts`
-  2. Implementar `fetchHealthScore()` - GET /api/health-score/
-  3. Implementar `regenerateAdvice()` - POST /api/health-score/advice/
-  4. Manejar estados: loading, error, needsOnboarding, data
-  5. Seguir patrón de otros hooks (AbortController, error handling)
-- **Acceptance:** Hook exporta data, loading, error, needsOnboarding, regenerateAdvice
-
 ### MED-007: Crear widget HealthScoreWidget para dashboard
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
@@ -100,6 +88,18 @@
 - **Acceptance:** `python manage.py test api.tests.test_health_score` pasa
 
 ## IN PROGRESS
+
+### MED-006: Crear hook useHealthScore en frontend
+- **Category:** feature
+- **Spec:** .atlas/specs/spec-20260119-022238.md
+- **Description:** Hook para fetch de datos de salud financiera
+- **Steps:**
+  1. Crear `hooks/useHealthScore.ts`
+  2. Implementar `fetchHealthScore()` - GET /api/health-score/
+  3. Implementar `regenerateAdvice()` - POST /api/health-score/advice/
+  4. Manejar estados: loading, error, needsOnboarding, data
+  5. Seguir patrón de otros hooks (AbortController, error handling)
+- **Acceptance:** Hook exporta data, loading, error, needsOnboarding, regenerateAdvice
 
 ## DONE
 
