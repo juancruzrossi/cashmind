@@ -527,3 +527,93 @@ class HealthScoreView(APIView):
         serializer.is_valid(raise_exception=True)
 
         return Response(serializer.validated_data)
+
+
+class HealthScoreAdviceView(APIView):
+    """Generate and retrieve financial advice for health score"""
+
+    def get(self, request):
+        """Get cached advice or generate new one if not exists"""
+        current_month = date.today().replace(day=1)
+
+        try:
+            snapshot = HealthScoreSnapshot.objects.get(
+                user=request.user,
+                month=current_month
+            )
+        except HealthScoreSnapshot.DoesNotExist:
+            return Response(
+                {'error': 'No hay evaluación de salud financiera para este mes. Visita /health-score/ primero.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if snapshot.cached_advice:
+            return Response({
+                'advice': snapshot.cached_advice,
+                'generated_at': snapshot.advice_generated_at,
+                'cached': True
+            })
+
+        # Generate new advice
+        return self._generate_and_cache_advice(request.user, snapshot)
+
+    def post(self, request):
+        """Regenerate advice regardless of cache"""
+        current_month = date.today().replace(day=1)
+
+        try:
+            snapshot = HealthScoreSnapshot.objects.get(
+                user=request.user,
+                month=current_month
+            )
+        except HealthScoreSnapshot.DoesNotExist:
+            return Response(
+                {'error': 'No hay evaluación de salud financiera para este mes. Visita /health-score/ primero.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        return self._generate_and_cache_advice(request.user, snapshot)
+
+    def _generate_and_cache_advice(self, user, snapshot):
+        """Generate advice using Gemini and cache it in the snapshot"""
+        service = HealthScoreService()
+        result = service.calculate_health_score(user, snapshot.month)
+
+        metrics_data = {
+            'savings_rate': {
+                'value': float(result.savings_rate.value),
+                'status': result.savings_rate.status,
+            },
+            'fixed_expenses': {
+                'value': float(result.fixed_expenses.value),
+                'status': result.fixed_expenses.status,
+            },
+            'budget_adherence': {
+                'value': float(result.budget_adherence.value),
+                'status': result.budget_adherence.status,
+            },
+            'trend': {
+                'value': float(result.trend.value),
+                'status': result.trend.status,
+            },
+            'overall_status': result.overall_status,
+        }
+
+        try:
+            gemini_service = GeminiService()
+            advice = gemini_service.generate_financial_advice(metrics_data)
+        except Exception as e:
+            return Response(
+                {'error': f'Error al generar consejo: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        snapshot.cached_advice = advice
+        snapshot.advice_generated_at = timezone.now()
+        snapshot.save()
+
+        return Response({
+            'advice': advice,
+            'generated_at': snapshot.advice_generated_at,
+            'cached': False
+        })

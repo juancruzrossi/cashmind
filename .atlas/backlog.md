@@ -2,17 +2,6 @@
 
 ## TODO
 
-### MED-005: Crear endpoint API /api/health-score/advice/
-- **Category:** feature
-- **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Endpoint para generar/regenerar consejos de Gemini
-- **Steps:**
-  1. Crear view `HealthScoreAdviceView` en `api/views.py`
-  2. POST regenera consejo llamando a GeminiService
-  3. Guardar consejo en cached_advice del snapshot actual
-  4. GET retorna consejo cacheado si existe, o genera uno nuevo
-- **Acceptance:** `POST /api/health-score/advice/` retorna nuevo consejo y lo cachea
-
 ### MED-006: Crear hook useHealthScore en frontend
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
@@ -111,6 +100,17 @@
 - **Acceptance:** `python manage.py test api.tests.test_health_score` pasa
 
 ## IN PROGRESS
+
+### MED-005: Crear endpoint API /api/health-score/advice/
+- **Category:** feature
+- **Spec:** .atlas/specs/spec-20260119-022238.md
+- **Description:** Endpoint para generar/regenerar consejos de Gemini
+- **Steps:**
+  1. Crear view `HealthScoreAdviceView` en `api/views.py`
+  2. POST regenera consejo llamando a GeminiService
+  3. Guardar consejo en cached_advice del snapshot actual
+  4. GET retorna consejo cacheado si existe, o genera uno nuevo
+- **Acceptance:** `POST /api/health-score/advice/` retorna nuevo consejo y lo cachea
 
 ## DONE
 
