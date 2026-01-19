@@ -2,18 +2,6 @@
 
 ## TODO
 
-### LOW-012: Implementar onboarding guiado para nuevos usuarios
-- **Category:** feature
-- **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Wizard cuando no hay datos suficientes para evaluar
-- **Steps:**
-  1. Crear componente `components/health/OnboardingWizard.tsx`
-  2. Detectar: < 1 ingreso, < 5 gastos, < 3 presupuestos
-  3. Mostrar checklist de requisitos con status (completado/pendiente)
-  4. Botones para navegar a: agregar ingreso, agregar gastos, definir presupuestos
-  5. Mostrar en lugar de métricas cuando needsOnboarding=true
-- **Acceptance:** Usuarios nuevos ven wizard con pasos claros para completar datos
-
 ### LOW-013: Tests unitarios backend para health score
 - **Category:** test
 - **Spec:** .atlas/specs/spec-20260119-022238.md
@@ -27,6 +15,18 @@
 - **Acceptance:** `python manage.py test api.tests.test_health_score` pasa
 
 ## IN PROGRESS
+
+### LOW-012: Implementar onboarding guiado para nuevos usuarios
+- **Category:** feature
+- **Spec:** .atlas/specs/spec-20260119-022238.md
+- **Description:** Wizard cuando no hay datos suficientes para evaluar
+- **Steps:**
+  1. Crear componente `components/health/OnboardingWizard.tsx`
+  2. Detectar: < 1 ingreso, < 5 gastos, < 3 presupuestos
+  3. Mostrar checklist de requisitos con status (completado/pendiente)
+  4. Botones para navegar a: agregar ingreso, agregar gastos, definir presupuestos
+  5. Mostrar en lugar de métricas cuando needsOnboarding=true
+- **Acceptance:** Usuarios nuevos ven wizard con pasos claros para completar datos
 
 ## DONE
 
