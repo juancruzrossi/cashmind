@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { MetricCard } from '@/components/health/metric-card';
 import { HistoryChart } from '@/components/health/history-chart';
 import { AdvicePanel } from '@/components/health/advice-panel';
+import { OnboardingWizard } from '@/components/health/onboarding-wizard';
 
 type Status = 'green' | 'yellow' | 'red';
 
@@ -77,6 +78,7 @@ export default function HealthPage() {
     isRegenerating,
     error,
     needsOnboarding,
+    onboardingStatus,
     fetchHealthScore,
     regenerateAdvice,
   } = useHealthScore();
@@ -132,7 +134,21 @@ export default function HealthPage() {
     );
   }
 
-  if (needsOnboarding || !data) {
+  if (needsOnboarding && onboardingStatus) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Salud Financiera</h1>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Evaluación de tu estado financiero actual
+          </p>
+        </div>
+        <OnboardingWizard status={onboardingStatus} />
+      </div>
+    );
+  }
+
+  if (!data) {
     return (
       <div className="space-y-6">
         <div>
@@ -147,9 +163,9 @@ export default function HealthPage() {
               <span className="text-3xl text-muted-foreground">?</span>
             </div>
             <div className="text-center max-w-md">
-              <p className="text-lg font-medium text-foreground">Sin datos suficientes</p>
+              <p className="text-lg font-medium text-foreground">Sin datos disponibles</p>
               <p className="text-sm text-muted-foreground mt-2">
-                Para calcular tu salud financiera necesitamos más información sobre tus transacciones y presupuestos.
+                No se pudieron cargar los datos de salud financiera.
               </p>
             </div>
           </div>
