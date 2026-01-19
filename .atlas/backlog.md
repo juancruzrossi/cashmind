@@ -2,19 +2,6 @@
 
 ## TODO
 
-### MED-011: Crear panel de consejos con botón regenerar
-- **Category:** feature
-- **Spec:** .atlas/specs/spec-20260119-022238.md
-- **Description:** Panel que muestra consejos de Gemini con opción de regenerar
-- **Steps:**
-  1. Crear componente `components/health/AdvicePanel.tsx`
-  2. Mostrar consejos cacheados en formato lista
-  3. Botón "Regenerar consejo" que llama a regenerateAdvice()
-  4. Loading state mientras genera
-  5. Error state con retry si falla Gemini
-  6. Fallback a consejo genérico si no hay cached_advice
-- **Acceptance:** Panel muestra consejos y botón regenera correctamente
-
 ### LOW-012: Implementar onboarding guiado para nuevos usuarios
 - **Category:** feature
 - **Spec:** .atlas/specs/spec-20260119-022238.md
@@ -40,6 +27,19 @@
 - **Acceptance:** `python manage.py test api.tests.test_health_score` pasa
 
 ## IN PROGRESS
+
+### MED-011: Crear panel de consejos con botón regenerar
+- **Category:** feature
+- **Spec:** .atlas/specs/spec-20260119-022238.md
+- **Description:** Panel que muestra consejos de Gemini con opción de regenerar
+- **Steps:**
+  1. Crear componente `components/health/AdvicePanel.tsx`
+  2. Mostrar consejos cacheados en formato lista
+  3. Botón "Regenerar consejo" que llama a regenerateAdvice()
+  4. Loading state mientras genera
+  5. Error state con retry si falla Gemini
+  6. Fallback a consejo genérico si no hay cached_advice
+- **Acceptance:** Panel muestra consejos y botón regenera correctamente
 
 ## DONE
 
