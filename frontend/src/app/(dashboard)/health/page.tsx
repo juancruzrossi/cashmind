@@ -6,6 +6,7 @@ import { useHealthScore } from '@/hooks/useHealthScore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { MetricCard } from '@/components/health/metric-card';
+import { HistoryChart } from '@/components/health/history-chart';
 
 type Status = 'green' | 'yellow' | 'red';
 
@@ -217,6 +218,8 @@ export default function HealthPage() {
           icon={trendIcon}
         />
       </div>
+
+      <HistoryChart />
     </div>
   );
 }

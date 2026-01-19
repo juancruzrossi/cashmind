@@ -291,6 +291,10 @@ class ApiService {
   async regenerateHealthScoreAdvice() {
     return this.request('/health-score/advice/', { method: 'POST' });
   }
+
+  async getHealthScoreHistory() {
+    return this.request('/health-score/history/');
+  }
 }
 
 export const api = new ApiService();
