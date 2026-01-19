@@ -93,3 +93,21 @@ https://github.com/juancruzrossi/cashmind/pull/12
 - Method expects dict with: savings_rate, fixed_expenses, budget_adherence, trend (each with value and status)
 - Uses temperature=0.7 for varied responses
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+
+## 2026-01-19 - MED-005: Crear endpoint API /api/health-score/advice/ (feature)
+
+### Summary:
+Added `GET/POST /api/health-score/advice/` endpoint to generate and cache financial advice using Gemini.
+
+### Changes:
+- backend/api/views.py: Added HealthScoreAdviceView with GET (cached or generate) and POST (regenerate) methods
+- backend/api/urls.py: Added route for `/health-score/advice/`
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/13
+
+### Notes for next developer:
+- GET returns cached advice if exists, otherwise generates new
+- POST always regenerates advice (for "regenerate" button)
+- Requires snapshot to exist first (call /health-score/ first)
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning
