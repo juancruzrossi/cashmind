@@ -191,7 +191,7 @@ class HealthScoreService:
             score = int(50 + float(diversification - 40) * (50 / 20))
             status = 'yellow'
         else:
-            score = max(0, int(diversification * 1.25))
+            score = max(0, int(float(diversification) * 1.25))
             status = 'red'
 
         return MetricResult(value=diversification, score=score, status=status)
