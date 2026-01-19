@@ -194,3 +194,40 @@ class Goal(models.Model):
 
     def __str__(self):
         return f"{self.name} - ${self.current_amount}/${self.target_amount}"
+
+
+class HealthScoreSnapshot(models.Model):
+    """Monthly snapshot of user's financial health score"""
+    STATUS_CHOICES = [
+        ('red', 'Necesita Atención'),
+        ('yellow', 'Regular'),
+        ('green', 'Excelente'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='health_score_snapshots')
+    month = models.DateField(help_text="First day of the evaluated month")
+
+    # Individual scores (0-100)
+    savings_rate_score = models.IntegerField()
+    fixed_expenses_score = models.IntegerField()
+    budget_adherence_score = models.IntegerField()
+    trend_score = models.IntegerField()
+
+    # Overall score (0-100)
+    overall_score = models.IntegerField()
+    overall_status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+
+    # Cached Gemini advice
+    cached_advice = models.TextField(null=True, blank=True)
+    advice_generated_at = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'health_score_snapshots'
+        unique_together = ['user', 'month']
+        ordering = ['-month']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.month.strftime('%Y-%m')} - {self.overall_status}"
