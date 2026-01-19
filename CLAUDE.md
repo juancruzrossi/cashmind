@@ -174,3 +174,50 @@ gh pr merge --squash --delete-branch
 4. **ALWAYS** use GitHub CLI (`gh`) for PRs
 5. **ALWAYS** use squash and merge for PRs
 6. **ALWAYS** delete branches after merging
+
+## Skills y Agentes Especializados (OBLIGATORIO)
+
+### Skills de Desarrollo
+
+**SIEMPRE** usar las skills disponibles para tareas de desarrollo:
+
+| Skill | Uso |
+|-------|-----|
+| `senior-frontend` | Componentes React, UI/UX, performance frontend, accesibilidad |
+| `senior-backend` | APIs, lógica de negocio, optimización de queries, seguridad |
+| `backend-architect` | Diseño de APIs, schemas de DB, arquitectura de servicios |
+| `code-reviewer` | Revisión de código antes de PRs, análisis de calidad |
+| `debugger` | Investigar errores, stack traces, comportamiento inesperado |
+| `performance-engineer` | Optimización, profiling, caching |
+
+### Agentes Especializados
+
+**SIEMPRE** usar el agente apropiado via `Task` tool:
+
+- `frontend-developer` - Para implementar componentes React, UI, estado
+- `backend-architect` - Para diseñar APIs y schemas
+- `debugger` - Para investigar bugs y errores
+- `code-reviewer` - Para revisar código después de cambios significativos
+- `performance-engineer` - Para optimizaciones
+- `Explore` - Para explorar el codebase y responder preguntas
+
+### Diseño UI/UX
+
+**CRÍTICO**: Mantener consistencia visual en todo el proyecto.
+
+Antes de crear/modificar componentes UI:
+1. Usar skill `senior-frontend` para guía de implementación
+2. Seguir el sistema de colores definido (gold #d4a853, backgrounds sólidos)
+3. Mantener patrones existentes (dark theme, sin transparencias)
+4. Verificar responsividad (mobile-first, breakpoint `lg:`)
+
+### Cuándo Usar Cada Herramienta
+
+```
+Tarea de Frontend → senior-frontend skill + frontend-developer agent
+Tarea de Backend  → senior-backend skill + backend-architect agent
+Bug/Error         → debugger agent
+Code Review       → code-reviewer agent (PROACTIVO después de cambios)
+Explorar código   → Explore agent (NO usar Grep/Glob directamente)
+Planificación     → Plan agent o /planner skill
+```
