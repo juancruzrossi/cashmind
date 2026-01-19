@@ -1,3 +1,6 @@
+import logging
+import traceback
+
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
@@ -10,6 +13,8 @@ from django.db import transaction
 from django.utils import timezone
 from datetime import timedelta, date
 import json
+
+logger = logging.getLogger(__name__)
 
 from .models import Payslip, Transaction, Budget, Goal, InvitationCode, HealthScoreSnapshot
 from .serializers import (
@@ -477,10 +482,6 @@ class HealthScoreView(APIView):
     """Get current month's financial health score"""
 
     def get(self, request):
-        import logging
-        import traceback
-        logger = logging.getLogger(__name__)
-
         try:
             current_month = date.today().replace(day=1)
 
