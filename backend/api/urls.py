@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import (
     MeView, LogoutView, RegisterView, health_check,
     PayslipViewSet, TransactionViewSet, BudgetViewSet, GoalViewSet,
-    ChatInterpretView, ChatAnalyzeReceiptView
+    ChatInterpretView, ChatAnalyzeReceiptView, HealthScoreView
 )
 
 router = DefaultRouter()
@@ -28,6 +28,9 @@ urlpatterns = [
     # Chat
     path('chat/interpret/', ChatInterpretView.as_view(), name='chat-interpret'),
     path('chat/analyze-receipt/', ChatAnalyzeReceiptView.as_view(), name='chat-analyze-receipt'),
+
+    # Health Score
+    path('health-score/', HealthScoreView.as_view(), name='health-score'),
 
     # API routes
     path('', include(router.urls)),

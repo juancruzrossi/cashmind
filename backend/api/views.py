@@ -8,17 +8,18 @@ from django.contrib.auth import get_user_model
 from django.db.models import Sum, Avg
 from django.db import transaction
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, date
 import json
 
-from .models import Payslip, Transaction, Budget, Goal, InvitationCode
+from .models import Payslip, Transaction, Budget, Goal, InvitationCode, HealthScoreSnapshot
 from .serializers import (
     UserSerializer, PayslipSerializer, PayslipCreateSerializer,
     TransactionSerializer, BudgetSerializer, GoalSerializer,
-    GoalContributeSerializer
+    GoalContributeSerializer, HealthScoreSerializer
 )
 from .services.gemini import GeminiService
 from .services.chat import ChatService
+from .services.health_score import HealthScoreService
 
 User = get_user_model()
 
@@ -470,3 +471,59 @@ class ChatAnalyzeReceiptView(APIView):
                 {'success': False, 'error': 'No pude analizar la imagen. Intentá con otra foto.'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+class HealthScoreView(APIView):
+    """Get current month's financial health score"""
+
+    def get(self, request):
+        current_month = date.today().replace(day=1)
+
+        service = HealthScoreService()
+        result = service.calculate_health_score(request.user, current_month)
+
+        # Save/update snapshot for current month
+        snapshot, created = HealthScoreSnapshot.objects.update_or_create(
+            user=request.user,
+            month=current_month,
+            defaults={
+                'savings_rate_score': result.savings_rate.score,
+                'fixed_expenses_score': result.fixed_expenses.score,
+                'budget_adherence_score': result.budget_adherence.score,
+                'trend_score': result.trend.score,
+                'overall_score': result.overall_score,
+                'overall_status': result.overall_status,
+            }
+        )
+
+        response_data = {
+            'overall_score': result.overall_score,
+            'overall_status': result.overall_status,
+            'needs_onboarding': result.needs_onboarding,
+            'savings_rate': {
+                'value': float(result.savings_rate.value),
+                'score': result.savings_rate.score,
+                'status': result.savings_rate.status,
+            },
+            'fixed_expenses': {
+                'value': float(result.fixed_expenses.value),
+                'score': result.fixed_expenses.score,
+                'status': result.fixed_expenses.status,
+            },
+            'budget_adherence': {
+                'value': float(result.budget_adherence.value),
+                'score': result.budget_adherence.score,
+                'status': result.budget_adherence.status,
+            },
+            'trend': {
+                'value': float(result.trend.value),
+                'score': result.trend.score,
+                'status': result.trend.status,
+            },
+            'month': current_month.isoformat(),
+        }
+
+        serializer = HealthScoreSerializer(data=response_data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.validated_data)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Payslip, Deduction, Bonus, Transaction, Budget, Goal
+from .models import Payslip, Deduction, Bonus, Transaction, Budget, Goal, HealthScoreSnapshot
 
 User = get_user_model()
 
@@ -126,3 +126,35 @@ class GoalSerializer(serializers.ModelSerializer):
 
 class GoalContributeSerializer(serializers.Serializer):
     amount = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+
+class MetricSerializer(serializers.Serializer):
+    """Serializer for individual metric results"""
+    value = serializers.DecimalField(max_digits=10, decimal_places=2)
+    score = serializers.IntegerField()
+    status = serializers.CharField()
+
+
+class HealthScoreSerializer(serializers.Serializer):
+    """Serializer for complete health score response"""
+    overall_score = serializers.IntegerField()
+    overall_status = serializers.CharField()
+    needs_onboarding = serializers.BooleanField()
+    savings_rate = MetricSerializer()
+    fixed_expenses = MetricSerializer()
+    budget_adherence = MetricSerializer()
+    trend = MetricSerializer()
+    month = serializers.DateField()
+
+
+class HealthScoreSnapshotSerializer(serializers.ModelSerializer):
+    """Serializer for HealthScoreSnapshot model"""
+    class Meta:
+        model = HealthScoreSnapshot
+        fields = [
+            'id', 'month', 'savings_rate_score', 'fixed_expenses_score',
+            'budget_adherence_score', 'trend_score', 'overall_score',
+            'overall_status', 'cached_advice', 'advice_generated_at',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
