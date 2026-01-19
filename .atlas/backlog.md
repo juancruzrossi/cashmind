@@ -6,6 +6,10 @@
 
 ## DONE
 
+### TEST-001: Agregar comentario de prueba en README (2026-01-19) - PR #27
+- **Category:** test
+- **Description:** Agregar un comentario al final del README.md para verificar el flujo de integration branch
+
 ### LOW-013: Tests unitarios backend para health score (2026-01-19) - PR #21
 - **Category:** test
 - **Spec:** .atlas/specs/spec-20260119-022238.md

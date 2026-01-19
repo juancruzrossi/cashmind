@@ -254,3 +254,18 @@ https://github.com/juancruzrossi/cashmind/pull/21
 - Endpoint tests use APITestCase with force_authenticate
 - Advice endpoint tests mock GeminiService to avoid API calls
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
+
+## 2026-01-19 - TEST-001: Agregar comentario de prueba en README (test)
+
+### Summary:
+Added HTML comment to README.md to verify integration branch workflow is working correctly.
+
+### Changes:
+- README.md: Added test comment at end of file
+
+### PR:
+https://github.com/juancruzrossi/cashmind/pull/27
+
+### Notes for next developer:
+- Integration branch workflow verified successfully
+- Security tools (gitleaks, semgrep) not installed - skipped scan with warning
