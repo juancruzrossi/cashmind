@@ -1,176 +1,176 @@
-# CashMind - Tu Mente Financiera Personal
+# CashMind - Your Personal Financial Mind
 
-Aplicación de gestión de finanzas personales con análisis inteligente de recibos de sueldo mediante IA (Google Gemini). Diseñada para ayudarte a tomar control de tus finanzas con una interfaz moderna, responsiva y fácil de usar.
+Personal finance management app with intelligent payslip analysis powered by AI (Google Gemini). Designed to help you take control of your finances with a modern, responsive, and easy-to-use interface.
 
-## Stack Tecnológico
+## Tech Stack
 
-| Capa | Tecnología |
+| Layer | Technology |
 |------|------------|
 | **Backend** | Django 5, Django REST Framework, PostgreSQL, JWT Auth |
 | **Frontend** | Next.js 16, React 19, Tailwind CSS 4, Recharts |
-| **IA** | Google Gemini 2.5 Flash Lite (OCR de recibos) |
+| **AI** | Google Gemini 2.5 Flash Lite (payslip OCR) |
 | **Deploy** | Docker, Docker Compose |
 
 ---
 
 ## Features
 
-### Dashboard Principal
-- **Resumen financiero**: Balance total, ingresos y gastos del período
-- **Gráfico Ingresos vs Gastos**: Comparativa mensual con barras
-- **Gastos por Categoría**: Desglose de gastos en gráfico de torta
-- **Ingresos por Categoría**: Desglose de ingresos en gráfico de torta
-- **Transacciones Recientes**: Lista de las últimas 5 transacciones
-- **Filtro de Período**: Mes actual, año actual, últimos 365 días, o mes específico
+### Main Dashboard
+- **Financial Summary**: Total balance, income, and expenses for the selected period
+- **Income vs Expenses Chart**: Monthly comparison with bars
+- **Expenses by Category**: Expense breakdown in a pie chart
+- **Income by Category**: Income breakdown in a pie chart
+- **Recent Transactions**: List of the last 5 transactions
+- **Period Filter**: Current month, current year, last 365 days, or a specific month
 
-### Recibos de Sueldo (Payslips)
-- **Subida de recibos**: Arrastra y suelta PDFs o imágenes de recibos
-- **Análisis con IA**: Google Gemini extrae automáticamente:
-  - Sueldo bruto y neto
-  - Deducciones (impuestos, jubilación, obra social, etc.)
-  - Bonificaciones (aguinaldo, horas extra, etc.)
-  - Empleador y puesto
-  - Mes y año del recibo
-- **Creación automática**: Al guardar un recibo, se crea automáticamente una transacción de ingreso por el sueldo neto
-- **Vista detallada**: Visualiza cada recibo con todas sus deducciones y bonificaciones
-- **Eliminación en cascada**: Al eliminar un recibo, se elimina también su transacción asociada
+### Payslips
+- **Payslip Upload**: Drag and drop PDFs or payslip images
+- **AI Analysis**: Google Gemini automatically extracts:
+  - Gross and net salary
+  - Deductions (taxes, retirement, health insurance, etc.)
+  - Bonuses (annual bonus, overtime, etc.)
+  - Employer and role
+  - Payslip month and year
+- **Automatic Creation**: When a payslip is saved, an income transaction is automatically created for the net salary
+- **Detailed View**: View each payslip with all deductions and bonuses
+- **Cascade Deletion**: When a payslip is deleted, its associated transaction is also deleted
 
-### Transacciones
-- **CRUD completo**: Crear, ver, editar y eliminar transacciones
-- **Tipos**: Ingresos y gastos
-- **Categorías predefinidas**:
-  - **Ingresos**: Salario, Freelance, Inversiones, Regalos, Reembolsos, Otros
-  - **Gastos**: Alimentación, Transporte, Entretenimiento, Salud, Educación, Servicios, Compras, Vivienda, Otros
-- **Transacciones recurrentes**: Marca transacciones como diarias, semanales, mensuales o anuales
-- **Notas opcionales**: Agrega detalles adicionales a cada transacción
+### Transactions
+- **Full CRUD**: Create, view, edit, and delete transactions
+- **Types**: Income and expenses
+- **Predefined Categories**:
+  - **Income**: Salary, Freelance, Investments, Gifts, Refunds, Other
+  - **Expenses**: Food, Transportation, Entertainment, Health, Education, Services, Shopping, Housing, Other
+- **Recurring Transactions**: Mark transactions as daily, weekly, monthly, or yearly
+- **Optional Notes**: Add extra details to each transaction
 
-### Presupuestos (Budgets)
-- **Límites por categoría**: Define cuánto quieres gastar máximo en cada categoría
-- **Períodos**: Semanal, mensual o anual
-- **Seguimiento visual**: Barra de progreso muestra cuánto llevas gastado
-- **Alertas visuales**: Indicador cuando te acercas o superas el límite
+### Budgets
+- **Category Limits**: Define how much you want to spend at most in each category
+- **Periods**: Weekly, monthly, or yearly
+- **Visual Tracking**: Progress bar shows how much you have spent
+- **Visual Alerts**: Indicator when you are close to or over the limit
 
-### Metas de Ahorro (Goals)
-- **Define objetivos**: Nombre, monto objetivo y fecha límite opcional
-- **Categorías**: Ahorro, Inversión, Deuda, Compra, Emergencia, Otros
-- **Aportes**: Agrega dinero a tus metas cuando quieras
-- **Progreso visual**: Barra de progreso y porcentaje completado
-- **Colores e iconos**: Personaliza cada meta
+### Savings Goals
+- **Define Goals**: Name, target amount, and optional deadline
+- **Categories**: Savings, Investment, Debt, Purchase, Emergency, Other
+- **Contributions**: Add money to your goals whenever you want
+- **Visual Progress**: Progress bar and completion percentage
+- **Colors and Icons**: Customize each goal
 
-### Autenticación
-- **JWT Auth**: Tokens de acceso y refresh
-- **Sesión persistente**: Tokens guardados en localStorage
-- **Auto-refresh**: El token se renueva automáticamente antes de expirar
-- **Rutas protegidas**: AuthGuard redirige a login si no hay sesión
+### Authentication
+- **JWT Auth**: Access and refresh tokens
+- **Persistent Session**: Tokens stored in localStorage
+- **Auto-refresh**: Token is automatically renewed before expiration
+- **Protected Routes**: AuthGuard redirects to login when there is no session
 
 ### UX/UI
-- **100% Responsivo**: Funciona perfecto en móvil, tablet y desktop
-- **Sidebar colapsable**: En móvil se muestra como sheet lateral
-- **Tema oscuro ready**: Estructura preparada para dark mode
-- **Filtros intuitivos**: Selector de período con popover y botones rápidos
-- **Feedback visual**: Loading states, estados vacíos, y mensajes de error
+- **100% Responsive**: Works perfectly on mobile, tablet, and desktop
+- **Collapsible Sidebar**: On mobile it is shown as a side sheet
+- **Dark Theme Ready**: Structure prepared for dark mode
+- **Intuitive Filters**: Period selector with popover and quick buttons
+- **Visual Feedback**: Loading states, empty states, and error messages
 
 ---
 
-## Desarrollo Local
+## Local Development
 
-### Prerequisitos
-- Docker y Docker Compose
-- API Key de Google Gemini (obtener en [Google AI Studio](https://aistudio.google.com/app/apikey))
+### Prerequisites
+- Docker and Docker Compose
+- Google Gemini API key (get it from [Google AI Studio](https://aistudio.google.com/app/apikey))
 
-### 1. Clonar el repositorio
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/tu-usuario/cashmind.git
+git clone https://github.com/your-username/cashmind.git
 cd cashmind
 ```
 
-### 2. Configurar API Key de Gemini
+### 2. Configure the Gemini API Key
 
 ```bash
 cp backend/.env.example backend/.env
 ```
 
-Editar `backend/.env`:
+Edit `backend/.env`:
 ```env
-GOOGLE_GEMINI_API_KEY=tu_api_key_aqui
+GOOGLE_GEMINI_API_KEY=your_api_key_here
 ```
 
-### 3. Levantar con Docker
+### 3. Start with Docker
 
 ```bash
 docker-compose up --build
 ```
 
-La app estará disponible en:
+The app will be available at:
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000/api
-- **Admin Django**: http://localhost:8000/admin
+- **Django Admin**: http://localhost:8000/admin
 
-### 4. Crear usuario administrador
+### 4. Create an Admin User
 
 ```bash
 docker-compose exec backend python manage.py createsuperuser
 ```
 
-### 5. Crear usuarios de la app
+### 5. Create App Users
 
-1. Ir a http://localhost:8000/admin
-2. Loguearse con el superusuario
+1. Go to http://localhost:8000/admin
+2. Log in with the superuser
 3. Users → Add User
-4. Completar username y password
+4. Fill in username and password
 
 ---
 
-## Comandos Útiles
+## Useful Commands
 
 ### Docker
 
 ```bash
-# Levantar servicios
+# Start services
 docker-compose up
 
-# Levantar en background
+# Start in background
 docker-compose up -d
 
-# Reconstruir imágenes
+# Rebuild images
 docker-compose up --build
 
-# Ver logs
+# View logs
 docker-compose logs -f
 
-# Detener servicios
+# Stop services
 docker-compose down
 
-# Limpiar todo (incluye volúmenes)
+# Clean everything (includes volumes)
 docker-compose down -v
 ```
 
 ### Backend (Django)
 
 ```bash
-# Ejecutar migraciones
+# Run migrations
 docker-compose exec backend python manage.py migrate
 
-# Crear nueva migración
+# Create a new migration
 docker-compose exec backend python manage.py makemigrations
 
-# Shell de Django
+# Django shell
 docker-compose exec backend python manage.py shell
 
-# Crear superusuario
+# Create superuser
 docker-compose exec backend python manage.py createsuperuser
 ```
 
 ### Frontend (Next.js)
 
 ```bash
-# Desarrollo sin Docker
+# Development without Docker
 cd frontend
 npm install
 npm run dev
 
-# Build de producción
+# Production build
 npm run build
 
 # Linting
@@ -181,90 +181,90 @@ npm run lint
 
 ## API Endpoints
 
-### Autenticación
+### Authentication
 
-| Método | Endpoint | Descripción |
+| Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/auth/login/` | Login, retorna access y refresh token |
-| POST | `/api/auth/refresh/` | Renovar access token |
-| GET | `/api/auth/me/` | Obtener usuario actual |
+| POST | `/api/auth/login/` | Login, returns access and refresh token |
+| POST | `/api/auth/refresh/` | Refresh access token |
+| GET | `/api/auth/me/` | Get current user |
 
-### Transacciones
+### Transactions
 
-| Método | Endpoint | Descripción |
+| Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/transactions/` | Listar transacciones |
-| POST | `/api/transactions/` | Crear transacción |
-| GET | `/api/transactions/{id}/` | Detalle de transacción |
-| PUT | `/api/transactions/{id}/` | Actualizar transacción |
-| DELETE | `/api/transactions/{id}/` | Eliminar transacción |
-| GET | `/api/transactions/stats/` | Estadísticas (total, ingresos, gastos) |
-| GET | `/api/transactions/monthly/` | Datos mensuales para gráfico |
-| GET | `/api/transactions/by_category/` | Desglose por categoría |
+| GET | `/api/transactions/` | List transactions |
+| POST | `/api/transactions/` | Create transaction |
+| GET | `/api/transactions/{id}/` | Transaction detail |
+| PUT | `/api/transactions/{id}/` | Update transaction |
+| DELETE | `/api/transactions/{id}/` | Delete transaction |
+| GET | `/api/transactions/stats/` | Statistics (total, income, expenses) |
+| GET | `/api/transactions/monthly/` | Monthly data for the chart |
+| GET | `/api/transactions/by_category/` | Breakdown by category |
 
-### Recibos de Sueldo
+### Payslips
 
-| Método | Endpoint | Descripción |
+| Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/payslips/` | Listar recibos |
-| POST | `/api/payslips/` | Crear recibo |
-| GET | `/api/payslips/{id}/` | Detalle de recibo |
-| DELETE | `/api/payslips/{id}/` | Eliminar recibo |
-| POST | `/api/payslips/analyze/` | Analizar imagen/PDF con IA |
+| GET | `/api/payslips/` | List payslips |
+| POST | `/api/payslips/` | Create payslip |
+| GET | `/api/payslips/{id}/` | Payslip detail |
+| DELETE | `/api/payslips/{id}/` | Delete payslip |
+| POST | `/api/payslips/analyze/` | Analyze image/PDF with AI |
 
-### Presupuestos
+### Budgets
 
-| Método | Endpoint | Descripción |
+| Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/budgets/` | Listar presupuestos |
-| POST | `/api/budgets/` | Crear presupuesto |
-| GET | `/api/budgets/{id}/` | Detalle de presupuesto |
-| PUT | `/api/budgets/{id}/` | Actualizar presupuesto |
-| DELETE | `/api/budgets/{id}/` | Eliminar presupuesto |
+| GET | `/api/budgets/` | List budgets |
+| POST | `/api/budgets/` | Create budget |
+| GET | `/api/budgets/{id}/` | Budget detail |
+| PUT | `/api/budgets/{id}/` | Update budget |
+| DELETE | `/api/budgets/{id}/` | Delete budget |
 
-### Metas
+### Goals
 
-| Método | Endpoint | Descripción |
+| Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/goals/` | Listar metas |
-| POST | `/api/goals/` | Crear meta |
-| GET | `/api/goals/{id}/` | Detalle de meta |
-| PUT | `/api/goals/{id}/` | Actualizar meta |
-| DELETE | `/api/goals/{id}/` | Eliminar meta |
-| POST | `/api/goals/{id}/contribute/` | Aportar a una meta |
+| GET | `/api/goals/` | List goals |
+| POST | `/api/goals/` | Create goal |
+| GET | `/api/goals/{id}/` | Goal detail |
+| PUT | `/api/goals/{id}/` | Update goal |
+| DELETE | `/api/goals/{id}/` | Delete goal |
+| POST | `/api/goals/{id}/contribute/` | Contribute to a goal |
 
 ---
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 cashmind/
 ├── backend/
 │   ├── api/
 │   │   ├── models.py          # User, Payslip, Transaction, Budget, Goal
-│   │   ├── views.py           # ViewSets para cada modelo
-│   │   ├── serializers.py     # Serializers de DRF
-│   │   ├── urls.py            # Rutas de la API
+│   │   ├── views.py           # ViewSets for each model
+│   │   ├── serializers.py     # DRF serializers
+│   │   ├── urls.py            # API routes
 │   │   └── services/
-│   │       └── gemini.py      # Servicio de análisis con Gemini
+│   │       └── gemini.py      # Gemini analysis service
 │   ├── cashmind/
-│   │   ├── settings.py        # Configuración de Django
-│   │   └── urls.py            # URLs principales
+│   │   ├── settings.py        # Django settings
+│   │   └── urls.py            # Main URLs
 │   ├── Dockerfile
 │   ├── requirements.txt
 │   └── manage.py
 ├── frontend/
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── (auth)/login/      # Página de login
-│   │   │   └── (dashboard)/       # Rutas protegidas
-│   │   │       ├── dashboard/     # Dashboard principal
-│   │   │       ├── transactions/  # Transacciones
-│   │   │       ├── payslips/      # Recibos de sueldo
-│   │   │       ├── budgets/       # Presupuestos
-│   │   │       └── goals/         # Metas
+│   │   │   ├── (auth)/login/      # Login page
+│   │   │   └── (dashboard)/       # Protected routes
+│   │   │       ├── dashboard/     # Main dashboard
+│   │   │       ├── transactions/  # Transactions
+│   │   │       ├── payslips/      # Payslips
+│   │   │       ├── budgets/       # Budgets
+│   │   │       └── goals/         # Goals
 │   │   ├── components/
-│   │   │   ├── ui/               # Componentes shadcn/ui
+│   │   │   ├── ui/               # shadcn/ui components
 │   │   │   ├── dashboard/        # Charts, StatCard, etc.
 │   │   │   ├── layout/           # AppSidebar, Header
 │   │   │   ├── payslip/          # PayslipUploader
@@ -275,12 +275,12 @@ cashmind/
 │   │   │   ├── useBudgets.ts
 │   │   │   └── useGoals.ts
 │   │   ├── lib/
-│   │   │   ├── api.ts           # Cliente HTTP
-│   │   │   ├── auth-context.tsx # Contexto de autenticación
-│   │   │   ├── events.ts        # Sistema de eventos
-│   │   │   └── date-utils.ts    # Utilidades de fechas
+│   │   │   ├── api.ts           # HTTP client
+│   │   │   ├── auth-context.tsx # Authentication context
+│   │   │   ├── events.ts        # Event system
+│   │   │   └── date-utils.ts    # Date utilities
 │   │   └── types/
-│   │       └── index.ts         # Interfaces TypeScript
+│   │       └── index.ts         # TypeScript interfaces
 │   ├── Dockerfile
 │   ├── package.json
 │   └── tailwind.config.ts
@@ -290,54 +290,56 @@ cashmind/
 
 ---
 
-## Variables de Entorno
+## Environment Variables
 
 ### Backend
 
-| Variable | Descripción | Requerida |
-|----------|-------------|-----------|
-| `SECRET_KEY` | Clave secreta de Django | Sí (prod) |
-| `DEBUG` | Modo debug (`True`/`False`) | No (default: True) |
-| `DATABASE_URL` | URL de conexión PostgreSQL | Sí (prod) |
-| `GOOGLE_GEMINI_API_KEY` | API Key de Gemini | Sí |
-| `ALLOWED_HOSTS` | Hosts permitidos | Sí (prod) |
-| `CORS_ALLOWED_ORIGINS` | Orígenes CORS permitidos | Sí (prod) |
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `SECRET_KEY` | Django secret key | Yes (prod) |
+| `DEBUG` | Debug mode (`True`/`False`) | No (default: True) |
+| `DATABASE_URL` | PostgreSQL connection URL | Yes (prod) |
+| `GOOGLE_GEMINI_API_KEY` | Gemini API key | Yes |
+| `ALLOWED_HOSTS` | Allowed hosts | Yes (prod) |
+| `CORS_ALLOWED_ORIGINS` | Allowed CORS origins | Yes (prod) |
 
 ### Frontend
 
-| Variable | Descripción | Requerida |
-|----------|-------------|-----------|
-| `NEXT_PUBLIC_API_URL` | URL base de la API | No (default: localhost:8000) |
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_API_URL` | API base URL | No (default: localhost:8000) |
 
 ---
 
-## Patrones de Diseño
+## Design Patterns
 
 ### Cascade Deletes
 - `Payslip` → `Deduction`, `Bonus`, `Transaction` (CASCADE)
-- Al eliminar un recibo, se eliminan sus deducciones, bonos y la transacción de salario
+- Deleting a payslip also deletes its deductions, bonuses, and salary transaction
 
 ### Event System
-El frontend usa un sistema de eventos para sincronizar componentes:
+The frontend uses an event system to keep components synchronized:
 ```typescript
-// Después de crear/editar/eliminar
+// After create/edit/delete
 events.emit(EVENTS.TRANSACTION_CHANGED);
 events.emit(EVENTS.PAYSLIP_CHANGED);
 
-// Los hooks escuchan y refrescan datos automáticamente
+// Hooks listen and refresh data automatically
 ```
 
 ### Date Handling
-Todas las fechas usan timezone local del usuario:
+All dates use the user's local timezone:
 ```typescript
 import { formatLocalDate, getLocalToday } from '@/lib/date-utils';
 
-// Nunca usar toISOString() - convierte a UTC
-formatLocalDate(new Date()) // "2025-12-01" en zona local
+// Never use toISOString() - it converts to UTC
+formatLocalDate(new Date()) // "2025-12-01" in local timezone
 ```
 
 ---
 
-## Licencia
+## License
 
-MIT License - Haz lo que quieras con el código.
+MIT License
+
+<!-- TEST-001: Integration branch flow verification - 2026-01-19 -->
