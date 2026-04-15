@@ -23,7 +23,7 @@ Any important context or gotchas.
 
 ================================================================================
 
-## 2026-01-19 - HIGH-001: Crear modelo HealthScoreSnapshot y migración (feature)
+## 2026-01-19 - HIGH-001: Create HealthScoreSnapshot model and migration (feature)
 
 ### Summary:
 Added new Django model `HealthScoreSnapshot` to store monthly financial health scores with 4 individual metrics, overall score, status (semaphore), and cached Gemini advice.
@@ -41,7 +41,7 @@ https://github.com/juancruzrossi/cashmind/pull/9
 - Created temporary .venv to generate migration (Docker not available in this environment)
 - Model uses unique_together constraint for [user, month] to prevent duplicates
 
-## 2026-01-19 - HIGH-002: Implementar servicio de cálculo de métricas de salud financiera (feature)
+## 2026-01-19 - HIGH-002: Implement financial health metric calculation service (feature)
 
 ### Summary:
 Implemented `HealthScoreService` class with 4 financial health metric calculations, weighted overall score, traffic light status, and onboarding check. Includes 31 unit tests.
@@ -56,11 +56,11 @@ Implemented `HealthScoreService` class with 4 financial health metric calculatio
 https://github.com/juancruzrossi/cashmind/pull/10
 
 ### Notes for next developer:
-- Fixed expense categories are: vivienda, servicios, transporte, seguros
+- Fixed expense categories are: housing, services, transportation, insurance
 - Decimal values need explicit float() conversion when multiplying with Python floats
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - HIGH-003: Crear endpoint API /api/health-score/ (feature)
+## 2026-01-19 - HIGH-003: Create API endpoint /api/health-score/ (feature)
 
 ### Summary:
 Added REST endpoint `GET /api/health-score/` that returns the user's current financial health score with 4 metrics and their status. Auto-saves snapshot to database.
@@ -78,13 +78,13 @@ https://github.com/juancruzrossi/cashmind/pull/11
 - Snapshot is auto-saved/updated on each request using update_or_create
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - MED-004: Agregar método de consejos financieros a GeminiService (feature)
+## 2026-01-19 - MED-004: Add financial advice method to GeminiService (feature)
 
 ### Summary:
 Added `generate_financial_advice(metrics_data)` method to GeminiService for generating personalized financial tips based on health score metrics.
 
 ### Changes:
-- backend/api/services/gemini.py: Added new method that takes metrics dict and returns AI-generated advice in Spanish
+- backend/api/services/gemini.py: Added new method that takes a metrics dict and returns AI-generated financial advice in Spanish
 
 ### PR:
 https://github.com/juancruzrossi/cashmind/pull/12
@@ -94,7 +94,7 @@ https://github.com/juancruzrossi/cashmind/pull/12
 - Uses temperature=0.7 for varied responses
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - MED-005: Crear endpoint API /api/health-score/advice/ (feature)
+## 2026-01-19 - MED-005: Create API endpoint /api/health-score/advice/ (feature)
 
 ### Summary:
 Added `GET/POST /api/health-score/advice/` endpoint to generate and cache financial advice using Gemini.
@@ -112,7 +112,7 @@ https://github.com/juancruzrossi/cashmind/pull/13
 - Requires snapshot to exist first (call /health-score/ first)
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - MED-006: Crear hook useHealthScore en frontend (feature)
+## 2026-01-19 - MED-006: Create useHealthScore hook in frontend (feature)
 
 ### Summary:
 Added `useHealthScore` hook for fetching health score data from the backend API, including support for regenerating advice.
@@ -129,7 +129,7 @@ https://github.com/juancruzrossi/cashmind/pull/14
 - Advice is fetched separately from health score data (only if not in onboarding state)
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - MED-007: Crear widget HealthScoreWidget para dashboard (feature)
+## 2026-01-19 - MED-007: Create HealthScoreWidget for dashboard (feature)
 
 ### Summary:
 Added `HealthScoreWidget` component that displays financial health as a traffic light indicator (green/yellow/red) with proper loading, error, and onboarding states.
@@ -142,14 +142,14 @@ https://github.com/juancruzrossi/cashmind/pull/15
 
 ### Notes for next developer:
 - Colors: green=#22c55e, yellow=#eab308, red=#ef4444
-- Status labels in Spanish: Excelente/Regular/Necesita Atención
+- Status labels: Excellent/Regular/Needs Attention
 - Includes aria-live regions for accessibility
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - MED-008: Integrar widget en página de dashboard (feature)
+## 2026-01-19 - MED-008: Integrate widget into dashboard page (feature)
 
 ### Summary:
-Integrated `HealthScoreWidget` in the dashboard page with a "Ver detalle" link that navigates to /health. Layout is responsive: full width on mobile, 1/3 on desktop.
+Integrated `HealthScoreWidget` in the dashboard page with a "View details" link that navigates to /health. Layout is responsive: full width on mobile, 1/3 on desktop.
 
 ### Changes:
 - frontend/src/app/(dashboard)/dashboard/page.tsx: Imported HealthScoreWidget and Link, added widget with navigation link
@@ -162,7 +162,7 @@ https://github.com/juancruzrossi/cashmind/pull/16
 - Link uses primary color (#d4a853) with hover effect
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - MED-009: Crear página /health con sección de métricas (feature)
+## 2026-01-19 - MED-009: Create /health page with metrics section (feature)
 
 ### Summary:
 Created dedicated `/health` page with large traffic light header showing overall score and grid of 4 MetricCards for individual metrics (savings rate, fixed expenses, budget adherence, trend).
@@ -179,7 +179,7 @@ https://github.com/juancruzrossi/cashmind/pull/17
 - Trend icon changes based on positive/negative value (TrendingUp/TrendingDown)
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - MED-011: Crear panel de consejos con botón regenerar (feature)
+## 2026-01-19 - MED-011: Create advice panel with regenerate button (feature)
 
 ### Summary:
 Added AdvicePanel component displaying cached Gemini financial advice with regenerate button, loading/error states, and fallback advice.
@@ -196,7 +196,7 @@ https://github.com/juancruzrossi/cashmind/pull/19
 - Default fallback advice provided when no cached advice exists
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - MED-010: Crear gráfica de evolución histórica (feature)
+## 2026-01-19 - MED-010: Create historical evolution chart (feature)
 
 ### Summary:
 Added health score history chart showing evolution of the overall score over the last 6 months. Includes backend endpoint and frontend component using Recharts.
@@ -217,7 +217,7 @@ https://github.com/juancruzrossi/cashmind/pull/18
 - Snapshots are created when user visits /health-score/ endpoint
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - LOW-012: Implementar onboarding guiado para nuevos usuarios (feature)
+## 2026-01-19 - LOW-012: Implement guided onboarding for new users (feature)
 
 ### Summary:
 Added OnboardingWizard component that guides new users through the requirements needed to calculate their health score. Shows progress bars for each requirement with navigation buttons to add missing data.
@@ -238,7 +238,7 @@ https://github.com/juancruzrossi/cashmind/pull/20
 - Navigation buttons link to relevant pages for adding data
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - LOW-013: Tests unitarios backend para health score (test)
+## 2026-01-19 - LOW-013: Backend unit tests for health score (test)
 
 ### Summary:
 Added comprehensive unit tests for health score backend endpoints. Fixed existing tests that called non-existent method, added 19 new endpoint tests covering all 3 API endpoints.
@@ -255,7 +255,7 @@ https://github.com/juancruzrossi/cashmind/pull/21
 - Advice endpoint tests mock GeminiService to avoid API calls
 - Security tools (gitleaks, semgrep) not installed - skipped scan with warning
 
-## 2026-01-19 - TEST-001: Agregar comentario de prueba en README (test)
+## 2026-01-19 - TEST-001: Add test comment in README (test)
 
 ### Summary:
 Added HTML comment to README.md to verify integration branch workflow is working correctly.

@@ -175,51 +175,51 @@ gh pr merge --squash --delete-branch
 5. **ALWAYS** use squash and merge for PRs
 6. **ALWAYS** delete branches after merging
 
-## Skills y Agentes Especializados (OBLIGATORIO)
+## Specialized Skills and Agents (REQUIRED)
 
-### Skills de Desarrollo
+### Development Skills
 
-**SIEMPRE** usar las skills disponibles para tareas de desarrollo:
+**ALWAYS** use the available skills for development tasks:
 
-| Skill | Uso |
+| Skill | Use |
 |-------|-----|
-| `senior-frontend` | Componentes React, UI/UX, performance frontend, accesibilidad |
-| `senior-backend` | APIs, lógica de negocio, optimización de queries, seguridad |
-| `backend-architect` | Diseño de APIs, schemas de DB, arquitectura de servicios |
-| `code-reviewer` | Revisión de código antes de PRs, análisis de calidad |
-| `debugger` | Investigar errores, stack traces, comportamiento inesperado |
-| `performance-engineer` | Optimización, profiling, caching |
+| `senior-frontend` | React components, UI/UX, frontend performance, accessibility |
+| `senior-backend` | APIs, business logic, query optimization, security |
+| `backend-architect` | API design, DB schemas, service architecture |
+| `code-reviewer` | Code review before PRs, quality analysis |
+| `debugger` | Investigate errors, stack traces, unexpected behavior |
+| `performance-engineer` | Optimization, profiling, caching |
 
-### Agentes Especializados
+### Specialized Agents
 
-**SIEMPRE** usar el agente apropiado via `Task` tool:
+**ALWAYS** use the appropriate agent via the `Task` tool:
 
-- `frontend-developer` - Para implementar componentes React, UI, estado
-- `backend-architect` - Para diseñar APIs y schemas
-- `debugger` - Para investigar bugs y errores
-- `code-reviewer` - Para revisar código después de cambios significativos
-- `performance-engineer` - Para optimizaciones
-- `Explore` - Para explorar el codebase y responder preguntas
+- `frontend-developer` - To implement React components, UI, and state
+- `backend-architect` - To design APIs and schemas
+- `debugger` - To investigate bugs and errors
+- `code-reviewer` - To review code after significant changes
+- `performance-engineer` - For optimizations
+- `Explore` - To explore the codebase and answer questions
 
-### Diseño UI/UX
+### UI/UX Design
 
-**CRÍTICO**: Mantener consistencia visual en todo el proyecto.
+**CRITICAL**: Maintain visual consistency across the entire project.
 
-Antes de crear/modificar componentes UI:
-1. Usar skill `senior-frontend` para guía de implementación
-2. Seguir el sistema de colores definido (gold #d4a853, backgrounds sólidos)
-3. Mantener patrones existentes (dark theme, sin transparencias)
-4. Verificar responsividad (mobile-first, breakpoint `lg:`)
+Before creating or modifying UI components:
+1. Use the `senior-frontend` skill for implementation guidance
+2. Follow the defined color system (gold `#d4a853`, solid backgrounds)
+3. Maintain existing patterns (dark theme, no transparency)
+4. Verify responsiveness (mobile-first, `lg:` breakpoint)
 
-### Cuándo Usar Cada Herramienta
+### When to Use Each Tool
 
 ```
-Tarea de Frontend → senior-frontend skill + frontend-developer agent
-Tarea de Backend  → senior-backend skill + backend-architect agent
-Bug/Error         → debugger agent
-Code Review       → code-reviewer agent (PROACTIVO después de cambios)
-Explorar código   → Explore agent (NO usar Grep/Glob directamente)
-Planificación     → Plan agent o /planner skill
+Frontend Task  → senior-frontend skill + frontend-developer agent
+Backend Task   → senior-backend skill + backend-architect agent
+Bug/Error      → debugger agent
+Code Review    → code-reviewer agent (PROACTIVE after changes)
+Code Exploration → Explore agent (DO NOT use Grep/Glob directly)
+Planning       → Plan agent or /planner skill
 ```
 
 ## Frontend Testing (agent-browser)
